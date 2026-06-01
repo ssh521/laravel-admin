@@ -1,8 +1,11 @@
+@import "tailwindcss";
 @import "@fortawesome/fontawesome-free/css/all.css";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@source "../views/**/*.blade.php";
+@source "../js/**/*.js";
+@source "../../../vendor/ssh521/laravel-admin/resources/views/**/*.blade.php";
+@source "../../../vendor/ssh521/laravel-admin/resources/js/**/*.js";
+@source "../../views/vendor/laravel-admin/**/*.blade.php";
 
 [x-cloak] {
     display: none;
@@ -265,7 +268,7 @@ span.cursor-pointer:hover {
 
 /* 부드러운 나타나기 효과 */
 .fade-in {
-    @apply animate-in fade-in duration-500 ease-out;
+    animation: admin-fade-in 500ms ease-out;
   }
 
   /* 호버 시 살짝 떠오르는 효과 (카드, 버튼용) */
@@ -293,7 +296,7 @@ span.cursor-pointer:hover {
   .modal-content {
     @apply bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all;
     /* 모바일에서는 아래에서 위로 슬라이드, PC는 중앙 정렬 */
-    @apply animate-in slide-in-from-bottom-10 md:slide-in-from-top-4 duration-300;
+    animation: admin-slide-in-from-bottom 300ms ease-out;
   }  
 
   .badge {
@@ -301,10 +304,10 @@ span.cursor-pointer:hover {
   }
 
   /* 배지 색상 */
-  .badge-success { @apply badge bg-green-100 text-green-700; }
-  .badge-error { @apply badge bg-red-100 text-red-700; }
-  .badge-warning { @apply badge bg-yellow-100 text-yellow-700; }
-  .badge-info { @apply badge bg-blue-100 text-blue-700; }  
+  .badge-success { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-green-100 text-green-700; }
+  .badge-error { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-red-100 text-red-700; }
+  .badge-warning { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-yellow-100 text-yellow-700; }
+  .badge-info { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-100 text-blue-700; }  
 
   /* dTree 스타일 (Classic ASP 메뉴 형식) */
   .dtree {
@@ -362,4 +365,44 @@ span.cursor-pointer:hover {
     background-color: #c0d2ec;
     color: #333;
   }
+}
+
+@media (min-width: 768px) {
+    .modal-content {
+        animation-name: admin-slide-in-from-top;
+    }
+}
+
+@keyframes admin-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes admin-slide-in-from-bottom {
+    from {
+        opacity: 0;
+        transform: translateY(2.5rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes admin-slide-in-from-top {
+    from {
+        opacity: 0;
+        transform: translateY(-1rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
