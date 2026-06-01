@@ -1,6 +1,6 @@
 # ssh521/laravel-admin
 
-Reusable Laravel 12 admin panel extracted from admin-yaver.
+Reusable Laravel 13 admin panel extracted from admin-yaver.
 
 ## Install Locally
 
@@ -10,6 +10,7 @@ composer require ssh521/laravel-admin:dev-main
 php artisan vendor:publish --tag=laravel-admin-config --no-interaction
 php artisan vendor:publish --tag=laravel-admin-migrations --no-interaction
 php artisan vendor:publish --tag=laravel-admin-assets --force --no-interaction
+npm install @fortawesome/fontawesome-free sortablejs axios
 npm run build
 php artisan migrate
 php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\RolePermissionSeeder"
@@ -17,9 +18,43 @@ php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\MenuSeeder
 php artisan laravel-admin:make-super-admin admin@example.com --name="Super Admin" --password="change-this-password" --verified
 ```
 
-The host `App\Models\User` must use `Spatie\Permission\Traits\HasRoles`.
+Admin authentication uses a package-owned `admin_users` table through the configurable `laravel_admin` guard. The host `App\Models\User` is still used for the user management screens; if those screens assign roles to host users, that model must use `Spatie\Permission\Traits\HasRoles`.
 
-The package admin stylesheet is written for Tailwind CSS v3. If the host app uses the Laravel 12 Tailwind 4 Vite plugin, switch the admin build entry to Tailwind v3/PostCSS or compile the admin CSS in a separate v3 pipeline.
+The package admin stylesheet is written for Tailwind CSS v4 and can be included in a Laravel 13 starter kit Vite build. Add the published admin entries to `vite.config.js`:
+
+```js
+laravel({
+    input: [
+        'resources/css/app.css',
+        'resources/js/app.js',
+        'resources/vendor/laravel-admin/admin.css',
+        'resources/vendor/laravel-admin/admin.js',
+    ],
+})
+```
+
+## Authentication
+
+The package does not override the host app's `/login`, `/register`, or Fortify views by default. This avoids route and view conflicts with Breeze, Jetstream, or an existing custom auth stack.
+
+To enable a separate admin login screen at `/admin/login`, set:
+
+```php
+'auth' => [
+    'register_fortify_views' => false,
+    'guard' => 'laravel_admin',
+    'provider' => 'laravel_admin_users',
+    'admin_login' => [
+        'enabled' => true,
+        'middleware' => ['web'],
+        'redirect_to' => '/admin',
+    ],
+],
+'admin_user_model' => Ssh521\LaravelAdmin\Models\AdminUser::class,
+'admin_users_table' => 'admin_users',
+```
+
+Admin routes use the package `AuthenticateAdmin` middleware by default. When admin login is enabled, unauthenticated `/admin` requests are redirected to `/admin/login`; otherwise they fall back to the host app's `login` route. The package registers the configured guard/provider at runtime, so new Laravel projects do not need to edit `config/auth.php` unless they want custom guard names or models.
 
 ## Updating Assets
 
@@ -28,10 +63,18 @@ Published CSS/JS files should be overwritten after package updates so the host V
 ```bash
 composer update ssh521/laravel-admin
 php artisan vendor:publish --tag=laravel-admin-assets --force --no-interaction
+npm install @fortawesome/fontawesome-free sortablejs axios
 npm run build
 ```
 
 Do not force-publish config, migrations, seeders, or views during routine updates. Those files may contain host-app customizations.
+
+If you are updating an existing install that predates the separate `admin_users` table, publish only that new migration:
+
+```bash
+php artisan vendor:publish --tag=laravel-admin-admin-users-migration --no-interaction
+php artisan migrate
+```
 
 ## Initial Super Admin
 
@@ -41,7 +84,7 @@ Run this after migrations and seeders:
 php artisan laravel-admin:make-super-admin admin@example.com --verified
 ```
 
-If the user exists, the command assigns the `Super Admin` role. If the user does not exist, it creates the user and prompts for a password. For non-interactive setup, pass `--password=...`.
+If the admin user exists, the command assigns the `Super Admin` role. If the admin user does not exist, it creates the account in `admin_users` and prompts for a password. For non-interactive setup, pass `--password=...`.
 
 ## What Is Included
 
@@ -65,7 +108,7 @@ These are the main areas to revisit while turning the extracted admin panel into
 
 ### Authentication And Permissions
 
-- Keep `Spatie\Permission\Traits\HasRoles` as a host `User` model requirement and document it in install steps.
+- Keep admin authentication isolated from the host `users` table, while leaving the host `User` model configurable for user management screens.
 - Make Super Admin setup explicit during onboarding through `php artisan laravel-admin:make-super-admin`.
 - Verify every Policy keeps the Super Admin bypass and role/menu permission checks aligned.
 - Add tests for role-based left menu folder visibility, especially `MenuCategory` access by role.
@@ -76,7 +119,7 @@ These are the main areas to revisit while turning the extracted admin panel into
 - Preserve the current admin UI shape: left menu folders, header, dark mode, modal-based CRUD, and Livewire event naming.
 - Keep User management as the reference pattern for future CRUD screens.
 - Review modal sizing, mobile behavior, and dark mode after each new admin module.
-- Tailwind CSS v3 is currently required for the published admin CSS. If host apps use Tailwind CSS v4, provide either a separate admin CSS build guide or a precompiled asset option.
+- Keep the published admin CSS compatible with the Laravel 13 Tailwind CSS v4 Vite plugin.
 - Check whether published assets should be copied into host `resources/vendor/laravel-admin` or served from package resources in production.
 
 ### API Management
