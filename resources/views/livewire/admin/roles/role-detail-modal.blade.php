@@ -1,6 +1,6 @@
 <div>
-    <x-draggable-modal 
-        id="role-detail-modal"  
+    <x-laravel-admin::draggable-modal
+        id="role-detail-modal"
         x-on:closed-modal.window="if ($event.detail.modalId === 'role-detail-modal') $wire.resetRole()"
         title="역할 상세 정보"
         :show-close-button="true"
@@ -52,23 +52,23 @@
                     <!-- 액션 버튼 -->
                     <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-600">
                         @can('update', $role)
-                        <x-danger-button type="button" wire:click="openEditModal">
+                        <x-laravel-admin::danger-button type="button" wire:click="openEditModal">
                             모달창에서 수정하기
-                        </x-danger-button>
-                        <x-primary-button type="button" wire:click="editRole">
+                        </x-laravel-admin::danger-button>
+                        <x-laravel-admin::primary-button type="button" wire:click="editRole">
                             수정
-                        </x-primary-button>
+                        </x-laravel-admin::primary-button>
                         @endcan
-                        <x-secondary-button type="button" @click="$dispatch('close-modal', { modalId: 'role-detail-modal' })">닫기</x-secondary-button>
+                        <x-laravel-admin::secondary-button type="button" @click="$dispatch('close-modal', { modalId: 'role-detail-modal' })">닫기</x-laravel-admin::secondary-button>
 
                     </div>
                 @endif
             </div>
-        </x-draggable-modal>
+        </x-laravel-admin::draggable-modal>
 
         <!-- 자식 모달: 역할 수정 폼 -->
-        <x-draggable-modal 
-            id="role-edit-modal"  
+        <x-laravel-admin::draggable-modal
+            id="role-edit-modal"
             x-on:closed-modal.window="if ($event.detail.modalId === 'role-edit-modal') $wire.resetEditForm()"
             title="역할 수정"
             :show-close-button="true"
@@ -80,5 +80,5 @@
             <div class="px-2 py-2">
                 <livewire:admin.roles.role-form parent-modal-id="role-edit-modal" />
             </div>
-        </x-draggable-modal>
+        </x-laravel-admin::draggable-modal>
 </div>

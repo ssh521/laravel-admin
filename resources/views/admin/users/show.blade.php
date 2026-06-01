@@ -1,8 +1,8 @@
-<x-layouts.admin title="사용자 정보">
+<x-laravel-admin::layouts.admin title="사용자 정보">
 
     <x-slot name="header">
 
-        <x-admin-header>
+        <x-laravel-admin::admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <span class="cursor-pointer" @click="open = !open">관리자메뉴</span>
@@ -14,7 +14,7 @@
             <x-slot name="description">
                 {{ __('User Information') }}
             </x-slot>
-        </x-admin-header>
+        </x-laravel-admin::admin-header>
 
     </x-slot>
 
@@ -42,7 +42,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Name Field -->
                         <div>
-                            <x-input-label :value="__('Name')" />
+                            <x-laravel-admin::input-label :value="__('Name')" />
                             <div class="mt-2">
                                 <div class="font-bold text-lg ml-1 mt-2">{{ $user->name }}</div>
                             </div>
@@ -50,14 +50,14 @@
 
                         <!-- Email Field -->
                         <div>
-                            <x-input-label :value="__('Email')" />
+                            <x-laravel-admin::input-label :value="__('Email')" />
                             <div class="mt-2">
                                 <div class="font-bold text-lg ml-1 mt-2">{{ $user->email }}</div>
                             </div>
                         </div>
                     </div>
 
-                    <x-section-border />
+                    <x-laravel-admin::section-border />
 
                     <!-- Roles Section -->
                     <div>
@@ -77,7 +77,7 @@
                         </div>
                     </div>
 
-                    <x-section-border />
+                    <x-laravel-admin::section-border />
 
                     <!-- Permissions Section -->
                     <div>
@@ -97,7 +97,7 @@
                         </div>
                     </div>
 
-                    <x-section-border />
+                    <x-laravel-admin::section-border />
 
                     <!-- Delete Button -->
                     <div class="flex items-center justify-end py-4">
@@ -115,4 +115,4 @@
         </div>
     </div>
 
-</x-layouts.admin>
+</x-laravel-admin::layouts.admin>

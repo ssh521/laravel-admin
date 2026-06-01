@@ -47,8 +47,7 @@ class LaravelAdminServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        View::addLocation(__DIR__.'/../resources/views');
-        Blade::anonymousComponentPath(__DIR__.'/../resources/views/components');
+        $this->registerViewLocations();
 
         $this->registerRoutes();
         if (config('laravel-admin.auth.register_fortify_views', false)) {
@@ -58,6 +57,18 @@ class LaravelAdminServiceProvider extends ServiceProvider
         $this->registerPolicies();
         $this->registerCommands();
         $this->registerPublishes();
+    }
+
+    private function registerViewLocations(): void
+    {
+        $publishedViewsPath = resource_path('views/vendor/laravel-admin');
+        $packageViewsPath = __DIR__.'/../resources/views';
+
+        View::addLocation($publishedViewsPath);
+        View::addLocation($packageViewsPath);
+
+        Blade::anonymousComponentPath($publishedViewsPath.'/components', 'laravel-admin');
+        Blade::anonymousComponentPath($packageViewsPath.'/components', 'laravel-admin');
     }
 
     private function registerRoutes(): void
@@ -178,6 +189,10 @@ class LaravelAdminServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources/views' => resource_path('views/vendor/laravel-admin'),
         ], 'laravel-admin-views');
+
+        $this->publishes([
+            __DIR__.'/../resources/views/components' => resource_path('views/vendor/laravel-admin/components'),
+        ], 'laravel-admin-components');
 
         $this->publishes([
             __DIR__.'/../resources/css/admin.css' => resource_path('vendor/laravel-admin/admin.css'),

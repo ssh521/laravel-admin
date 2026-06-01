@@ -1,6 +1,6 @@
-<x-layouts.admin title="메뉴 카테고리 수정">
+<x-laravel-admin::layouts.admin title="메뉴 카테고리 수정">
     <x-slot name="header">
-        <x-admin-header>
+        <x-laravel-admin::admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
@@ -8,12 +8,12 @@
             <x-slot name="description">
                 {{ __('Edit Menu Category') }}
             </x-slot>
-        </x-admin-header>
+        </x-laravel-admin::admin-header>
     </x-slot>
 
     <div class="w-full lg:max-w-7xl mx-auto">
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl px-6 py-2">
-            <x-session-messages />
+            <x-laravel-admin::session-messages />
 
             <div class="flex justify-between items-center mb-6">
                 <div>
@@ -43,30 +43,30 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Category Name Field -->
                     <div>
-                        <x-label for="name" :value="__('Category Name')" />
-                        <x-input id="name" name="name" type="text" class="mt-1 block w-full"
+                        <x-laravel-admin::label for="name" :value="__('Category Name')" />
+                        <x-laravel-admin::input id="name" name="name" type="text" class="mt-1 block w-full"
                             :value="old('name', $menuCategory->name)" placeholder="Enter category name"
                             autocomplete="name" required />
-                        <x-input-error-message class="mt-2" :messages="$errors->get('name')" />
+                        <x-laravel-admin::input-error-message class="mt-2" :messages="$errors->get('name')" />
                     </div>
 
                     <!-- Sort Order Field -->
                     <div>
-                        <x-label for="sort_order" :value="__('Sort Order')" />
-                        <x-input id="sort_order" name="sort_order" type="number" class="mt-1 block w-full"
+                        <x-laravel-admin::label for="sort_order" :value="__('Sort Order')" />
+                        <x-laravel-admin::input id="sort_order" name="sort_order" type="number" class="mt-1 block w-full"
                             :value="old('sort_order', $menuCategory->sort_order)" min="0" />
-                        <x-input-error-message class="mt-2" :messages="$errors->get('sort_order')" />
+                        <x-laravel-admin::input-error-message class="mt-2" :messages="$errors->get('sort_order')" />
                     </div>
                 </div>
 
-                <x-section-border />
+                <x-laravel-admin::section-border />
 
                 <!-- Additional Settings -->
                 <div class="space-y-6">
                     <!-- Active Status -->
                     <div>
                         <label class="flex items-center">
-                            <x-checkbox name="is_active" value="1"
+                            <x-laravel-admin::checkbox name="is_active" value="1"
                                 :checked="old('is_active', $menuCategory->is_active)" />
                             <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ __('활성화') }}</span>
                         </label>
@@ -74,9 +74,9 @@
                 </div>
 
                 <div class="flex items-center justify-end mt-6">
-                    <x-primary-button>
+                    <x-laravel-admin::primary-button>
                         {{ __('Update Category') }}
-                    </x-primary-button>
+                    </x-laravel-admin::primary-button>
                 </div>
             </form>
 
@@ -91,4 +91,4 @@
             @endcan
         </div>
     </div>
-</x-layouts.admin>
+</x-laravel-admin::layouts.admin>

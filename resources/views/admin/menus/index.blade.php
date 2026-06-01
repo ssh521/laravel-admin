@@ -1,8 +1,8 @@
 {{-- 메뉴 관리 페이지 - 메뉴 목록 조회, 검색, 정렬, 순서 변경 기능 --}}
-<x-layouts.admin title="메뉴 관리">
+<x-laravel-admin::layouts.admin title="메뉴 관리">
     {{-- 페이지 헤더 --}}
     <x-slot name="header">
-        <x-admin-header>
+        <x-laravel-admin::admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
@@ -10,7 +10,7 @@
             <x-slot name="description">
                 {{ __('Menu List') }}
             </x-slot>
-        </x-admin-header>
+        </x-laravel-admin::admin-header>
     </x-slot>
 
     {{-- 메인 컨텐츠 영역 --}}
@@ -50,7 +50,7 @@
                             placeholder="메뉴 검색">
                         {{-- 검색어 초기화 버튼 --}}
                         @if(request('search'))
-                            <a href="{{ route('admin.menus.index') }}" 
+                            <a href="{{ route('admin.menus.index') }}"
                                class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -73,11 +73,11 @@
             </div>
         </div>
 
-        <x-session-messages />
+        <x-laravel-admin::session-messages />
 
         {{-- 체크박스 제어 컴포넌트 --}}
         <div class="pb-2">
-            <x-checkbox-controls /> | 
+            <x-laravel-admin::checkbox-controls /> |
             <a href="javascript:void(0)" onclick="openCategorySelectionModal()" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">분류선택</a>
         </div>
 
@@ -88,12 +88,12 @@
                             // 정렬 관련 변수들을 한 번에 정의
                             $currentSort = request('sort', 'id');
                             $currentDirection = request('direction', 'desc');
-                            
+
                             // 정렬 방향 결정 함수
                             $getNextDirection = function($sortField) use ($currentSort, $currentDirection) {
                                 return ($currentSort === $sortField && $currentDirection === 'asc') ? 'desc' : 'asc';
                             };
-                            
+
                             // 정렬 아이콘 렌더링 함수
                             $renderSortIcon = function($sortField) use ($currentSort, $currentDirection) {
                                 if ($currentSort === $sortField) {
@@ -117,7 +117,7 @@
                 <tr>
                     {{-- ID 컬럼 --}}
                     <th scope="col" class="px-2 py-3 whitespace-nowrap">ID</th>
-                    
+
                     {{-- 메뉴명 컬럼 (정렬 가능) --}}
                     <th scope="col" class="px-2 py-3 whitespace-nowrap">
                         <a href="{{ route('admin.menus.index', array_merge(request()->query(), ['sort' => 'name', 'direction' => $getNextDirection('name')])) }}"
@@ -126,7 +126,7 @@
                             {!! $renderSortIcon('name') !!}
                         </a>
                     </th>
-                    
+
                     {{-- 카테고리 컬럼 (정렬 가능) --}}
                     <th scope="col" class="px-2 py-3 whitespace-nowrap">
                         @if(empty(request('search')))
@@ -141,13 +141,13 @@
                         </span>
                         @endif
                     </th>
-                    
+
                     {{-- 라우트/URL 컬럼 --}}
                     <th scope="col" class="px-2 py-3 whitespace-nowrap">라우트/URL</th>
-                    
+
                     {{-- 상태 컬럼 --}}
                     <th scope="col" class="px-2 py-3 whitespace-nowrap">상태</th>
-                    
+
                     {{-- 액션 컬럼 --}}
                     <th scope="col" class="px-2 py-3 whitespace-nowrap">
                         <span class="sr-only">Edit</span>
@@ -159,12 +159,12 @@
                 @forelse ($menus as $key => $menu)
                 <tr
                     class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                    
+
                     {{-- 메뉴 ID --}}
                     <th scope="row" class="px-2 py-2 font-medium text-gray-900 dark:text-white">
-                        <x-checkbox :value="$menu->id" />
+                        <x-laravel-admin::checkbox :value="$menu->id" />
                     </th>
-                    
+
                     {{-- 메뉴명 (링크 가능) --}}
                     <th scope="row" class="px-2 py-2 font-medium text-gray-900 dark:text-white whitespace-nowrap">
                         @can('view', $menu)
@@ -183,8 +183,8 @@
                     {{-- 카테고리 (순서 변경 모달 트리거) --}}
                     <td class="px-2 py-2">
                         @if($menu->category)
-                            <x-modal-trigger 
-                                text="{{ $menu->category->name }}" 
+                            <x-laravel-admin::modal-trigger
+                                text="{{ $menu->category->name }}"
                                 modal-id="menu-order-modal"
                                 variant="primary"
                                 type="link"
@@ -196,12 +196,12 @@
                             -
                         @endif
                     </td>
-                    
+
                     {{-- 라우트/URL 정보 --}}
                     <td class="px-2 py-2 whitespace-nowrap dark:text-white">
                         @if($menu->route_name)
                             {{-- 라우트명이 있는 경우 --}}
-                            <a href="{{ $menu->url }}" 
+                            <a href="{{ $menu->url }}"
                                target="{{ $menu->target ?? '_self' }}"
                                class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
                                 {{ $menu->route_name }}
@@ -212,7 +212,7 @@
                         @else
                             {{-- 직접 URL인 경우 --}}
                             @if($menu->url && $menu->url !== '#')
-                                <a href="{{ $menu->url }}" 
+                                <a href="{{ $menu->url }}"
                                    target="{{ $menu->target ?? '_self' }}"
                                    class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
                                     {{ $menu->url }}
@@ -226,14 +226,14 @@
                             <span class="ml-1 text-xs bg-red-100 text-red-800 px-1 rounded">외부</span>
                         @endif
                     </td>
-                    
+
                     {{-- 활성/비활성 상태 --}}
                     <td class="px-2 py-2">
                         <span class="px-2 py-1 text-xs {{ $menu->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }} rounded-full">
                             {{ $menu->is_active ? '활성' : '비활성' }}
                         </span>
                     </td>
-                    
+
                     {{-- 액션 버튼 --}}
                     <td class="px-2 py-2 text-right whitespace-nowrap">
                         @can('update', $menu)
@@ -265,7 +265,7 @@
     </div>
 
     {{-- 카테고리 선택 모달 (draggable + Livewire) --}}
-    <x-draggable-modal
+    <x-laravel-admin::draggable-modal
         id="category-selection-modal"
         title="메뉴 카테고리 변경"
         width="500"
@@ -273,10 +273,10 @@
         :close-on-backdrop-click="false"
     >
         <livewire:menus.change-category-modal />
-    </x-draggable-modal>
+    </x-laravel-admin::draggable-modal>
 
     {{-- 메뉴 순서 변경 모달 (Livewire 컴포넌트) --}}
-    <x-draggable-modal 
+    <x-laravel-admin::draggable-modal
         id="menu-order-modal"
         title="메뉴 순서 변경"
         width="600"
@@ -284,14 +284,14 @@
         :close-on-backdrop-click="false"
     >
         <livewire:admin.menus.menu-order-modal />
-    </x-draggable-modal>
+    </x-laravel-admin::draggable-modal>
 
     {{-- 메뉴 순서 변경 및 카테고리 변경 관련 JavaScript --}}
     <script>
         // ==========================================
         // 카테고리 선택 관련 기능
         // ==========================================
-        
+
         /**
          * 카테고리 선택 모달 열기
          */
@@ -309,7 +309,7 @@
                 detail: { modalId: 'category-selection-modal' }
             }));
         }
-               
+
 
         // ==========================================
         // 메뉴 순서 변경 관련 기능 (Livewire 컴포넌트로 이동됨)
@@ -351,4 +351,4 @@
         });
     </script>
 
-</x-layouts.admin> 
+</x-laravel-admin::layouts.admin>

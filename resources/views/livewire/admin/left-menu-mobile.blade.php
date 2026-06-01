@@ -7,11 +7,11 @@
         @click="isMobileMenuOpen = false"></div>
 
     <!-- 좌측 메뉴: YouTube 스타일, 트랜지션 포함 -->
-    <aside x-show="isMobileMenuOpen" 
+    <aside x-show="isMobileMenuOpen"
         x-transition:enter="transition-transform duration-300"
-        x-transition:enter-start="-translate-x-64" 
+        x-transition:enter-start="-translate-x-64"
         x-transition:enter-end="translate-x-0"
-        x-transition:leave="transition-transform duration-300" 
+        x-transition:leave="transition-transform duration-300"
         x-transition:leave-start="translate-x-0"
         x-transition:leave-end="-translate-x-64"
         @transitionend="
@@ -36,7 +36,7 @@
             </button>
             <!-- 로고 -->
             <a href="{{ route('admin.index') }}" class="flex items-center gap-2" style="text-decoration: none;">
-                <x-site-logo class="w-[22px] -mb-1 dark:text-purple-200" />
+                <x-laravel-admin::site-logo class="w-[22px] -mb-1 dark:text-purple-200" />
                 <span class="text-md lg:text-xl font-bold text-purple-700 dark:text-purple-200 tracking-tight">관리자 메뉴</span>
             </a>
         </div>

@@ -8,17 +8,17 @@
                 <!-- Logo -->
                 <div class="flex items-center shrink-0">
                     <a href="{{ route('home') }}" class="flex items-center gap-1">
-                        <x-site-logo size="w-logo-header h-logo-header" />
+                        <x-laravel-admin::site-logo size="w-logo-header h-logo-header" />
                         <span class="text-brand-header text-purple-700 dark:text-purple-200">야버닷컴</span>
                     </a>
-                    <x-dark-mode-toggle class="hidden lg:block" />
-                </div>     
+                    <x-laravel-admin::dark-mode-toggle class="hidden lg:block" />
+                </div>
 
             </div>
 
             <div class="flex items-center">
             </div>
-            
+
             <div class="flex items-center justify-end w-40">
 
 

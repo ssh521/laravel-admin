@@ -1,6 +1,6 @@
-<x-layouts.admin title="권한 상세">
+<x-laravel-admin::layouts.admin title="권한 상세">
     <x-slot name="header">
-        <x-admin-header>
+        <x-laravel-admin::admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
@@ -9,7 +9,7 @@
             <x-slot name="description">
                 {{ __('Permission Detail') }}
             </x-slot>
-        </x-admin-header>
+        </x-laravel-admin::admin-header>
     </x-slot>
 
     <div class="w-full lg:max-w-7xl mx-auto">
@@ -26,26 +26,26 @@
                 <div>
                     <a href="{{ route('admin.permissions.index') }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
                         ← {{ __('Back to Permissions') }}
-                    </a>                            
+                    </a>
                 </div>
             </div>
 
-            <x-session-messages />
+            <x-laravel-admin::session-messages />
 
             <div class="space-y-6">
                 <!-- Permission Basic Information -->
                 <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6">
                             <h4 class="text-md font-medium text-gray-900 dark:text-white mb-4">{{ __('Basic Information') }}</h4>
-                            
+
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <x-label for="permission_name" :value="__('Permission Name')" />
+                                    <x-laravel-admin::label for="permission_name" :value="__('Permission Name')" />
                                     <p class="mt-1 text-sm text-gray-900 dark:text-white font-medium">{{ $permission->name }}</p>
                                 </div>
-                                
+
                                 @if($permission->description)
                                 <div>
-                                    <x-label for="permission_description" :value="__('Description')" />
+                                    <x-laravel-admin::label for="permission_description" :value="__('Description')" />
                                     <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $permission->description }}</p>
                                 </div>
                                 @endif
@@ -53,23 +53,23 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                                 <div>
-                                    <x-label for="created_at" :value="__('Created At')" />
+                                    <x-laravel-admin::label for="created_at" :value="__('Created At')" />
                                     <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $permission->created_at->format('Y-m-d H:i:s') }}</p>
                                 </div>
-                                
+
                                 <div>
-                                    <x-label for="updated_at" :value="__('Updated At')" />
+                                    <x-laravel-admin::label for="updated_at" :value="__('Updated At')" />
                                     <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $permission->updated_at->format('Y-m-d H:i:s') }}</p>
                                 </div>
                 </div>
             </div>
 
-            <x-section-border />
+            <x-laravel-admin::section-border />
 
             <!-- Assigned Roles Section -->
             <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6">
                             <h4 class="text-md font-medium text-gray-900 dark:text-white mb-4">{{ __('Assigned Roles') }}</h4>
-                            
+
                             @if($permission->roles && $permission->roles->count() > 0)
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                                     @foreach($permission->roles as $role)
@@ -88,7 +88,7 @@
         <!-- Action Buttons -->
         <div class="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-600">
                             @can('update', $permission)
-                            <a href="{{ route('admin.permissions.edit', $permission) }}" 
+                            <a href="{{ route('admin.permissions.edit', $permission) }}"
                                class="inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-blue-500 border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-blue-700 dark:hover:bg-blue-600 focus:bg-blue-700 dark:focus:bg-blue-600 active:bg-blue-900 dark:active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 transition ease-in-out duration-150"
                                style="color: white !important;">
                                 {{ __('Edit Permission') }}
@@ -99,7 +99,7 @@
                             <form action="{{ route('admin.permissions.destroy', $permission) }}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" 
+                                <button type="submit"
                                         class="inline-flex items-center px-4 py-2 bg-red-600 dark:bg-red-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 dark:hover:bg-red-400 active:bg-red-700 dark:active:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 transition ease-in-out duration-150"
                                         onclick="return confirm('{{ __('정말 삭제하시겠습니까?') }}')">
                                     {{ __('Delete Permission') }}
@@ -109,4 +109,4 @@
     </div>
         </div>
     </div>
-</x-layouts.admin> 
+</x-laravel-admin::layouts.admin>

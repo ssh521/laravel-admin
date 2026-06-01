@@ -1,6 +1,6 @@
-<x-layouts.admin title="권한 등록">
+<x-laravel-admin::layouts.admin title="권한 등록">
     <x-slot name="header">
-        <x-admin-header>
+        <x-laravel-admin::admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">Admin Home</a>
@@ -8,7 +8,7 @@
             <x-slot name="description">
                 {{ __('Create New Permission') }}
             </x-slot>
-        </x-admin-header>
+        </x-laravel-admin::admin-header>
     </x-slot>
 
     <div class="w-full lg:max-w-7xl mx-auto">
@@ -25,7 +25,7 @@
                 <div>
                     <a href="{{ route('admin.permissions.index') }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
                         ← {{ __('Back to Permissions') }}
-                    </a>                            
+                    </a>
                 </div>
             </div>
 
@@ -35,29 +35,29 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Permission Name Field -->
                     <div>
-                        <x-label for="name" :value="__('Permission Name')" />
-                        <x-input id="name" name="name" type="text" class="mt-1 block w-full" 
+                        <x-laravel-admin::label for="name" :value="__('Permission Name')" />
+                        <x-laravel-admin::input id="name" name="name" type="text" class="mt-1 block w-full"
                                      :value="old('name')" placeholder="{{ __('Enter permission name') }}" autocomplete="name" />
                         @if ($errors->has('name'))
-                            <x-input-error-message :messages="['Please enter a permission name!']" />
+                            <x-laravel-admin::input-error-message :messages="['Please enter a permission name!']" />
                         @endif
                     </div>
 
                     <!-- Permission Description Field -->
                     <div>
-                        <x-label for="description" :value="__('Description')" />
-                        <x-input id="description" name="description" type="text" class="mt-1 block w-full" 
+                        <x-laravel-admin::label for="description" :value="__('Description')" />
+                        <x-laravel-admin::input id="description" name="description" type="text" class="mt-1 block w-full"
                                      :value="old('description')" placeholder="{{ __('Enter permission description') }}" />
-                        <x-input-error-message class="mt-2" :messages="$errors->get('description')" />
+                        <x-laravel-admin::input-error-message class="mt-2" :messages="$errors->get('description')" />
                     </div>
                 </div>
 
                 <div class="flex items-center justify-end mt-6">
-                    <x-primary-button>
+                    <x-laravel-admin::primary-button>
                         {{ __('Create Permission') }}
-                    </x-primary-button>
+                    </x-laravel-admin::primary-button>
                 </div>
             </form>
         </div>
     </div>
-</x-layouts.admin>
+</x-laravel-admin::layouts.admin>

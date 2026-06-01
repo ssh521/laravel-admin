@@ -1,4 +1,4 @@
-<x-layouts.app title="대시보드">
+<x-laravel-admin::layouts.app title="대시보드">
 
     <x-slot name="header">
         {{ __('Dashboard') }}
@@ -29,4 +29,4 @@
 
     </div>
 
-</x-layouts.app>
+</x-laravel-admin::layouts.app>

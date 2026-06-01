@@ -118,8 +118,8 @@
                     <button class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
                         wire:click.stop="save">저장</button>
                     @endif
-                    <x-secondary-button type="button"
-                        @click="$dispatch('close-modal', { modalId: '{{ $parentModalId }}' })">닫기</x-secondary-button>
+                    <x-laravel-admin::secondary-button type="button"
+                        @click="$dispatch('close-modal', { modalId: '{{ $parentModalId }}' })">닫기</x-laravel-admin::secondary-button>
                 </div>
                 @endif
             </div>

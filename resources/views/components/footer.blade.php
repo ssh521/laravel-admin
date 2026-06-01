@@ -4,8 +4,8 @@
     파일: resources/views/components/footer.blade.php
 
     사용법:
-        <x-footer />
-        <x-footer max-width="max-w-screen-2xl" />
+        <x-laravel-admin::footer />
+        <x-laravel-admin::footer max-width="max-w-screen-2xl" />
 
     config/site.php 에서 값 관리 권장
     ============================================================

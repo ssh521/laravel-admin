@@ -1,6 +1,6 @@
-<x-layouts.admin title="메뉴 카테고리 역할 관리">
+<x-laravel-admin::layouts.admin title="메뉴 카테고리 역할 관리">
     <x-slot name="header">
-        <x-admin-header>
+        <x-laravel-admin::admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
@@ -9,7 +9,7 @@
             <x-slot name="description">
                 {{ __('Menu Category Role Management') }}
             </x-slot>
-        </x-admin-header>
+        </x-laravel-admin::admin-header>
     </x-slot>
 
     <div class="w-full lg:max-w-7xl mx-auto">
@@ -26,7 +26,7 @@
                 <div>
                     <a href="{{ route('admin.menu-categories.show', $menuCategory) }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
                         ← {{ __('Back to Category') }}
-                    </a>                            
+                    </a>
                 </div>
             </div>
 
@@ -42,11 +42,11 @@
 
                 <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6">
                     <h4 class="text-md font-medium text-gray-900 dark:text-white mb-4">{{ __('Select Allowed Roles') }}</h4>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         @foreach($roles as $role)
                             <label class="flex items-center">
-                                <x-checkbox name="roles[]" value="{{ $role->id }}" :checked="in_array($role->id, $allowedRoleIds)" />
+                                <x-laravel-admin::checkbox name="roles[]" value="{{ $role->id }}" :checked="in_array($role->id, $allowedRoleIds)" />
                                 <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">{{ $role->name }}</span>
                             </label>
                         @endforeach
@@ -54,11 +54,11 @@
                 </div>
 
                 <div class="flex items-center justify-end mt-6">
-                    <x-primary-button>
+                    <x-laravel-admin::primary-button>
                         {{ __('Save Changes') }}
-                    </x-primary-button>
+                    </x-laravel-admin::primary-button>
                 </div>
             </form>
         </div>
     </div>
-</x-layouts.admin> 
+</x-laravel-admin::layouts.admin>

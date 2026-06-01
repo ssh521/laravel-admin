@@ -42,14 +42,14 @@
     @livewireStyles
 </head>
 <body class="font-sans antialiased bg-[#E7E7D6] dark:bg-gray-900 h-full min-h-screen">
-    <x-banner />
+    <x-laravel-admin::banner />
 
-    <div x-data="{ 
-            isMobileMenuOpen: false, 
-            isDesktop: localStorage.getItem('adminSidebarOpen') === 'true' || false 
+    <div x-data="{
+            isMobileMenuOpen: false,
+            isDesktop: localStorage.getItem('adminSidebarOpen') === 'true' || false
         }" x-init="
             $watch('isDesktop', value => localStorage.setItem('adminSidebarOpen', value));
-            
+
             // 단축키 이벤트 리스너 추가
             document.addEventListener('keydown', function(e) {
                 // Ctrl/Cmd + B: 사이드바 토글
@@ -104,7 +104,7 @@
         </div>
     </div>
 
-    <x-client-notification />    
+    <x-laravel-admin::client-notification />
 
     <!-- Dynamic Modal Manager -->
     @livewire('dynamic-modal-manager')

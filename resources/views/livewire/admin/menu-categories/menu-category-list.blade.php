@@ -11,7 +11,7 @@
                     @endif
                 </div>
 
-                <x-session-messages />
+                <x-laravel-admin::session-messages />
 
                 <div class="flex justify-between items-center pb-4">
                     <div>
@@ -36,14 +36,14 @@
                         <div class="flex items-center ml-1">
                             <label for="simple-search" class="sr-only">Search</label>
                             <div class="w-full relative">
-                                <input 
-                                    type="text" 
+                                <input
+                                    type="text"
                                     wire:model.live.debounce.300ms="search"
                                     class="bg-gray-50 border w-40 z-0 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-xs pl-2 pr-8 p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     placeholder="카테고리 검색">
 
                                 @if($search)
-                                <button 
+                                <button
                                     wire:click="$set('search', '')"
                                     class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,7 +95,7 @@
                             @forelse($categories as $category)
                             <tr data-category-id="{{ $category->id }}"
                                 class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                
+
                                 <td class="px-2 py-2">
                                     <div class="drag-handle flex items-center justify-center">
                                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -148,9 +148,9 @@
                                 </td>
                                 <td class="px-2 py-2 text-right">
                                     @if($canUpdate($category))
-                                    <x-modal-trigger 
-                                        text="권한" 
-                                        modal-id="roles-modal" 
+                                    <x-laravel-admin::modal-trigger
+                                        text="권한"
+                                        modal-id="roles-modal"
                                         type="link"
                                         variant="primary"
                                         modal-type="single"
@@ -215,7 +215,7 @@
                         id: row.dataset.categoryId,
                         sort_order: index + 1
                     }));
-                    
+
                     // 순서 변경 API 호출
                     updateCategoryOrder(newOrder);
                 }
@@ -225,7 +225,7 @@
 
     function updateCategoryOrder(newOrder) {
         console.log('순서 변경 요청:', newOrder);
-        
+
         fetch('{{ route("menu-categories.update-order-multiple") }}', {
             method: 'POST',
             headers: {
@@ -248,10 +248,10 @@
                 showNotification('카테고리 순서가 성공적으로 변경되었습니다.', 'success');
                 // 페이지 새로고침 없이 순서 번호 업데이트
                 updateSortOrderNumbers();
-                
+
                 // Livewire left-menu 컴포넌트 refresh
                 refreshLeftMenu();
-                
+
                 // Livewire 이벤트 dispatch
                 if (window.Livewire) {
                     window.Livewire.dispatch('admin-menu-categories:menu-categories:reordered');
@@ -269,7 +269,7 @@
 
     function refreshLeftMenu() {
         console.log('refreshLeftMenu 함수 실행됨');
-        
+
         // Livewire 이벤트 시도
         if (window.Livewire && typeof window.Livewire.dispatch === 'function') {
             try {
@@ -294,17 +294,17 @@
     function showNotification(message, type) {
         const notification = document.createElement('div');
         let bgColor = 'bg-red-500 text-white';
-        
+
         if (type === 'success') {
             bgColor = 'bg-green-500 text-white top-4';
         } else if (type === 'info') {
             bgColor = 'bg-blue-500 text-white top-20';
         }
-        
+
         notification.className = `fixed right-4 p-4 rounded-lg shadow-lg z-50 ${bgColor}`;
         notification.textContent = message;
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
             notification.remove();
         }, 3000);
@@ -348,7 +348,7 @@
 </style>
 
 <!-- 권한 관리 모달 -->
-<x-draggable-modal id="roles-modal" title="권한 관리" :width="600" :height="500">
+<x-laravel-admin::draggable-modal id="roles-modal" title="권한 관리" :width="600" :height="500">
     <div class="p-6">
         <div class="mb-4">
             <h3 class="text-lg font-medium text-gray-900 dark:text-white" id="modal-category-name">
@@ -366,19 +366,19 @@
             </div>
 
             <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <button type="button" 
+                <button type="button"
                     @click="$dispatch('draggable-modal-close', { modalId: 'roles-modal', action: 'close' })"
                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">
                     취소
                 </button>
-                <button type="submit" 
+                <button type="submit"
                     class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     저장
                 </button>
             </div>
         </form>
     </div>
-</x-draggable-modal>
+</x-laravel-admin::draggable-modal>
 
 <script>
     let currentCategoryId = null;
@@ -391,10 +391,10 @@
             if (trigger) {
                 const categoryId = trigger.getAttribute('data-category-id');
                 const categoryName = trigger.getAttribute('data-category-name');
-                
+
                 currentCategoryId = categoryId;
                 document.getElementById('modal-category-name').textContent = `[${categoryName}] 권한 관리`;
-                
+
                 // 권한 데이터 로드
                 loadCategoryRoles(categoryId);
             }
@@ -437,10 +437,10 @@
             const roleElement = document.createElement('div');
             roleElement.className = 'flex items-center';
             roleElement.innerHTML = `
-                <input type="checkbox" 
-                       id="role-${role.id}" 
-                       name="roles[]" 
-                       value="${role.id}" 
+                <input type="checkbox"
+                       id="role-${role.id}"
+                       name="roles[]"
+                       value="${role.id}"
                        ${isSelected ? 'checked' : ''}
                        class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600">
                 <label for="role-${role.id}" class="ml-2 text-sm text-gray-700 dark:text-gray-300">
@@ -454,7 +454,7 @@
     // 폼 제출 처리
     document.getElementById('roles-form').addEventListener('submit', function(e) {
         e.preventDefault();
-        
+
         if (!currentCategoryId) {
             showNotification('카테고리 정보가 없습니다.', 'error');
             return;

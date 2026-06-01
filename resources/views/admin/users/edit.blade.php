@@ -1,6 +1,6 @@
-<x-layouts.admin title="사용자 수정">
+<x-laravel-admin::layouts.admin title="사용자 수정">
     <x-slot name="header">
-        <x-admin-header>
+        <x-laravel-admin::admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
@@ -12,7 +12,7 @@
             <x-slot name="description">
                 {{ __('Edit User') }}
             </x-slot>
-        </x-admin-header>
+        </x-laravel-admin::admin-header>
     </x-slot>
 
     <div class="w-full md:max-w-5xl mx-auto">
@@ -41,19 +41,19 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Name Field -->
                     <div>
-                        <x-label for="name" :value="__('Name')" />
-                        <x-input id="name" name="name" type="text" class="mt-1 block w-full"
+                        <x-laravel-admin::label for="name" :value="__('Name')" />
+                        <x-laravel-admin::input id="name" name="name" type="text" class="mt-1 block w-full"
                             :value="old('name', $user->name)" placeholder="Enter user name" autocomplete="name" />
-                        <x-input-error-message class="mt-2" :messages="$errors->get('name')" />
+                        <x-laravel-admin::input-error-message class="mt-2" :messages="$errors->get('name')" />
                     </div>
 
                     <!-- Email Field -->
                     <div>
-                        <x-label for="email" :value="__('Email')" />
-                        <x-input id="email" name="email" type="email" class="mt-1 block w-full"
+                        <x-laravel-admin::label for="email" :value="__('Email')" />
+                        <x-laravel-admin::input id="email" name="email" type="email" class="mt-1 block w-full"
                             :value="old('email', $user->email)" placeholder="Enter email address"
                             autocomplete="email" />
-                        <x-input-error-message class="mt-2" :messages="$errors->get('email')" />
+                        <x-laravel-admin::input-error-message class="mt-2" :messages="$errors->get('email')" />
                     </div>
                 </div>
 
@@ -61,9 +61,9 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Password Field -->
                     <div>
-                        <x-input-label for="password" :value="__('Password')" />
+                        <x-laravel-admin::input-label for="password" :value="__('Password')" />
                         <div class="relative">
-                            <x-input id="password" name="password" type="password" class="mt-1 block w-full pr-10"
+                            <x-laravel-admin::input id="password" name="password" type="password" class="mt-1 block w-full pr-10"
                                 placeholder="Enter new password (leave blank to keep current)"
                                 autocomplete="new-password" />
                             <button type="button" onclick="togglePasswordVisibility('password')"
@@ -77,14 +77,14 @@
                                 </svg>
                             </button>
                         </div>
-                        <x-input-error-message class="mt-2" :messages="$errors->get('password')" />
+                        <x-laravel-admin::input-error-message class="mt-2" :messages="$errors->get('password')" />
                     </div>
 
                     <!-- Confirm Password Field -->
                     <div>
-                        <x-input-label for="confirm-password" :value="__('Confirm Password')" />
+                        <x-laravel-admin::input-label for="confirm-password" :value="__('Confirm Password')" />
                         <div class="relative">
-                            <x-input id="confirm-password" name="confirm-password" type="password"
+                            <x-laravel-admin::input id="confirm-password" name="confirm-password" type="password"
                                 class="mt-1 block w-full pr-10" placeholder="Confirm new password"
                                 autocomplete="new-password" />
                             <button type="button" onclick="togglePasswordVisibility('confirm-password')"
@@ -98,14 +98,14 @@
                                 </svg>
                             </button>
                         </div>
-                        <x-input-error-message class="mt-2" :messages="$errors->get('confirm-password')" />
+                        <x-laravel-admin::input-error-message class="mt-2" :messages="$errors->get('confirm-password')" />
                     </div>
                 </div>
 
                 <!-- Email Verification Status -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <x-input-label :value="__('Email Verification Status')" />
+                        <x-laravel-admin::input-label :value="__('Email Verification Status')" />
                         <div class="mt-2 flex items-center space-x-4">
                             <div class="flex items-center">
                                 <input id="email_verified" name="email_verified" type="checkbox" value="1" {{
@@ -134,13 +134,13 @@
                     </div>
                 </div>
 
-                <x-section-border />
+                <x-laravel-admin::section-border />
 
                 <!-- Roles Section -->
                 @can('assignRoles', $user)
                 <div>
                     <h4 class="text-md font-medium mb-4">{{ __('Assign Roles') }}</h4>
-                    <x-input-label for="roles_multiple" :value="__('Select Roles')" />
+                    <x-laravel-admin::input-label for="roles_multiple" :value="__('Select Roles')" />
                     <div class="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                         @foreach ($roles as $role)
                         <div class="flex items-center">
@@ -154,7 +154,7 @@
                         </div>
                         @endforeach
                     </div>
-                    <x-input-error-message class="mt-2" :messages="$errors->get('roles')" />
+                    <x-laravel-admin::input-error-message class="mt-2" :messages="$errors->get('roles')" />
                 </div>
                 @else
                 <div>
@@ -174,7 +174,7 @@
                 </div>
                 @endcan
 
-                <x-section-border />
+                <x-laravel-admin::section-border />
 
                 <!-- Permissions Section -->
                 @can('assignPermissions', $user)
@@ -194,7 +194,7 @@
                         </div>
                     </div>
 
-                    <x-input-label for="Permissions-checkbox" :value="__('Select Permissions')" />
+                    <x-laravel-admin::input-label for="Permissions-checkbox" :value="__('Select Permissions')" />
                     <div class="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                         @foreach($permissions as $permission)
                         <div class="flex items-center">
@@ -230,9 +230,9 @@
 
 
                 <div class="flex items-center justify-end mt-6">
-                    <x-primary-button>
+                    <x-laravel-admin::primary-button>
                         {{ __('Update User') }}
-                    </x-primary-button>
+                    </x-laravel-admin::primary-button>
                 </div>
             </form>
 
@@ -265,7 +265,7 @@
         function toggleAllPermissions(selectAllCheckbox) {
             const permissionCheckboxes = document.querySelectorAll('input[name="permissions[]"]');
             const isChecked = selectAllCheckbox.checked;
-            
+
             permissionCheckboxes.forEach(checkbox => {
                 checkbox.checked = isChecked;
             });
@@ -275,14 +275,14 @@
         document.addEventListener('DOMContentLoaded', function() {
             const permissionCheckboxes = document.querySelectorAll('input[name="permissions[]"]');
             const selectAllCheckbox = document.getElementById('select-all-permissions');
-            
+
             if (selectAllCheckbox) {
                 // 개별 체크박스 변경 시 전체 선택 상태 업데이트
                 permissionCheckboxes.forEach(checkbox => {
                     checkbox.addEventListener('change', function() {
                         const checkedCount = document.querySelectorAll('input[name="permissions[]"]:checked').length;
                         const totalCount = permissionCheckboxes.length;
-                        
+
                         if (checkedCount === 0) {
                             selectAllCheckbox.checked = false;
                             selectAllCheckbox.indeterminate = false;
@@ -295,11 +295,11 @@
                         }
                     });
                 });
-                
+
                 // 초기 상태 설정
                 const checkedCount = document.querySelectorAll('input[name="permissions[]"]:checked').length;
                 const totalCount = permissionCheckboxes.length;
-                
+
                 if (checkedCount === 0) {
                     selectAllCheckbox.checked = false;
                     selectAllCheckbox.indeterminate = false;
@@ -313,4 +313,4 @@
             }
         });
     </script>
-</x-layouts.admin>
+</x-laravel-admin::layouts.admin>

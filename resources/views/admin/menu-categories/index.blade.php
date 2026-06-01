@@ -1,8 +1,8 @@
-<x-layouts.admin title="메뉴 카테고리 관리">
+<x-laravel-admin::layouts.admin title="메뉴 카테고리 관리">
 
     <x-slot name="header">
 
-        <x-admin-header>
+        <x-laravel-admin::admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
@@ -10,7 +10,7 @@
             <x-slot name="description">
                 {{ __('Menu Categories') }}
             </x-slot>
-        </x-admin-header>
+        </x-laravel-admin::admin-header>
 
     </x-slot>
 
@@ -32,7 +32,7 @@
                             id: row.dataset.categoryId,
                             sort_order: index + 1
                         }));
-                        
+
                         // 순서 변경 API 호출
                         updateCategoryOrder(newOrder);
                     }
@@ -42,7 +42,7 @@
 
         function updateCategoryOrder(newOrder) {
             console.log('순서 변경 요청:', newOrder);
-            
+
             fetch('{{ route("admin.menu-categories.update-order-multiple", [], false) }}', {
                 method: 'POST',
                 headers: {
@@ -91,7 +91,7 @@
                     showNotification('카테고리 순서가 성공적으로 변경되었습니다.', 'success');
                     // 페이지 새로고침 없이 순서 번호 업데이트
                     updateSortOrderNumbers();
-                    
+
                     // Livewire left-menu 컴포넌트 refresh
                     refreshLeftMenu();
                 } else {
@@ -107,10 +107,10 @@
 
         function refreshLeftMenu() {
             console.log('refreshLeftMenu 함수 실행됨');
-            
+
             // 성공 메시지를 먼저 표시
             //showNotification('왼쪽 메뉴를 업데이트하는 중...', 'info');
-            
+
             // Livewire left-menu 갱신 이벤트만 dispatch (페이지 새로고침 금지)
             if (window.Livewire && typeof window.Livewire.dispatch === 'function') {
                 try {
@@ -192,7 +192,7 @@
                         @endif
                     </div>
 
-                    <x-session-messages />                    
+                    <x-laravel-admin::session-messages />
 
                     <div class="flex justify-between items-center pb-4">
 
@@ -293,7 +293,7 @@
                                 @forelse($categories as $category)
                                 <tr data-category-id="{{ $category->id }}"
                                     class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                    
+
                                     <td class="px-2 py-2">
                                         <div class="drag-handle flex items-center justify-center">
                                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -350,9 +350,9 @@
                                     <td class="px-2 py-2 text-right">
 
                                         @can('update', $category)
-                                        <x-modal-trigger 
-                                            text="권한" 
-                                            modal-id="roles-modal" 
+                                        <x-laravel-admin::modal-trigger
+                                            text="권한"
+                                            modal-id="roles-modal"
                                             type="link"
                                             variant="primary"
                                             modal-type="single"
@@ -385,7 +385,7 @@
     </div>
 
     <!-- 권한 관리 모달 -->
-    <x-draggable-modal id="roles-modal" title="권한 관리" :width="600" :height="500">
+    <x-laravel-admin::draggable-modal id="roles-modal" title="권한 관리" :width="600" :height="500">
         <div class="p-6">
             <div class="mb-4">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white" id="modal-category-name">
@@ -403,19 +403,19 @@
                 </div>
 
                 <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <button type="button" 
+                    <button type="button"
                         @click="$dispatch('close-modal', { modalId: 'roles-modal', action: 'close' })"
                         class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">
                         취소
                     </button>
-                    <button type="submit" 
+                    <button type="submit"
                         class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         저장
                     </button>
                 </div>
             </form>
         </div>
-    </x-draggable-modal>
+    </x-laravel-admin::draggable-modal>
 
     <script>
         let currentCategoryId = null;
@@ -428,10 +428,10 @@
                 if (trigger) {
                     const categoryId = trigger.getAttribute('data-category-id');
                     const categoryName = trigger.getAttribute('data-category-name');
-                    
+
                     currentCategoryId = categoryId;
                     document.getElementById('modal-category-name').textContent = `[${categoryName}] 권한 관리`;
-                    
+
                     // 권한 데이터 로드
                     loadCategoryRoles(categoryId);
                 }
@@ -474,10 +474,10 @@
                 const roleElement = document.createElement('div');
                 roleElement.className = 'flex items-center';
                 roleElement.innerHTML = `
-                    <input type="checkbox" 
-                           id="role-${role.id}" 
-                           name="roles[]" 
-                           value="${role.id}" 
+                    <input type="checkbox"
+                           id="role-${role.id}"
+                           name="roles[]"
+                           value="${role.id}"
                            ${isSelected ? 'checked' : ''}
                            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600">
                     <label for="role-${role.id}" class="ml-2 text-sm text-gray-700 dark:text-gray-300">
@@ -491,7 +491,7 @@
         // 폼 제출 처리
         document.getElementById('roles-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             if (!currentCategoryId) {
                 showNotification('카테고리 정보가 없습니다.', 'error');
                 return;
@@ -533,4 +533,4 @@
             });
         });
     </script>
-</x-layouts.admin>
+</x-laravel-admin::layouts.admin>

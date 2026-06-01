@@ -9,14 +9,14 @@
     </div>
 
     <nav class="flex flex-wrap gap-6 border-b border-gray-200 pb-2 dark:border-gray-700">
-        <x-nav-link href="{{ route('settings.profile') }}" :active="request()->routeIs('settings.profile')">
+        <x-laravel-admin::nav-link href="{{ route('settings.profile') }}" :active="request()->routeIs('settings.profile')">
             {{ __('Profile') }}
-        </x-nav-link>
-        <x-nav-link href="{{ route('settings.password') }}" :active="request()->routeIs('settings.password')">
+        </x-laravel-admin::nav-link>
+        <x-laravel-admin::nav-link href="{{ route('settings.password') }}" :active="request()->routeIs('settings.password')">
             {{ __('Update Password') }}
-        </x-nav-link>
-        <x-nav-link href="{{ route('settings.appearance') }}" :active="request()->routeIs('settings.appearance')">
+        </x-laravel-admin::nav-link>
+        <x-laravel-admin::nav-link href="{{ route('settings.appearance') }}" :active="request()->routeIs('settings.appearance')">
             {{ __('Appearance') }}
-        </x-nav-link>
+        </x-laravel-admin::nav-link>
     </nav>
 </div>

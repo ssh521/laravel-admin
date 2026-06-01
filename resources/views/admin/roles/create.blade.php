@@ -1,6 +1,6 @@
-<x-layouts.admin title="역할 등록">
+<x-laravel-admin::layouts.admin title="역할 등록">
     <x-slot name="header">
-        <x-admin-header>
+        <x-laravel-admin::admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">Admin Home</a>
@@ -8,7 +8,7 @@
             <x-slot name="description">
                 {{ __('Create New Role') }}
             </x-slot>
-        </x-admin-header>
+        </x-laravel-admin::admin-header>
     </x-slot>
 
     <div class="w-full lg:max-w-7xl mx-auto">
@@ -25,7 +25,7 @@
                 <div>
                     <a href="{{ route('admin.roles.index') }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
                         ← {{ __('Back to Roles') }}
-                    </a>                            
+                    </a>
                 </div>
             </div>
 
@@ -35,29 +35,29 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Role Name Field -->
                     <div>
-                        <x-label for="name" :value="__('Role Name')" />
-                        <x-input id="name" name="name" type="text" class="mt-1 block w-full" 
+                        <x-laravel-admin::label for="name" :value="__('Role Name')" />
+                        <x-laravel-admin::input id="name" name="name" type="text" class="mt-1 block w-full"
                                      :value="old('name')" placeholder="{{ __('Enter role name') }}" autocomplete="name" />
                         @if ($errors->has('name'))
-                            <x-input-error-message :messages="['Please enter a role name!']" />
+                            <x-laravel-admin::input-error-message :messages="['Please enter a role name!']" />
                         @endif
                     </div>
 
                     <!-- Role Description Field -->
                     <div>
-                        <x-label for="description" :value="__('Description')" />
-                        <x-input id="description" name="description" type="text" class="mt-1 block w-full" 
+                        <x-laravel-admin::label for="description" :value="__('Description')" />
+                        <x-laravel-admin::input id="description" name="description" type="text" class="mt-1 block w-full"
                                      :value="old('description')" placeholder="{{ __('Enter role description') }}" />
-                        <x-input-error-message class="mt-2" :messages="$errors->get('description')" />
+                        <x-laravel-admin::input-error-message class="mt-2" :messages="$errors->get('description')" />
                     </div>
                 </div>
 
-                <x-section-border />
+                <x-laravel-admin::section-border />
 
                 <!-- Permissions Section -->
                 <div>
                     <h4 class="text-md font-medium text-gray-900 dark:text-white mb-4">{{ __('Assign Permissions') }}</h4>
-                    <x-input-label for="permissions_multiple" :value="__('Select Permissions')" />
+                    <x-laravel-admin::input-label for="permissions_multiple" :value="__('Select Permissions')" />
                     <div class="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                         @foreach($permissions as $permission)
                             <div class="flex items-center">
@@ -72,16 +72,16 @@
                         @endforeach
                     </div>
                     @if ($errors->has('permissions'))
-                        <x-input-error-message class="mt-2" :messages="['Please select at least one permission!']" />
+                        <x-laravel-admin::input-error-message class="mt-2" :messages="['Please select at least one permission!']" />
                     @endif
                 </div>
 
                 <div class="flex items-center justify-end mt-6">
-                    <x-primary-button>
+                    <x-laravel-admin::primary-button>
                         {{ __('Create Role') }}
-                    </x-primary-button>
+                    </x-laravel-admin::primary-button>
                 </div>
             </form>
         </div>
     </div>
-</x-layouts.admin>
+</x-laravel-admin::layouts.admin>

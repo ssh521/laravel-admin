@@ -1,3 +1,3 @@
-<x-layouts.guest {{ $attributes }}>
+<x-laravel-admin::layouts.guest {{ $attributes }}>
     {{ $slot }}
-</x-layouts.guest>
+</x-laravel-admin::layouts.guest>

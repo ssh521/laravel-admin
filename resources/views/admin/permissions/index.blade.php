@@ -1,8 +1,8 @@
-<x-layouts.admin title="권한 관리">
+<x-laravel-admin::layouts.admin title="권한 관리">
 
     <x-slot name="header">
 
-        <x-admin-header>
+        <x-laravel-admin::admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">{{ __('Admin Home') }}</a>
@@ -10,7 +10,7 @@
             <x-slot name="description">
                 {{ __('Permission List') }}
             </x-slot>
-        </x-admin-header>
+        </x-laravel-admin::admin-header>
 
     </x-slot>
 
@@ -26,20 +26,20 @@
                 @endif
             </div>
 
-            <x-session-messages />    
-            
+            <x-laravel-admin::session-messages />
+
             <div class="flex justify-between items-center pb-4">
 
                 <div>
                     @can('viewAny', Ssh521\LaravelAdmin\Models\Menu::class)
-                    <a href="{{ route('admin.permissions.index') }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">{{ __('View List') }}</a> 
+                    <a href="{{ route('admin.permissions.index') }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">{{ __('View List') }}</a>
                     <span class="mx-1">|</span>
                     @endcan
 
                     @can('create', arguments: Ssh521\LaravelAdmin\Models\Menu::class)
                     <a href="{{ route('admin.permissions.create') }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">{{ __('Create New') }}</a>
                     @endcan
-                </div>                        
+                </div>
 
                 <div>
                     <form class="flex items-center ml-1 space-x-2" action="{{ route('admin.permissions.index') }}" method="GET">
@@ -49,7 +49,7 @@
                                 class="bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 dark:focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-500 block w-40 pl-2 pr-8 p-1.5"
                                 placeholder="{{ __('Search permissions') }}">
                             @if(request('search'))
-                                <a href="{{ route('admin.permissions.index') }}" 
+                                <a href="{{ route('admin.permissions.index') }}"
                                    class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -73,17 +73,17 @@
 
             <div
                 class="relative overflow-x-auto my-2 border-gray-200 dark:border-gray-700 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800"
-                x-data="permissionSortable()" 
+                x-data="permissionSortable()"
                 x-init="initSortable()">
 
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center space-x-4">
-                                <button @click="toggleSortMode()" 
+                                <button @click="toggleSortMode()"
                                         :class="sortMode === 'drag' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'"
                                         class="px-3 py-1 rounded-md text-sm font-medium transition-colors">
                                     {{ __('Drag Sort') }}
                                 </button>
-                                <button @click="toggleSortMode()" 
+                                <button @click="toggleSortMode()"
                                         :class="sortMode === 'click' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'"
                                         class="px-3 py-1 rounded-md text-sm font-medium transition-colors">
                                     {{ __('Click Sort') }}
@@ -102,7 +102,7 @@
                             <span x-show="sortMode === 'drag'" class="text-gray-400">⋮⋮</span>
                         </th>
                         <th scope="col" class="px-2 py-3 whitespace-nowrap">
-                                        <button x-show="sortMode === 'click'" 
+                                        <button x-show="sortMode === 'click'"
                                                 @click="sortBy('name')"
                                                 class="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                                             <span>{{ __('Permission Name') }}</span>
@@ -119,7 +119,7 @@
                             <span x-show="sortMode === 'drag'" class="text-gray-700 dark:text-gray-300">{{ __('Permission Name') }}</span>
                         </th>
                         <th scope="col" class="px-2 py-3 whitespace-nowrap">
-                                        <button x-show="sortMode === 'click'" 
+                                        <button x-show="sortMode === 'click'"
                                                 @click="sortBy('description')"
                                                 class="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                                             <span>{{ __('Permission Description') }}</span>
@@ -282,7 +282,7 @@
                     }`;
                     notification.textContent = message;
                     document.body.appendChild(notification);
-                    
+
                     setTimeout(() => {
                         notification.remove();
                     }, 3000);
@@ -304,4 +304,4 @@
         }
     </style>
 
-</x-layouts.admin>
+</x-laravel-admin::layouts.admin>

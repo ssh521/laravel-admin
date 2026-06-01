@@ -49,7 +49,7 @@
                     <!-- 검색 입력 -->
                     <label for="simple-search" class="sr-only">Search</label>
                     <div class="w-full relative">
-                        <x-admin.input type="text" wire:model.live.debounce.300ms="search" x-ref="searchInput"
+                        <x-laravel-admin::admin.input type="text" wire:model.live.debounce.300ms="search" x-ref="searchInput"
                             class="w-40 pl-2 pr-8" placeholder="사용자 검색" />
                         @if($search)
                         <button wire:click="$set('search', '')"
@@ -88,8 +88,8 @@
             </div>
         </div>
 
-        <x-session-messages />
-        
+        <x-laravel-admin::session-messages />
+
         <div
             class="relative overflow-x-auto my-2 border-gray-200 dark:border-gray-700 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
 

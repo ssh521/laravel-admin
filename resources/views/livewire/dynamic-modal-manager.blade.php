@@ -1,36 +1,36 @@
-<div 
+<div
     x-data="{
         init() {
             Livewire.on('dynamic-modal:add-to-store', (data) => {
                 const modal = Array.isArray(data) ? (data[0]?.modal || data[0]) : (data.modal || data);
                 if (!modal?.id) return;
-                
+
                 Alpine.store('dynamicModals').add({ ...modal.config, id: modal.id, component: modal.component, params: modal.params });
             });
-            
+
             Livewire.on('dynamic-modal:close-all', () => {
                 Alpine.store('dynamicModals').closeAll();
             });
-            
+
             Livewire.on('dynamic-modal:bring-to-front', (data) => {
                 const modalId = Array.isArray(data) ? data[0]?.modalId : data.modalId;
                 if (modalId) Alpine.store('dynamicModals').bringToFront(modalId);
             });
-            
+
             Livewire.on('dynamic-modal:remove-from-store', (data) => {
                 const modalId = Array.isArray(data) ? data[0]?.modalId : data.modalId;
                 if (modalId) {
                     const modal = Alpine.store('dynamicModals').getModal(modalId);
                     const wasSingle = modal?.single === true;
                     Alpine.store('dynamicModals').remove(modalId);
-                    
+
                     // 싱글 모달이 닫히면 모든 모달 활성화
                     if (wasSingle) {
                         Alpine.store('dynamicModals').enableAllModals();
                     }
                 }
             });
-            
+
             Livewire.on('dynamic-modal:enable-all-modals', () => {
                 Alpine.store('dynamicModals').enableAllModals();
             });
@@ -49,13 +49,13 @@
                 $singleModalId = $modal['id'];
             }
         @endphp
-        
+
         @if($hasBackdrop)
             <!-- Backdrop 오버레이 (모달보다 먼저 렌더링, 낮은 z-index) -->
             <!-- Single 모달인 경우: 페이지 콘텐츠 위에 위치하여 클릭 차단 -->
             <!-- 일반 모달인 경우: pointer-events-none으로 클릭 통과 -->
-            <div 
-                x-data="{ 
+            <div
+                x-data="{
                     modalId: '{{ $modal['id'] }}',
                     get backdropZIndex() {
                         const modal = Alpine.store('dynamicModals').getModal(this.modalId);
@@ -74,8 +74,8 @@
                 wire:key="backdrop-{{ $modal['id'] }}"
             ></div>
         @endif
-        
-        <x-dynamic-modal 
+
+        <x-laravel-admin::dynamic-modal
             :modalId="$modal['id']"
             :title="$modal['config']['title']"
             :showCloseButton="$modal['config']['showCloseButton']"
@@ -93,6 +93,6 @@
                     <p class="text-gray-600 dark:text-gray-400">컴포넌트가 지정되지 않았습니다.</p>
                 </div>
             @endif
-        </x-dynamic-modal>
+        </x-laravel-admin::dynamic-modal>
     @endforeach
 </div>

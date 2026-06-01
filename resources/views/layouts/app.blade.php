@@ -12,7 +12,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
         <link rel="manifest" href="/site.webmanifest">
-        
+
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -25,7 +25,7 @@
         @livewireStyles
     </head>
     <body class="font-sans antialiased bg-gray-100 dark:bg-gray-900 h-full min-h-screen">
-        <x-banner />
+        <x-laravel-admin::banner />
 
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
 

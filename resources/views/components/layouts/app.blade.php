@@ -44,7 +44,7 @@
 </head>
 <body class="font-sans antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 h-full">
 
-    <x-banner />
+    <x-laravel-admin::banner />
 
     <!-- Layout Start -->
     <div x-data="{
@@ -122,7 +122,7 @@
                 </div>
             </aside>
 
-            
+
             <!-- Main 유일한 스크롤 영역 -->
             <main
                 class="relative flex-1 min-h-0 overflow-auto mt-2 lg:mt-0 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
@@ -164,7 +164,7 @@
                 </div>
 
 
-                <x-footer />                
+                <x-laravel-admin::footer />
             </main>
             <!-- Main 끝 -->
 
@@ -172,7 +172,7 @@
         <!-- Content 끝-->
 
     </div>
-        
+
     @stack('scripts')
     @livewireScripts
 </body>
