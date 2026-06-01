@@ -26,6 +26,14 @@ return [
     'api_middleware' => ['api'],
     'admin_user_model' => AdminUser::class,
     'admin_users_table' => 'admin_users',
+    'seed_admin_user' => [
+        'enabled' => env('LARAVEL_ADMIN_SEED_ADMIN_ENABLED', true),
+        'name' => env('LARAVEL_ADMIN_SEED_ADMIN_NAME', 'Super Admin'),
+        'email' => env('LARAVEL_ADMIN_SEED_ADMIN_EMAIL', 'admin@example.com'),
+        'password' => env('LARAVEL_ADMIN_SEED_ADMIN_PASSWORD', 'change-this-password'),
+        'verified' => env('LARAVEL_ADMIN_SEED_ADMIN_VERIFIED', true),
+        'role' => env('LARAVEL_ADMIN_SEED_ADMIN_ROLE', 'Super Admin'),
+    ],
     'user_model' => User::class,
     'super_admin_role' => 'Super Admin',
     'vite' => [

@@ -110,6 +110,6 @@ class RolePermissionSeeder extends Seeder
         // 실행시키기
         // php artisan db:seed RolePermissionSeeder
 
-        $this->command?->info('Super Admin role is ready. Assign it with: php artisan laravel-admin:make-super-admin your@email.com');
+        $this->command?->info('Super Admin role is ready. Seed an admin user with: php artisan db:seed --class="Ssh521\\\\LaravelAdmin\\\\Database\\\\Seeders\\\\AdminUserSeeder"');
     }
 }
