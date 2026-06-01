@@ -26,23 +26,7 @@
                     <span>{{ __('Dashboard') }}</span>
                 </a>
 
-                <a
-                    href="{{ route('notices.index') }}"
-                    title="{{ __('Notices') }}"
-                    class="flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors
-                        {{ request()->routeIs('notices.index')
-                            ? 'border-gray-200 bg-transparent text-gray-900 dark:border-gray-700 dark:bg-transparent dark:text-white'
-                            : 'border-transparent text-gray-700 hover:border-gray-200 hover:bg-gray-50 dark:text-gray-300 dark:hover:border-gray-700 dark:hover:bg-gray-900/40' }}"
-                >
-                    <span class="inline-flex h-4 w-4 shrink-0 items-center justify-center text-gray-600 dark:text-gray-300">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
-                            <path d="M6 8a6 6 0 1 1 12 0c0 7 3 7 3 7H3s3 0 3-7"></path>
-                            <path d="M10 19a2 2 0 0 0 4 0"></path>
-                        </svg>
-                    </span>
-                    <span>{{ __('Notices') }}</span>
-                </a>
-
+                @if (Route::has('test.samplepage'))
                 <a
                     href="{{ route('test.samplepage') }}"
                     wire:navigate
@@ -62,7 +46,9 @@
                     </span>
                     <span>{{ __('Sample Page') }}</span>
                 </a>
+                @endif
 
+                @if (Route::has('test.icon-list'))
                 <a
                     href="{{ route('test.icon-list') }}"
                     wire:navigate
@@ -82,7 +68,9 @@
                     </span>
                     <span>{{ __('Icon List') }}</span>
                 </a>
+                @endif
 
+                @if (Route::has('test.components'))
                 <a
                     href="{{ route('test.components') }}"
                     wire:navigate
@@ -101,12 +89,13 @@
                     </span>
                     <span>{{ __('Components') }}</span>
                 </a>
+                @endif
 
             </div>
         </div>
 
         {{-- Favorites 1 --}}
-        <div class="space-y-1" x-data="{ open: {{ request()->routeIs('dashboard.servers') ? 'true' : 'false' }} }">
+        <div class="space-y-1" x-data="{ open: {{ Route::has('dashboard.servers') && request()->routeIs('dashboard.servers') ? 'true' : 'false' }} }">
             <button
                 type="button"
                 title="Favorites"
@@ -127,16 +116,18 @@
             </button>
 
             <div x-show="open" x-collapse class="relative mt-1 space-y-1 pl-7 before:absolute before:left-4 before:top-1 before:bottom-1 before:w-px before:bg-gray-200/70 dark:before:bg-gray-700/70">
-                <a
-                    href="{{ route('dashboard.servers') }}"
-                    wire:navigate
-                    class="flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors
-                        {{ request()->routeIs('dashboard.servers')
-                            ? 'border-gray-200 bg-transparent text-gray-900 dark:border-gray-700 dark:bg-transparent dark:text-white'
-                            : 'border-transparent text-gray-700 hover:border-gray-200 hover:bg-gray-50 dark:text-gray-300 dark:hover:border-gray-700 dark:hover:bg-gray-900/40' }}"
-                >
-                    서버
-                </a>
+                @if (Route::has('dashboard.servers'))
+                    <a
+                        href="{{ route('dashboard.servers') }}"
+                        wire:navigate
+                        class="flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors
+                            {{ request()->routeIs('dashboard.servers')
+                                ? 'border-gray-200 bg-transparent text-gray-900 dark:border-gray-700 dark:bg-transparent dark:text-white'
+                                : 'border-transparent text-gray-700 hover:border-gray-200 hover:bg-gray-50 dark:text-gray-300 dark:hover:border-gray-700 dark:hover:bg-gray-900/40' }}"
+                    >
+                        서버
+                    </a>
+                @endif
                 <a href="https://laravel.yaver.com/" target="_blank" class="flex items-center gap-2 rounded-md border border-transparent px-2.5 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:border-gray-200 hover:bg-gray-50 dark:text-gray-300 dark:hover:border-gray-700 dark:hover:bg-gray-900/40">
                     Laravel Yaver
                 </a>
@@ -184,4 +175,3 @@
         </div>
     </div>
 </nav>
-

@@ -2,13 +2,17 @@
 
 use Illuminate\Support\Facades\Route;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\AdminController;
+use Ssh521\LaravelAdmin\Http\Controllers\DashboardController;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\MenuCategoryController;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\MenuController;
-use Ssh521\LaravelAdmin\Http\Controllers\Admin\NoticeController;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\PermissionController;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\RoleController;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\UserController;
 use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserTable;
+
+Route::middleware(config('laravel-admin.dashboard.middleware', ['web', 'auth', 'verified']))
+    ->get(config('laravel-admin.dashboard.path', '/dashboard'), [DashboardController::class, 'index'])
+    ->name('dashboard');
 
 // Admin Routes
 Route::prefix(config('laravel-admin.route_prefix', 'admin'))
@@ -96,20 +100,5 @@ Route::prefix(config('laravel-admin.route_prefix', 'admin'))
             Route::post('/{menu}/toggle-status', [MenuController::class, 'toggleStatus'])->name('toggle-status');
             Route::post('/{menu}/update-order', [MenuController::class, 'updateOrder'])->name('update-order');
             Route::get('/{menu}', [MenuController::class, 'show'])->name('show');
-        });
-
-        // Notices Routes
-        Route::prefix('notices')->name('notices.')->group(function () {
-            Route::get('/', [NoticeController::class, 'index'])->name('index');
-            Route::get('/create', [NoticeController::class, 'create'])->name('create');
-            Route::post('/', [NoticeController::class, 'store'])->name('store');
-            Route::post('/upload-image', [NoticeController::class, 'uploadImage'])->name('upload-image');
-            Route::get('/{notice}/edit', [NoticeController::class, 'edit'])->name('edit');
-            Route::put('/{notice}', [NoticeController::class, 'update'])->name('update');
-            Route::delete('/{notice}', [NoticeController::class, 'destroy'])->name('destroy');
-            Route::get('/{notice}', [NoticeController::class, 'show'])->name('show');
-            // Attachment routes
-            Route::get('/attachments/{attachment}/download', [NoticeController::class, 'downloadAttachment'])->name('attachments.download');
-            Route::delete('/attachments/{attachment}', [NoticeController::class, 'deleteAttachment'])->name('attachments.delete');
         });
     });

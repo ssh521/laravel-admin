@@ -17,8 +17,6 @@ use Ssh521\LaravelAdmin\Livewire\Admin\LeftMenu;
 use Ssh521\LaravelAdmin\Livewire\Admin\LeftMenuMobile;
 use Ssh521\LaravelAdmin\Livewire\Admin\MenuCategories\MenuCategoryList;
 use Ssh521\LaravelAdmin\Livewire\Admin\Menus\MenuOrderModal;
-use Ssh521\LaravelAdmin\Livewire\Admin\Notices\NoticeDetailModal;
-use Ssh521\LaravelAdmin\Livewire\Admin\Notices\NoticeTable;
 use Ssh521\LaravelAdmin\Livewire\Admin\Roles\RoleDetailModal;
 use Ssh521\LaravelAdmin\Livewire\Admin\Roles\RoleForm;
 use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserDetailModal;
@@ -27,12 +25,10 @@ use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserRoleForm;
 use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserSearchModal;
 use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserTable;
 use Ssh521\LaravelAdmin\Livewire\DynamicModalManager;
-use Ssh521\LaravelAdmin\Models\AdminNotice;
 use Ssh521\LaravelAdmin\Models\Menu;
 use Ssh521\LaravelAdmin\Models\MenuCategory;
 use Ssh521\LaravelAdmin\Models\Permission;
 use Ssh521\LaravelAdmin\Models\User;
-use Ssh521\LaravelAdmin\Policies\AdminNoticePolicy;
 use Ssh521\LaravelAdmin\Policies\AdminPolicy;
 use Ssh521\LaravelAdmin\Policies\MenuCategoryPolicy;
 use Ssh521\LaravelAdmin\Policies\MenuPolicy;
@@ -91,8 +87,6 @@ class LaravelAdminServiceProvider extends ServiceProvider
         Livewire::component('admin.left-menu-mobile', LeftMenuMobile::class);
         Livewire::component('admin.menu-categories.menu-category-list', MenuCategoryList::class);
         Livewire::component('admin.menus.menu-order-modal', MenuOrderModal::class);
-        Livewire::component('admin.notices.notice-detail-modal', NoticeDetailModal::class);
-        Livewire::component('admin.notices.notice-table', NoticeTable::class);
         Livewire::component('admin.roles.role-detail-modal', RoleDetailModal::class);
         Livewire::component('admin.roles.role-form', RoleForm::class);
         Livewire::component('admin.users.user-detail-modal', UserDetailModal::class);
@@ -118,7 +112,6 @@ class LaravelAdminServiceProvider extends ServiceProvider
         Gate::policy(Permission::class, PermissionPolicy::class);
         Gate::policy(MenuCategory::class, MenuCategoryPolicy::class);
         Gate::policy(Menu::class, MenuPolicy::class);
-        Gate::policy(AdminNotice::class, AdminNoticePolicy::class);
         Gate::define('viewDashboard', [AdminPolicy::class, 'viewDashboard']);
         Gate::define('viewStatistics', [AdminPolicy::class, 'viewStatistics']);
         Gate::define('manageUsers', [AdminPolicy::class, 'manageUsers']);
@@ -165,6 +158,7 @@ class LaravelAdminServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources/css/admin.css' => resource_path('vendor/laravel-admin/admin.css'),
             __DIR__.'/../resources/js' => resource_path('vendor/laravel-admin'),
+            __DIR__.'/../public/images/dtree' => public_path('images/dtree'),
         ], 'laravel-admin-assets');
     }
 }

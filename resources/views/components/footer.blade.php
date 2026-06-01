@@ -29,6 +29,11 @@
     'copyrightYear'      => config('site.copyright_year', date('Y')),
 ])
 
+@php
+    $termsUrl = Route::has('terms') ? route('terms') : url('/terms');
+    $privacyUrl = Route::has('privacy') ? route('privacy') : url('/privacy');
+@endphp
+
 <footer class="bg-white text-zinc-500 dark:bg-zinc-900 dark:text-zinc-400">
 
     {{-- 상단 구분선 --}}
@@ -94,9 +99,9 @@
             {{-- 저작권 --}}
             <div class="flex shrink-0 flex-col gap-2 rounded-lg border border-zinc-200 px-4 py-3 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-800">
                 <span class="flex gap-2 justify-center">
-                    <a href="{{ route('terms') }}" class="font-semibold hover:text-zinc-900 dark:hover:text-white">이용약관</a>
+                    <a href="{{ $termsUrl }}" class="font-semibold hover:text-zinc-900 dark:hover:text-white">이용약관</a>
                     <span>|</span>
-                    <a href="{{ route('privacy') }}" class="font-semibold hover:text-zinc-900 dark:hover:text-white">개인정보처리방침</a>
+                    <a href="{{ $privacyUrl }}" class="font-semibold hover:text-zinc-900 dark:hover:text-white">개인정보처리방침</a>
                 </span>
                 <span class="text-zinc-600 dark:text-zinc-500 text-center lg:text-right">
                     &copy; {{ $copyrightYear }} {{ $companyNameEn }}. All rights reserved.

@@ -7,8 +7,10 @@ Reusable Laravel 12 admin panel extracted from admin-yaver.
 ```bash
 composer config repositories.ssh521-laravel-admin path ../packages/laravel-admin
 composer require ssh521/laravel-admin:dev-main
-php artisan vendor:publish --tag=laravel-admin-config --tag=laravel-admin-assets --no-interaction
+php artisan vendor:publish --tag=laravel-admin-config --no-interaction
 php artisan vendor:publish --tag=laravel-admin-migrations --no-interaction
+php artisan vendor:publish --tag=laravel-admin-assets --force --no-interaction
+npm run build
 php artisan migrate
 php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\RolePermissionSeeder"
 php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\MenuSeeder"
@@ -18,6 +20,18 @@ php artisan laravel-admin:make-super-admin admin@example.com --name="Super Admin
 The host `App\Models\User` must use `Spatie\Permission\Traits\HasRoles`.
 
 The package admin stylesheet is written for Tailwind CSS v3. If the host app uses the Laravel 12 Tailwind 4 Vite plugin, switch the admin build entry to Tailwind v3/PostCSS or compile the admin CSS in a separate v3 pipeline.
+
+## Updating Assets
+
+Published CSS/JS files should be overwritten after package updates so the host Vite build uses the latest package assets:
+
+```bash
+composer update ssh521/laravel-admin
+php artisan vendor:publish --tag=laravel-admin-assets --force --no-interaction
+npm run build
+```
+
+Do not force-publish config, migrations, seeders, or views during routine updates. Those files may contain host-app customizations.
 
 ## Initial Super Admin
 
@@ -32,7 +46,7 @@ If the user exists, the command assigns the `Super Admin` role. If the user does
 ## What Is Included
 
 - Admin layout, left menu, header, dark mode, and modal UI from admin-yaver
-- User, role, permission, menu category, menu, notice, and API management screens
+- User, role, permission, menu category, menu, and API management screens
 - Role-based menu folder access through `MenuCategory` and `menu_category_role`
 - Livewire modal components following the existing `admin-users:user-form:open` style events
 - Publishable config, migrations, views, and Vite assets

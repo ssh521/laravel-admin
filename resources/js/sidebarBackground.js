@@ -2,7 +2,7 @@
 document.addEventListener('alpine:init', () => {
     Alpine.data('sidebarBackground', () => ({
         get backgroundStyle() {
-            return 'background-image: url(\'/images/menu_bg.gif\'); background-repeat: repeat; background-size: auto;';
+            return 'background-image: url(\'/images/dtree/menu_bg.gif\'); background-repeat: repeat; background-size: auto;';
         }
     }));
 }); 

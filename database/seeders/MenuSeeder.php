@@ -38,17 +38,12 @@ class MenuSeeder extends Seeder
             ],
             [
                 'name' => '회원 관리',
-                'sort_order' => 4,
+                'sort_order' => 2,
                 'is_active' => true,
             ],
             [
                 'name' => '메뉴 관리',
-                'sort_order' => 6,
-                'is_active' => true,
-            ],
-            [
-                'name' => '개발도구',
-                'sort_order' => 9,
+                'sort_order' => 3,
                 'is_active' => true,
             ],
         ];
@@ -163,55 +158,6 @@ class MenuSeeder extends Seeder
                 'description' => '메뉴 카테고리 관리',
             ],
 
-            // 개발도구 카테고리 (category_id: 4)
-            [
-                'name' => 'contextmenu',
-                'route_name' => 'alpine.contextmenu',
-                'url' => null,
-                'target' => '_self',
-                'category_id' => $categoryMap[4],
-                'parent_id' => null,
-                'sort_order' => 1,
-                'is_active' => true,
-                'icon' => null,
-                'description' => null,
-            ],
-            [
-                'name' => 'Api Tokens Index',
-                'route_name' => 'api-tokens.index',
-                'url' => '/user/api-tokens',
-                'target' => '_self',
-                'category_id' => $categoryMap[4],
-                'parent_id' => null,
-                'sort_order' => 2,
-                'is_active' => true,
-                'icon' => 'fas fa-list',
-                'description' => 'api-tokens.index 페이지',
-            ],
-            [
-                'name' => 'Alpine 테스트',
-                'route_name' => 'alpine.index',
-                'url' => '/alpine',
-                'target' => '_self',
-                'category_id' => $categoryMap[4],
-                'parent_id' => null,
-                'sort_order' => 2,
-                'is_active' => true,
-                'icon' => 'fas fa-code',
-                'description' => 'Alpine.js 테스트 페이지',
-            ],
-            [
-                'name' => 'Admin Notice Index',
-                'route_name' => 'admin.notices.index',
-                'url' => null,
-                'target' => '_self',
-                'category_id' => $categoryMap[1],
-                'parent_id' => null,
-                'sort_order' => 4,
-                'is_active' => true,
-                'icon' => 'fas fa-list',
-                'description' => 'Admin Notice Index 페이지',
-            ],
         ];
 
         foreach ($menus as $menuData) {
