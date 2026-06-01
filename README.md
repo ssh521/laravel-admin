@@ -14,11 +14,22 @@ npm install @fortawesome/fontawesome-free sortablejs axios
 npm run build
 php artisan migrate
 php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\RolePermissionSeeder"
+php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\AdminUserSeeder"
 php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\MenuSeeder"
-php artisan laravel-admin:make-super-admin admin@example.com --name="Super Admin" --password="change-this-password" --verified
 ```
 
 Admin authentication uses a package-owned `admin_users` table through the configurable `laravel_admin` guard. The host `App\Models\User` is still used for the user management screens; if those screens assign roles to host users, that model must use `Spatie\Permission\Traits\HasRoles`.
+
+`AdminUser` has its own service layer under `Ssh521\LaravelAdmin\Services\AdminUserService`, with matching DTOs, actions, and validators under the `AdminUser` namespace. Use this layer for package-owned administrator accounts; keep `UserService` for host application users shown in the user management screens.
+
+The packaged `AdminUserSeeder` creates or updates the initial admin account and assigns the configured admin role. Override these values in the host app `.env` before seeding:
+
+```dotenv
+LARAVEL_ADMIN_SEED_ADMIN_EMAIL=admin@example.com
+LARAVEL_ADMIN_SEED_ADMIN_PASSWORD=change-this-password
+LARAVEL_ADMIN_SEED_ADMIN_NAME="Super Admin"
+LARAVEL_ADMIN_SEED_ADMIN_VERIFIED=true
+```
 
 The package admin stylesheet is written for Tailwind CSS v4 and can be included in a Laravel 13 starter kit Vite build. Add the published admin entries to `vite.config.js`:
 
@@ -69,6 +80,20 @@ npm run build
 
 Do not force-publish config, migrations, seeders, or views during routine updates. Those files may contain host-app customizations.
 
+## Blade Component Rules
+
+Package-owned anonymous components live in `resources/views/components` and are registered with the `laravel-admin` namespace. Use them as `<x-laravel-admin::button>`, `<x-laravel-admin::layouts.admin>`, and `<x-laravel-admin::admin.input>` inside package views.
+
+Do not add or use unprefixed package components such as `<x-button>`, `<x-input>`, or `<x-layouts.admin>`. Those names belong to the host Laravel application and may already be provided by Breeze, Jetstream, Flux, or custom app components.
+
+Published package views are kept under `resources/views/vendor/laravel-admin`, with components isolated in `resources/views/vendor/laravel-admin/components`. Publish only the components when that is enough:
+
+```bash
+php artisan vendor:publish --tag=laravel-admin-components --no-interaction
+```
+
+If a host app publishes package views for customization, keep the `x-laravel-admin::` prefix for package components. Only switch to unprefixed `<x-...>` tags when the view intentionally wants to call a host-app component.
+
 If you are updating an existing install that predates the separate `admin_users` table, publish only that new migration:
 
 ```bash
@@ -78,7 +103,13 @@ php artisan migrate
 
 ## Initial Super Admin
 
-Run this after migrations and seeders:
+Run the packaged seeder after migrations and role/permission seeding:
+
+```bash
+php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\AdminUserSeeder"
+```
+
+Or create/promote a specific admin account manually:
 
 ```bash
 php artisan laravel-admin:make-super-admin admin@example.com --verified
