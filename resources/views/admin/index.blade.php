@@ -19,7 +19,12 @@
 
                 <!-- 통계 카드들 -->
                 @can('viewStatistics', 'admin')
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+                    <div class="bg-indigo-100 p-6 rounded-lg">
+                        <h3 class="text-lg font-semibold text-indigo-800">총 관리자</h3>
+                        <p class="text-3xl font-bold text-indigo-600">{{ $stats['total_admin_users'] ?? 0 }}</p>
+                    </div>
+
                     <div class="bg-blue-100 p-6 rounded-lg">
                         <h3 class="text-lg font-semibold text-blue-800">총 사용자</h3>
                         <p class="text-3xl font-bold text-blue-600">{{ $stats['total_users'] ?? 0 }}</p>
@@ -46,6 +51,14 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                     @can('manageUsers', 'admin')
+                    <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                        <h3 class="text-lg font-semibold mb-4">관리자 계정</h3>
+                        <p class="text-gray-600 mb-4">관리자 로그인 계정을 관리합니다.</p>
+                        <a href="{{ route('admin.admin-users.index') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                            관리하기
+                        </a>
+                    </div>
+
                     <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
                         <h3 class="text-lg font-semibold mb-4">사용자 관리</h3>
                         <p class="text-gray-600 mb-4">시스템 사용자들을 관리합니다.</p>

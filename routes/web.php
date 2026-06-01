@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Ssh521\LaravelAdmin\Http\Controllers\Admin\AdminUserController;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\AdminController;
 use Ssh521\LaravelAdmin\Http\Controllers\DashboardController;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\MenuCategoryController;
@@ -35,6 +36,10 @@ Route::prefix(config('laravel-admin.route_prefix', 'admin'))
         // 이름은 {{ route('admin.이름')}} 으로 사용해야함..
 
         Route::get('/', [AdminController::class, 'index'])->name('index');
+
+        // Admin User Routes
+        Route::resource('admin-users', AdminUserController::class)
+            ->parameters(['admin-users' => 'adminUser']);
 
         // Role Routes
         Route::prefix('roles')->name('roles.')->group(function () {
