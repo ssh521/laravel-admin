@@ -71,7 +71,7 @@ class RolePermissionSeeder extends Seeder
 
     public function run(): void
     {
-        $guardName = config('auth.defaults.guard', 'web');
+        $guardName = config('laravel-admin.auth.guard', 'laravel_admin');
 
         foreach ($this->permissions as $permission) {
             Permission::firstOrCreate([
@@ -80,7 +80,7 @@ class RolePermissionSeeder extends Seeder
             ]);
         }
 
-        $permissions = Permission::pluck('id', 'id')->all();
+        $permissions = Permission::where('guard_name', $guardName)->pluck('id', 'id')->all();
 
         // 역할들을 만든다.
         $superAdminRole = Role::firstOrCreate([

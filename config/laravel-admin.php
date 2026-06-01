@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\User;
+use Ssh521\LaravelAdmin\Http\Middleware\AuthenticateAdmin;
+use Ssh521\LaravelAdmin\Models\AdminUser;
 
 return [
     'dashboard' => [
@@ -9,9 +11,21 @@ return [
     ],
     'route_prefix' => 'admin',
     'route_name_prefix' => 'admin.',
-    'middleware' => ['web', 'auth', 'verified'],
+    'middleware' => ['web', AuthenticateAdmin::class, 'verified'],
+    'auth' => [
+        'register_fortify_views' => false,
+        'guard' => 'laravel_admin',
+        'provider' => 'laravel_admin_users',
+        'admin_login' => [
+            'enabled' => false,
+            'middleware' => ['web'],
+            'redirect_to' => '/admin',
+        ],
+    ],
     'api_prefix' => 'api/admin',
     'api_middleware' => ['api'],
+    'admin_user_model' => AdminUser::class,
+    'admin_users_table' => 'admin_users',
     'user_model' => User::class,
     'super_admin_role' => 'Super Admin',
     'vite' => [

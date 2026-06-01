@@ -156,10 +156,15 @@
             <div class="border-t border-gray-200 dark:border-gray-600"></div>
 
             <!-- Authentication -->
-            <form method="POST" action="{{ route('logout') }}" x-data>
+            @php
+                $adminLogoutRoute = config('laravel-admin.route_name_prefix', 'admin.').'logout';
+                $logoutRoute = Route::has($adminLogoutRoute) ? $adminLogoutRoute : 'logout';
+            @endphp
+
+            <form method="POST" action="{{ route($logoutRoute) }}" x-data>
                 @csrf
 
-                <x-dropdown-link href="{{ route('logout') }}" @click.prevent="$root.submit();">
+                <x-dropdown-link href="{{ route($logoutRoute) }}" @click.prevent="$root.submit();">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                         class="w-4 h-4 mr-2 inline -mt-1">

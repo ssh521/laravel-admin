@@ -2,30 +2,30 @@
 
 namespace Ssh521\LaravelAdmin\Console\Commands;
 
-use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use Ssh521\LaravelAdmin\Models\AdminUser;
 
 class MakeSuperAdminCommand extends Command
 {
     protected $signature = 'laravel-admin:make-super-admin
-        {email : The email address of the user to promote}
-        {--name= : Name to use when creating a new user}
-        {--password= : Password to use when creating a new user}
-        {--verified : Mark the user email as verified}';
+        {email : The email address of the admin user to promote}
+        {--name= : Name to use when creating a new admin user}
+        {--password= : Password to use when creating a new admin user}
+        {--verified : Mark the admin user email as verified}';
 
-    protected $description = 'Create or promote a user as the Laravel Admin Super Admin.';
+    protected $description = 'Create or promote an admin user as the Laravel Admin Super Admin.';
 
     public function handle(): int
     {
-        $userModel = config('laravel-admin.user_model', User::class);
+        $userModel = config('laravel-admin.admin_user_model', AdminUser::class);
         $roleName = config('laravel-admin.super_admin_role', 'Super Admin');
-        $guardName = config('auth.defaults.guard', 'web');
+        $guardName = config('laravel-admin.auth.guard', 'laravel_admin');
         $email = (string) $this->argument('email');
 
         if (! method_exists($userModel, 'query')) {
-            $this->error("Configured user model [{$userModel}] is invalid.");
+            $this->error("Configured admin user model [{$userModel}] is invalid.");
 
             return self::FAILURE;
         }
@@ -55,7 +55,7 @@ class MakeSuperAdminCommand extends Command
         }
 
         if (! method_exists($user, 'assignRole')) {
-            $this->error("User model [{$userModel}] must use Spatie\\Permission\\Traits\\HasRoles.");
+            $this->error("Admin user model [{$userModel}] must use Spatie\\Permission\\Traits\\HasRoles.");
 
             return self::FAILURE;
         }

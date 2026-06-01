@@ -25,6 +25,7 @@ use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserRoleForm;
 use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserSearchModal;
 use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserTable;
 use Ssh521\LaravelAdmin\Livewire\DynamicModalManager;
+use Ssh521\LaravelAdmin\Models\AdminUser;
 use Ssh521\LaravelAdmin\Models\Menu;
 use Ssh521\LaravelAdmin\Models\MenuCategory;
 use Ssh521\LaravelAdmin\Models\Permission;
@@ -41,6 +42,7 @@ class LaravelAdminServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/laravel-admin.php', 'laravel-admin');
+        $this->registerAuthConfiguration();
     }
 
     public function boot(): void
@@ -49,7 +51,9 @@ class LaravelAdminServiceProvider extends ServiceProvider
         Blade::anonymousComponentPath(__DIR__.'/../resources/views/components');
 
         $this->registerRoutes();
-        $this->registerFortifyViews();
+        if (config('laravel-admin.auth.register_fortify_views', false)) {
+            $this->registerFortifyViews();
+        }
         $this->registerLivewireComponents();
         $this->registerPolicies();
         $this->registerCommands();
@@ -63,6 +67,22 @@ class LaravelAdminServiceProvider extends ServiceProvider
         Route::middleware(config('laravel-admin.api_middleware', ['api']))
             ->prefix(config('laravel-admin.api_prefix', 'api/admin'))
             ->group(__DIR__.'/../routes/api.php');
+    }
+
+    private function registerAuthConfiguration(): void
+    {
+        $provider = config('laravel-admin.auth.provider', 'laravel_admin_users');
+        $guard = config('laravel-admin.auth.guard', 'laravel_admin');
+
+        config()->set("auth.providers.{$provider}", [
+            'driver' => 'eloquent',
+            'model' => config('laravel-admin.admin_user_model', AdminUser::class),
+        ]);
+
+        config()->set("auth.guards.{$guard}", [
+            'driver' => 'session',
+            'provider' => $provider,
+        ]);
     }
 
     private function registerFortifyViews(): void
@@ -146,6 +166,10 @@ class LaravelAdminServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'laravel-admin-migrations');
+
+        $this->publishes([
+            __DIR__.'/../database/migrations/2026_06_01_000001_create_admin_users_table.php' => database_path('migrations/2026_06_01_000001_create_admin_users_table.php'),
+        ], 'laravel-admin-admin-users-migration');
 
         $this->publishes([
             __DIR__.'/../database/seeders' => database_path('seeders/vendor/laravel-admin'),

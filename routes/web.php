@@ -8,11 +8,23 @@ use Ssh521\LaravelAdmin\Http\Controllers\Admin\MenuController;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\PermissionController;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\RoleController;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\UserController;
+use Ssh521\LaravelAdmin\Http\Controllers\Auth\AdminLoginController;
 use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserTable;
 
 Route::middleware(config('laravel-admin.dashboard.middleware', ['web', 'auth', 'verified']))
     ->get(config('laravel-admin.dashboard.path', '/dashboard'), [DashboardController::class, 'index'])
     ->name('dashboard');
+
+if (config('laravel-admin.auth.admin_login.enabled', false)) {
+    Route::prefix(config('laravel-admin.route_prefix', 'admin'))
+        ->name(config('laravel-admin.route_name_prefix', 'admin.'))
+        ->middleware(config('laravel-admin.auth.admin_login.middleware', ['web']))
+        ->group(function () {
+            Route::get('/login', [AdminLoginController::class, 'create'])->name('login');
+            Route::post('/login', [AdminLoginController::class, 'store'])->name('login.store');
+            Route::post('/logout', [AdminLoginController::class, 'destroy'])->name('logout');
+        });
+}
 
 // Admin Routes
 Route::prefix(config('laravel-admin.route_prefix', 'admin'))

@@ -8,6 +8,6 @@ class User extends BaseUser
 {
     public function guardName(): string
     {
-        return config('auth.defaults.guard', 'web');
+        return config('laravel-admin.auth.guard', 'laravel_admin');
     }
 }
