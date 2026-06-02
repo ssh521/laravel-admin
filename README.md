@@ -9,6 +9,7 @@ composer config repositories.ssh521-laravel-admin path ../packages/laravel-admin
 composer require ssh521/laravel-admin:dev-main
 php artisan vendor:publish --tag=laravel-admin-config --no-interaction
 php artisan vendor:publish --tag=laravel-admin-migrations --no-interaction
+php artisan vendor:publish --tag=laravel-admin-seeders --no-interaction
 php artisan vendor:publish --tag=laravel-admin-assets --force --no-interaction
 npm install @fortawesome/fontawesome-free sortablejs axios
 npm run build
@@ -79,6 +80,30 @@ npm run build
 
 Do not force-publish config, migrations, seeders, or views during routine updates. Those files may contain host-app customizations.
 
+## Publishing Seeders
+
+The package seeders can be published when the host app wants to customize the initial roles, permissions, menus, or administrator account:
+
+```bash
+php artisan vendor:publish --tag=laravel-admin-seeders --no-interaction
+```
+
+Published seeders are copied to:
+
+```text
+database/seeders/vendor/laravel-admin
+```
+
+The package seeders are also available through their package namespace and can be run without publishing:
+
+```bash
+php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\RolePermissionSeeder"
+php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\AdminUserSeeder"
+php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\MenuSeeder"
+```
+
+By default, `MenuSeeder` creates a `관리자 전용` menu folder for administrator account management. This folder is assigned to the `Super Admin` role only; the regular `Admin` role receives the general, member management, and menu management folders, but not the administrator-only folder.
+
 ## Blade Component Rules
 
 Package-owned anonymous components live in `resources/views/components` and are registered with the `laravel-admin` namespace. Use them as `<x-laravel-admin::button>`, `<x-laravel-admin::layouts.admin>`, and `<x-laravel-admin::admin.input>` inside package views.
@@ -122,7 +147,7 @@ If the admin user exists, the command assigns the `Super Admin` role. If the adm
 - User, role, permission, menu category, menu, and API management screens
 - Role-based menu folder access through `MenuCategory` and `menu_category_role`
 - Livewire modal components following the existing `admin-users:user-form:open` style events
-- Publishable config, migrations, views, and Vite assets
+- Publishable config, migrations, seeders, views, and Vite assets
 
 ## Additional Development Notes
 
