@@ -14,76 +14,65 @@
     </x-slot>
 
     {{-- 메인 컨텐츠 영역 --}}
-    <div class="w-full lg:max-w-7xl mx-auto">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl px-6 py-2">
+    <div class="w-full bg-white border border-[#d8d8d0] px-2 py-2 dark:bg-gray-900 dark:border-gray-700">
+        <div class="min-h-[560px] border border-[#d9d9d9] bg-white px-6 py-7 sm:px-10 sm:py-10 dark:bg-gray-800 dark:border-gray-700">
+            <div class="mb-2">
+                <h1 class="text-[26px] font-bold leading-none text-[#222222] dark:text-gray-100">
+                    {{ __('메뉴 리스트') }}
+                    @if(request('search'))
+                        <span class="text-[16px] font-normal text-gray-600 dark:text-gray-400">
+                            - "{{ request('search') }}" 검색 결과
+                        </span>
+                    @endif
+                </h1>
 
-            {{-- 페이지 제목 --}}
-            <div class="text-2xl text-left mt-1 font-bold dark:text-white">
-                {{ __('메뉴 리스트') }}
-                @if(request('search'))
-                    <span class="text-lg font-normal text-gray-600 dark:text-gray-400">
-                        - "{{ request('search') }}" 검색 결과
-                    </span>
-                @endif
-            </div>
-
-            {{-- 액션 버튼 및 검색 영역 --}}
-            <div class="flex justify-between items-center pb-4">
-                {{-- 네비게이션 링크 --}}
-                <div>
+                <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-[14px] font-semibold">
                     @can('viewAny', Ssh521\LaravelAdmin\Models\Menu::class)
-                    <a href="{{ route('admin.menus.index') }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">목록보기</a>
-                    <span class="mx-1">|</span>
+                        <a href="{{ route('admin.menus.index') }}">{{ __('목록보기') }}</a>
+                        <span class="text-[#222222] dark:text-gray-400">|</span>
                     @endcan
 
                     @can('create', Ssh521\LaravelAdmin\Models\Menu::class)
-                    <a href="{{ route('admin.menus.create') }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">등록하기</a>
+                        <a href="{{ route('admin.menus.create') }}">{{ __('등록하기') }}</a>
                     @endcan
                 </div>
-
-            <div>
-                <form class="flex items-center ml-1 space-x-2" action="{{ route('admin.menus.index') }}" method="GET">
-                    <label for="simple-search" class="sr-only">Search</label>
-                    <div class="w-full relative">
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            class="bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 dark:focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-500 block w-40 pl-2 pr-8 p-1.5"
-                            placeholder="메뉴 검색">
-                        {{-- 검색어 초기화 버튼 --}}
-                        @if(request('search'))
-                            <a href="{{ route('admin.menus.index') }}"
-                               class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </a>
-                        @endif
-                    </div>
-
-                    {{-- 검색 버튼 --}}
-                    <button type="submit"
-                        class="p-1 text-sm font-medium text-white bg-gray-500 rounded-lg border border-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 30 30"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-2-2m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                        <span class="sr-only">Search</span>
-                    </button>
-                </form>
             </div>
-        </div>
 
-        <x-laravel-admin::session-messages />
+            <x-laravel-admin::session-messages />
 
-        {{-- 체크박스 제어 컴포넌트 --}}
-        <div class="pb-2">
-            <x-laravel-admin::checkbox-controls /> |
-            <a href="javascript:void(0)" onclick="openCategorySelectionModal()" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">분류선택</a>
-        </div>
+            <form class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end" action="{{ route('admin.menus.index') }}" method="GET">
+                <label for="menu-search" class="sr-only">Search</label>
+                <input
+                    id="menu-search"
+                    type="text"
+                    name="search"
+                    value="{{ request('search') }}"
+                    class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-[14px] text-[#111111] outline-none sm:w-[260px] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    placeholder="메뉴 검색"
+                    onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';"
+                    onblur="this.style.borderColor='#7d7d7d'; this.style.boxShadow='none';"
+                >
 
-        {{-- 메뉴 목록 테이블 --}}
-        <div
-            class="relative overflow-x-auto my-2 border-gray-200 dark:border-gray-700 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
+                @if(request('search'))
+                    <a href="{{ route('admin.menus.index') }}" class="inline-flex h-[28px] items-center rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-3 text-[14px] font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                        {{ __('초기화') }}
+                    </a>
+                @endif
+
+                <button type="submit" class="h-[28px] cursor-pointer rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-4 text-[14px] font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                    {{ __('검색') }}
+                </button>
+            </form>
+
+            {{-- 체크박스 제어 컴포넌트 --}}
+            <div class="mb-1 flex flex-wrap items-center gap-x-1 text-[12px] font-semibold">
+                <x-laravel-admin::checkbox-controls />
+                <span class="text-[#222222] dark:text-gray-400">|</span>
+                <a href="javascript:void(0)" onclick="openCategorySelectionModal()">{{ __('분류선택') }}</a>
+            </div>
+
+            {{-- 메뉴 목록 테이블 --}}
+            <div class="overflow-x-auto">
                         @php
                             // 정렬 관련 변수들을 한 번에 정의
                             $currentSort = request('sort', 'id');
@@ -111,45 +100,44 @@
                             };
                         @endphp
 
-            <table class="w-full min-w-[300px] text-sm text-left rtl:text-right">
-            <thead
-                class="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-200 dark:bg-gray-700 border-b border-t border-gray-300 dark:border-gray-600">
-                <tr>
+            <table class="min-w-full border-collapse text-[14px] text-[#111111] dark:text-gray-100">
+            <thead>
+                <tr class="border-y border-[#cfcfcf] bg-[#dedede] text-[#555555] dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                     {{-- ID 컬럼 --}}
-                    <th scope="col" class="px-2 py-3 whitespace-nowrap">ID</th>
+                    <th scope="col" class="h-12 px-2 text-left font-bold whitespace-nowrap">ID</th>
 
                     {{-- 메뉴명 컬럼 (정렬 가능) --}}
-                    <th scope="col" class="px-2 py-3 whitespace-nowrap">
+                    <th scope="col" class="h-12 px-2 text-left font-bold whitespace-nowrap">
                         <a href="{{ route('admin.menus.index', array_merge(request()->query(), ['sort' => 'name', 'direction' => $getNextDirection('name')])) }}"
-                           class="inline-flex items-center gap-1 text-gray-700 dark:text-gray-300 hover:text-blue-700 dark:hover:text-blue-400">
+                           class="inline-flex items-center gap-1">
                             메뉴명
                             {!! $renderSortIcon('name') !!}
                         </a>
                     </th>
 
                     {{-- 카테고리 컬럼 (정렬 가능) --}}
-                    <th scope="col" class="px-2 py-3 whitespace-nowrap">
+                    <th scope="col" class="h-12 px-2 text-left font-bold whitespace-nowrap">
                         @if(empty(request('search')))
                         <a href="{{ route('admin.menus.index', array_merge(request()->query(), ['sort' => 'category', 'direction' => $getNextDirection('category')])) }}"
-                           class="inline-flex items-center gap-1 text-gray-700 dark:text-gray-300 hover:text-blue-700 dark:hover:text-blue-400">
+                           class="inline-flex items-center gap-1">
                             카테고리
                             {!! $renderSortIcon('category') !!}
                         </a>
                         @else
-                        <span class="inline-flex items-center gap-1 text-gray-700 dark:text-gray-300">
+                        <span class="inline-flex items-center gap-1">
                             카테고리
                         </span>
                         @endif
                     </th>
 
                     {{-- 라우트/URL 컬럼 --}}
-                    <th scope="col" class="px-2 py-3 whitespace-nowrap">라우트/URL</th>
+                    <th scope="col" class="h-12 px-2 text-left font-bold whitespace-nowrap">라우트/URL</th>
 
                     {{-- 상태 컬럼 --}}
-                    <th scope="col" class="px-2 py-3 whitespace-nowrap">상태</th>
+                    <th scope="col" class="h-12 px-2 text-left font-bold whitespace-nowrap">상태</th>
 
                     {{-- 액션 컬럼 --}}
-                    <th scope="col" class="px-2 py-3 whitespace-nowrap">
+                    <th scope="col" class="h-12 px-2 text-right font-bold whitespace-nowrap">
                         <span class="sr-only">Edit</span>
                     </th>
                 </tr>
@@ -158,18 +146,17 @@
                 {{-- 메뉴 목록 반복 출력 --}}
                 @forelse ($menus as $key => $menu)
                 <tr
-                    class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    class="border-b border-[#e6e6e6] bg-[#fbfbfb] transition-colors hover:bg-white dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
 
                     {{-- 메뉴 ID --}}
-                    <th scope="row" class="px-2 py-2 font-medium text-gray-900 dark:text-white">
+                    <th scope="row" class="h-12 px-4 font-medium">
                         <x-laravel-admin::checkbox :value="$menu->id" />
                     </th>
 
                     {{-- 메뉴명 (링크 가능) --}}
-                    <th scope="row" class="px-2 py-2 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                    <th scope="row" class="h-12 whitespace-nowrap px-4 text-left font-bold">
                         @can('view', $menu)
-                        <a href="{{ route('admin.menus.show', $menu) }}"
-                            class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-left">
+                        <a href="{{ route('admin.menus.show', $menu) }}">
                             @if($menu->icon)
                                 <i class="{{ $menu->icon }} mr-2 text-blue-500"></i>
                             @endif
@@ -181,7 +168,7 @@
                     </th>
 
                     {{-- 카테고리 (순서 변경 모달 트리거) --}}
-                    <td class="px-2 py-2">
+                    <td class="h-12 whitespace-nowrap px-4">
                         @if($menu->category)
                             <x-laravel-admin::modal-trigger
                                 text="{{ $menu->category->name }}"
@@ -198,12 +185,12 @@
                     </td>
 
                     {{-- 라우트/URL 정보 --}}
-                    <td class="px-2 py-2 whitespace-nowrap dark:text-white">
+                    <td class="h-12 whitespace-nowrap px-4">
                         @if($menu->route_name)
                             {{-- 라우트명이 있는 경우 --}}
                             <a href="{{ $menu->url }}"
                                target="{{ $menu->target ?? '_self' }}"
-                               class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
+                               class="font-medium">
                                 {{ $menu->route_name }}
                             </a>
                             @if($menu->route_parameters)
@@ -214,7 +201,7 @@
                             @if($menu->url && $menu->url !== '#')
                                 <a href="{{ $menu->url }}"
                                    target="{{ $menu->target ?? '_self' }}"
-                                   class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                                   class="">
                                     {{ $menu->url }}
                                 </a>
                             @else
@@ -223,29 +210,28 @@
                         @endif
                         {{-- 외부 링크 표시 --}}
                         @if($menu->is_external)
-                            <span class="ml-1 text-xs bg-red-100 text-red-800 px-1 rounded">외부</span>
+                            <span class="ml-1 text-[12px] text-red-700 dark:text-red-300">외부</span>
                         @endif
                     </td>
 
                     {{-- 활성/비활성 상태 --}}
-                    <td class="px-2 py-2">
-                        <span class="px-2 py-1 text-xs {{ $menu->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }} rounded-full">
+                    <td class="h-12 whitespace-nowrap px-4">
+                        <span class="{{ $menu->is_active ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300' }}">
                             {{ $menu->is_active ? '활성' : '비활성' }}
                         </span>
                     </td>
 
                     {{-- 액션 버튼 --}}
-                    <td class="px-2 py-2 text-right whitespace-nowrap">
+                    <td class="h-12 whitespace-nowrap px-4 text-right">
                         @can('update', $menu)
-                        <a class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-                            href="{{ route('admin.menus.edit', $menu) }}">수정</a>
+                        <a href="{{ route('admin.menus.edit', $menu) }}">수정</a>
                         @endcan
                     </td>
                 </tr>
                 @empty
                     {{-- 메뉴가 없을 때 표시 --}}
-                    <tr>
-                        <td colspan="6" class="px-2 py-4 text-center">
+                    <tr class="border-b border-[#e6e6e6] bg-[#fbfbfb] dark:border-gray-700 dark:bg-gray-800">
+                        <td colspan="6" class="h-12 px-4 text-center text-gray-500 dark:text-gray-400">
                             @if(request('search'))
                                 "{{ request('search') }}"에 대한 검색 결과가 없습니다.
                             @else
@@ -258,10 +244,10 @@
         </table>
     </div>
 
-    <div class="my-3">
+    <div class="mt-6 text-[14px]">
         {!! $menus->appends(request()->query())->links() !!}
     </div>
-
+        </div>
     </div>
 
     {{-- 카테고리 선택 모달 (draggable + Livewire) --}}

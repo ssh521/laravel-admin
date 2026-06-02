@@ -6,215 +6,145 @@
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
                 - <a href="{{ route('admin.menus.index') }}">메뉴 관리</a>
             </x-slot>
-            <x-slot name="description">
-                {{ __('Menu Detail') }}
-            </x-slot>
+            <x-slot name="description">{{ __('Menu Detail') }}</x-slot>
         </x-laravel-admin::admin-header>
     </x-slot>
 
-    <div class="w-full lg:max-w-7xl mx-auto">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl px-6 py-2">
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h3 class="text-lg font-medium dark:text-white">
-                        {{ __('Menu Information') }}
-                    </h3>
-                    <p class="mt-1 text-sm dark:text-gray-400">
-                        {{ __('메뉴 상세 정보를 확인합니다.') }}
-                    </p>
-                </div>
-                <div>
-                    <a href="{{ route('admin.menus.index') }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
-                        ← {{ __('Back to Menus') }}
-                    </a>
-                </div>
+    <div class="mx-auto w-full max-w-7xl bg-white px-2 py-2 dark:bg-gray-900">
+        <div class="min-h-[720px] bg-white px-8 py-10 sm:px-16 lg:px-24 dark:bg-gray-800">
+            <div class="mb-10">
+                <h1 class="text-[26px] font-bold leading-none text-[#222222] dark:text-gray-100">{{ __('Menu Information') }}</h1>
             </div>
 
             <x-laravel-admin::session-messages />
 
-            <div class="space-y-6">
-                <!-- Menu Basic Information -->
-                <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6">
-                    <h4 class="text-md font-medium text-gray-900 dark:text-white mb-4">{{ __('Basic Information') }}</h4>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <x-laravel-admin::label for="menu_id" :value="__('ID')" />
-                            <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $menu->id }}</p>
+            <div class="border border-dashed border-[#bdbdbd] bg-[#f7f7f7] px-8 py-10 text-[15px] font-bold text-[#222222] sm:px-16 lg:px-24 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
+                <div class="mx-auto max-w-[980px]">
+                    <div class="space-y-4">
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('ID') }} :</div>
+                            <div>{{ $menu->id }}</div>
                         </div>
-
-                        <div>
-                            <x-laravel-admin::label for="menu_name" :value="__('Menu Name')" />
-                            <p class="mt-1 text-sm text-gray-900 dark:text-white">
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('메뉴명') }} :</div>
+                            <div>
                                 @if($menu->icon)
-                                    <i class="{{ $menu->icon }} mr-2 text-gray-400 dark:text-gray-500"></i>
+                                    <i class="{{ $menu->icon }} mr-2"></i>
                                 @endif
                                 {{ $menu->name }}
-                            </p>
+                            </div>
                         </div>
-
-                        <div>
-                            <x-laravel-admin::label for="category" :value="__('Category')" />
-                            <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $menu->category ? $menu->category->name : '-' }}</p>
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('카테고리') }} :</div>
+                            <div>{{ $menu->category ? $menu->category->name : '-' }}</div>
                         </div>
-
-                        <div>
-                            <x-laravel-admin::label for="parent_menu" :value="__('Parent Menu')" />
-                            <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $menu->parent ? $menu->parent->name : '-' }}</p>
-                        </div>
-
-                        <div>
-                            <x-laravel-admin::label for="route_name" :value="__('Route Name')" />
-                            <p class="mt-1 text-sm text-gray-900 dark:text-white">
-                                @if($menu->route_name)
-                                    <span class="text-blue-600 dark:text-blue-400 font-medium">{{ $menu->route_name }}</span>
-                                @else
-                                    <span class="text-gray-400 dark:text-gray-500">-</span>
-                                @endif
-                            </p>
-                        </div>
-
-                        <div>
-                            <x-laravel-admin::label for="route_parameters" :value="__('Route Parameters')" />
-                            <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $menu->route_parameters ?: '-' }}</p>
-                        </div>
-
-                        <div>
-                            <x-laravel-admin::label for="direct_url" :value="__('Direct URL')" />
-                            <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $menu->url ?: '-' }}</p>
-                        </div>
-
-                        <div>
-                            <x-laravel-admin::label for="target" :value="__('Target')" />
-                            <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $menu->target ?: '-' }}</p>
-                        </div>
-
-                        <div>
-                            <x-laravel-admin::label for="sort_order" :value="__('Sort Order')" />
-                            <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $menu->sort_order }}</p>
-                        </div>
-
-                        <div>
-                            <x-laravel-admin::label for="status" :value="__('Status')" />
-                            <p class="mt-1">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $menu->is_active ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' }}">
-                                    {{ $menu->is_active ? __('활성') : __('비활성') }}
-                                </span>
-                            </p>
-                        </div>
-
-                        <div>
-                            <x-laravel-admin::label for="external_link" :value="__('External Link')" />
-                            <p class="mt-1">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $menu->is_external ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
-                                    {{ $menu->is_external ? __('예') : __('아니오') }}
-                                </span>
-                            </p>
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('상위 메뉴') }} :</div>
+                            <div>{{ $menu->parent ? $menu->parent->name : '-' }}</div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                        <div>
-                            <x-laravel-admin::label for="created_at" :value="__('Created At')" />
-                            <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $menu->created_at->format('Y-m-d H:i:s') }}</p>
-                        </div>
+                    <div class="my-8 border-t border-[#8d8d8d]"></div>
 
-                        <div>
-                            <x-laravel-admin::label for="updated_at" :value="__('Updated At')" />
-                            <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $menu->updated_at->format('Y-m-d H:i:s') }}</p>
+                    <div class="space-y-4">
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('Route Name') }} :</div>
+                            <div>{{ $menu->route_name ?: '-' }}</div>
+                        </div>
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('Route Params') }} :</div>
+                            <div>{{ $menu->route_parameters ?: '-' }}</div>
+                        </div>
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('Direct URL') }} :</div>
+                            <div>{{ $menu->url ?: '-' }}</div>
+                        </div>
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('Target') }} :</div>
+                            <div>{{ $menu->target ?: '-' }}</div>
                         </div>
                     </div>
 
-                    @if($menu->description)
-                        <div class="mt-6">
-                            <x-laravel-admin::label for="description" :value="__('Description')" />
-                            <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $menu->description }}</p>
+                    <div class="my-8 border-t border-[#8d8d8d]"></div>
+
+                    <div class="space-y-4">
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('정렬 순서') }} :</div>
+                            <div>{{ $menu->sort_order }}</div>
                         </div>
-                    @endif
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('상태') }} :</div>
+                            <div>{{ $menu->is_active ? __('활성') : __('비활성') }}</div>
+                        </div>
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('외부 링크') }} :</div>
+                            <div>{{ $menu->is_external ? __('예') : __('아니오') }}</div>
+                        </div>
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('등록일') }} :</div>
+                            <div>{{ $menu->created_at?->format('Y-m-d H:i:s') }}</div>
+                        </div>
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('수정일') }} :</div>
+                            <div>{{ $menu->updated_at?->format('Y-m-d H:i:s') }}</div>
+                        </div>
+                        @if($menu->description)
+                            <div class="flex min-h-[28px] flex-col sm:flex-row">
+                                <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('설명') }} :</div>
+                                <div>{{ $menu->description }}</div>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
 
-            <x-laravel-admin::section-border />
-
-                <!-- Child Menus Section -->
-                @if($menu->children->count() > 0)
-                <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6">
-                    <h4 class="text-md font-medium text-gray-900 dark:text-white mb-4">{{ __('Child Menus') }} ({{ $menu->children->count() }})</h4>
-
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
-                            <thead class="bg-gray-50 dark:bg-gray-600">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        {{ __('Menu Name') }}
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        {{ __('Route/URL') }}
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        {{ __('Status') }}
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        {{ __('Actions') }}
-                                    </th>
+            @if($menu->children->count() > 0)
+                <div class="mt-8 overflow-x-auto">
+                    <table class="min-w-full border-collapse text-[14px] text-[#111111] dark:text-gray-100">
+                        <thead>
+                            <tr class="border-y border-[#cfcfcf] bg-[#dedede] text-[#555555] dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                                <th class="h-12 px-2 text-left font-bold">{{ __('Child Menu') }}</th>
+                                <th class="h-12 px-2 text-left font-bold">{{ __('Route/URL') }}</th>
+                                <th class="h-12 px-2 text-left font-bold">{{ __('Status') }}</th>
+                                <th class="h-12 px-2 text-right font-bold">{{ __('Actions') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($menu->children as $childMenu)
+                                <tr class="border-b border-[#e6e6e6] bg-[#fbfbfb] dark:border-gray-700 dark:bg-gray-800">
+                                    <td class="h-12 whitespace-nowrap px-4 font-bold">{{ $childMenu->name }}</td>
+                                    <td class="h-12 whitespace-nowrap px-4">{{ $childMenu->route_name ?: ($childMenu->url ?: '-') }}</td>
+                                    <td class="h-12 whitespace-nowrap px-4">{{ $childMenu->is_active ? __('활성') : __('비활성') }}</td>
+                                    <td class="h-12 whitespace-nowrap px-4 text-right">
+                                        <a href="{{ route('admin.menus.show', $childMenu) }}">{{ __('View') }}</a>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody class="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-600">
-                                @foreach($menu->children as $childMenu)
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                                            {{ $childMenu->name }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                            @if($childMenu->route_name)
-                                                <span class="text-blue-600 dark:text-blue-400 font-medium">{{ $childMenu->route_name }}</span>
-                                            @else
-                                                <span class="text-gray-600 dark:text-gray-400">{{ $childMenu->url }}</span>
-                                            @endif
-                                            @if($childMenu->is_external)
-                                                <span class="ml-1 text-xs bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400 px-1 rounded">{{ __('외부') }}</span>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $childMenu->is_active ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' }}">
-                                                {{ $childMenu->is_active ? __('활성') : __('비활성') }}
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <a href="{{ route('admin.menus.show', $childMenu) }}"
-                                               class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">{{ __('View') }}</a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-                @endif
-            </div>
+            @endif
 
-            <!-- Action Buttons -->
-            <div class="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-600">
-                @can('update', $menu)
-                <a href="{{ route('admin.menus.edit', $menu) }}"
-                   class="inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-blue-500 border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-blue-700 dark:hover:bg-blue-600 focus:bg-blue-700 dark:focus:bg-blue-600 active:bg-blue-900 dark:active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 transition ease-in-out duration-150"
-                   style="color: white !important;">
-                    {{ __('Edit Menu') }}
+            <div class="mt-8 flex flex-wrap justify-center gap-2">
+                <a href="{{ route('admin.menus.index') }}" class="inline-flex h-[34px] min-w-[120px] items-center justify-center border border-[#777777] bg-[#eeeeee] px-6 text-[15px] font-bold text-[#111111] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                    {{ __('목록보기') }}
                 </a>
-                @endcan
-
-                @can('delete', $menu)
-                <form action="{{ route('admin.menus.destroy', $menu) }}" method="POST" class="inline">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit"
-                            class="inline-flex items-center px-4 py-2 bg-red-600 dark:bg-red-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 dark:hover:bg-red-400 active:bg-red-700 dark:active:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 transition ease-in-out duration-150"
-                            onclick="return confirm('{{ __('정말 삭제하시겠습니까?') }}')">
-                        {{ __('Delete Menu') }}
-                    </button>
-                </form>
+                @can('update', $menu)
+                    <a href="{{ route('admin.menus.edit', $menu) }}" class="inline-flex h-[34px] min-w-[120px] items-center justify-center border border-[#777777] bg-[#eeeeee] px-6 text-[15px] font-bold text-[#111111] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                        {{ __('수정하기') }}
+                    </a>
                 @endcan
             </div>
         </div>
     </div>
+
+    @can('delete', $menu)
+        <form action="{{ route('admin.menus.destroy', $menu) }}" method="POST" onsubmit="return confirm('{{ __('정말 삭제하시겠습니까?') }}')" class="mx-auto mt-3 flex w-full max-w-7xl justify-start px-2">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="cursor-pointer text-[13px] font-semibold text-[#003399] hover:underline dark:text-[#e7e7d6]">
+                {{ __('삭제하기') }}
+            </button>
+        </form>
+    @endcan
 </x-laravel-admin::layouts.admin>

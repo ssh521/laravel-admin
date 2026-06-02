@@ -178,113 +178,86 @@
         }
     </style>
 
-<div class="py-0">
-    <div class="w-full mx-auto sm:px-0 lg:px-0">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden">
-            <div class="p-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <div class="w-full bg-white border border-[#d8d8d0] px-2 py-2 dark:bg-gray-900 dark:border-gray-700">
+        <div class="min-h-[560px] border border-[#d9d9d9] bg-white px-6 py-7 sm:px-10 sm:py-10 dark:bg-gray-800 dark:border-gray-700">
+                    <div class="mb-2">
+                        <h1 class="text-[26px] font-bold leading-none text-[#222222] dark:text-gray-100">
+                            {{ __('Menu Categories List') }}
+                            @if(request('search'))
+                            <span class="text-[16px] font-normal text-gray-600 dark:text-gray-400">
+                                - "{{ request('search') }}" 검색 결과
+                            </span>
+                            @endif
+                        </h1>
 
-                    <div class="text-2xl text-left mt-1 font-bold dark:text-white">
-                        {{ __('Menu Categories List') }}
-                        @if(request('search'))
-                        <span class="text-lg font-normal text-gray-600 dark:text-gray-400">
-                            - "{{ request('search') }}" 검색 결과
-                        </span>
-                        @endif
+                        <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-[14px] font-semibold">
+                            @can('viewAny', Ssh521\LaravelAdmin\Models\MenuCategory::class)
+                            <a href="{{ route('admin.menu-categories.index') }}">{{ __('목록보기') }}</a>
+                            <span class="text-[#222222] dark:text-gray-400">|</span>
+                            @endcan
+
+                            @can('create', Ssh521\LaravelAdmin\Models\MenuCategory::class)
+                            <a href="{{ route('admin.menu-categories.create') }}">{{ __('등록하기') }}</a>
+                            @endcan
+                        </div>
                     </div>
 
                     <x-laravel-admin::session-messages />
 
-                    <div class="flex justify-between items-center pb-4">
+                    <form class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end" action="{{ route('admin.menu-categories.index') }}" method="GET">
+                        <label for="category-search" class="sr-only">Search</label>
 
-                        <div>
-                            @can('viewAny', Ssh521\LaravelAdmin\Models\MenuCategory::class)
-                            <a href="{{ route('admin.menu-categories.index') }}"
-                                class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">목록보기</a>
-                            <span class="mx-1 text-gray-500 dark:text-gray-400">|</span>
-                            @endcan
+                        <input
+                            id="category-search"
+                            type="text"
+                            name="search"
+                            value="{{ request('search') }}"
+                            class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-[14px] text-[#111111] outline-none sm:w-[260px] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            placeholder="카테고리 검색"
+                            onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';"
+                            onblur="this.style.borderColor='#7d7d7d'; this.style.boxShadow='none';"
+                        >
 
-                            @can('create', Ssh521\LaravelAdmin\Models\MenuCategory::class)
-                            <a href="{{ route('admin.menu-categories.create') }}"
-                                class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300">등록하기</a>
-                            @endcan
-                        </div>
+                        @if(request('search'))
+                        <a href="{{ route('admin.menu-categories.index') }}" class="inline-flex h-[28px] items-center rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-3 text-[14px] font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                            {{ __('초기화') }}
+                        </a>
+                        @endif
 
-                        <div class="flex items-center space-x-4">
-                            <!-- 순서 변경 안내 -->
-                            <div class="text-sm text-gray-600 dark:text-gray-400">
-                                <span class="flex items-center">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>
-                                    </svg>
-                                    드래그하여 순서 변경
-                                </span>
-                            </div>
+                        <button type="submit" class="h-[28px] cursor-pointer rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-4 text-[14px] font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                            {{ __('검색') }}
+                        </button>
+                    </form>
 
-                            <form class="flex items-center ml-1" action="{{ route('admin.menu-categories.index') }}"
-                                method="GET">
-                                <label for="simple-search" class="sr-only">Search</label>
-                                <div class="w-full relative">
-
-                                    <input type="text" name="search" value="{{ request('search') }}"
-                                        class="bg-gray-50 border w-40 z-0 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-xs pl-2 pr-8 p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        placeholder="카테고리 검색">
-
-                                    @if(request('search'))
-                                    <a href="{{ route('admin.menu-categories.index') }}"
-                                        class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M6 18L18 6M6 6l12 12"></path>
-                                        </svg>
-                                    </a>
-                                    @endif
-                                </div>
-
-                                <button type="submit"
-                                    class="p-1 ml-1 text-sm font-medium text-white bg-gray-500 rounded-lg border border-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-500 dark:hover:bg-gray-700 dark:focus:ring-gray-800 dark:text-gray-900">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 30 30"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M21 21l-2-2m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                    </svg>
-                                    <span class="sr-only">Search</span>
-                                </button>
-                            </form>
-                        </div>
-
-                    </div>
-
-                    <div class="relative overflow-x-auto my-2">
-                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                            <thead
-                                class="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-200 dark:bg-gray-700 border-b border-t border-gray-300 dark:border-gray-600">
-                                <tr>
-                                    <th scope="col" class="px-2 py-3 w-8">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full border-collapse text-[14px] text-[#111111] dark:text-gray-100">
+                            <thead>
+                                <tr class="border-y border-[#cfcfcf] bg-[#dedede] text-[#555555] dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                                    <th scope="col" class="h-12 w-8 px-2 text-left font-bold">
                                         <span class="sr-only">순서</span>
                                     </th>
-                                    <th scope="col" class="px-2 py-3">
+                                    <th scope="col" class="h-12 px-2 text-left font-bold">
                                         ID
                                     </th>
-                                    <th scope="col" class="px-2 py-3">
+                                    <th scope="col" class="h-12 px-2 text-left font-bold">
                                         카테고리명
                                     </th>
-                                    <th scope="col" class="px-2 py-3">
+                                    <th scope="col" class="h-12 px-2 text-left font-bold">
                                         메뉴 개수
                                     </th>
-                                    <th scope="col" class="px-2 py-3">
+                                    <th scope="col" class="h-12 px-2 text-left font-bold">
                                         정렬 순서
                                     </th>
-                                    <th scope="col" class="px-2 py-3">
+                                    <th scope="col" class="h-12 px-2 text-left font-bold">
                                         상태
                                     </th>
-                                    <th scope="col" class="px-2 py-3">
+                                    <th scope="col" class="h-12 px-2 text-left font-bold">
                                         허용 역할
                                     </th>
-                                    <th scope="col" class="px-2 py-3">
+                                    <th scope="col" class="h-12 px-2 text-left font-bold">
                                         생성일
                                     </th>
-                                    <th scope="col" class="px-2 py-3">
+                                    <th scope="col" class="h-12 px-2 text-right font-bold">
                                         <span class="sr-only">Edit</span>
                                     </th>
                                 </tr>
@@ -292,9 +265,9 @@
                             <tbody id="categories-tbody">
                                 @forelse($categories as $category)
                                 <tr data-category-id="{{ $category->id }}"
-                                    class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    class="border-b border-[#e6e6e6] bg-[#fbfbfb] transition-colors hover:bg-white dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
 
-                                    <td class="px-2 py-2">
+                                    <td class="h-12 px-4">
                                         <div class="drag-handle flex items-center justify-center">
                                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -303,51 +276,46 @@
                                         </div>
                                     </td>
 
-                                    <td class="px-2 py-2">
+                                    <td class="h-12 whitespace-nowrap px-4">
                                         {{ $category->id }}
                                     </td>
                                     <th scope="row"
-                                        class="px-2 py-2 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                                        class="h-12 whitespace-nowrap px-4 text-left font-bold">
 
                                         @can('view', $category)
-                                        <a class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-                                            href="{{ route('admin.menu-categories.show', $category) }}">{{ $category->name
+                                        <a href="{{ route('admin.menu-categories.show', $category) }}">{{ $category->name
                                             }}</a>
                                         @else
                                         {{ $category->name }}
                                         @endcan
 
                                     </th>
-                                    <td class="px-2 py-2">
+                                    <td class="h-12 whitespace-nowrap px-4">
                                         {{ $category->menus_count }}
                                     </td>
-                                    <td class="px-2 py-2 sort-order-cell">
+                                    <td class="h-12 whitespace-nowrap px-4 sort-order-cell">
                                         {{ $category->sort_order }}
                                     </td>
-                                    <td class="px-2 py-2">
-                                        <span
-                                            class="px-2 py-1 text-xs font-semibold rounded-full {{ $category->is_active ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' }}">
+                                    <td class="h-12 whitespace-nowrap px-4">
+                                        <span class="{{ $category->is_active ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300' }}">
                                             {{ $category->is_active ? '활성' : '비활성' }}
                                         </span>
                                     </td>
-                                    <td class="px-2 py-2">
+                                    <td class="h-12 px-4">
                                         @if($category->roles->count() > 0)
-                                        <div class="flex flex-wrap gap-1">
+                                        <div class="flex flex-wrap gap-x-2 gap-y-1">
                                             @foreach($category->roles as $role)
-                                            <span
-                                                class="px-2 py-1 text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 rounded-full">
-                                                {{ $role->name }}
-                                            </span>
+                                            <span>{{ $role->name }}</span>
                                             @endforeach
                                         </div>
                                         @else
-                                        <span class="text-gray-400 dark:text-gray-500 text-xs">없음</span>
+                                        <span class="text-gray-500 dark:text-gray-400">없음</span>
                                         @endif
                                     </td>
-                                    <td class="px-2 py-2">
+                                    <td class="h-12 whitespace-nowrap px-4">
                                         {{ $category->created_at->format('Y-m-d H:i') }}
                                     </td>
-                                    <td class="px-2 py-2 text-right">
+                                    <td class="h-12 whitespace-nowrap px-4 text-right">
 
                                         @can('update', $category)
                                         <x-laravel-admin::modal-trigger
@@ -356,15 +324,15 @@
                                             type="link"
                                             variant="primary"
                                             modal-type="single"
-                                            class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer"
+                                            class="cursor-pointer"
                                             data-category-id="{{ $category->id }}"
                                             data-category-name="{{ $category->name }}" />
                                         @endcan
                                     </td>
                                 </tr>
                                 @empty
-                                <tr class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-                                    <td colspan="9" class="px-2 py-4 text-center text-gray-500 dark:text-gray-400">
+                                <tr class="border-b border-[#e6e6e6] bg-[#fbfbfb] dark:border-gray-700 dark:bg-gray-800">
+                                    <td colspan="9" class="h-12 px-4 text-center text-gray-500 dark:text-gray-400">
                                         @if(request('search'))
                                         "{{ request('search') }}"에 대한 검색 결과가 없습니다.
                                         @else
@@ -377,10 +345,9 @@
                         </table>
                     </div>
 
-                    {!! $categories->appends(request()->query())->links() !!}
-
-                </div>
-            </div>
+                    <div class="mt-6 text-[14px]">
+                        {!! $categories->appends(request()->query())->links() !!}
+                    </div>
         </div>
     </div>
 
