@@ -36,7 +36,10 @@ class LeftMenu extends Component
 
     public function loadMenuCategories()
     {
-        $user = Auth::user();
+        $guard = config('laravel-admin.auth.guard', 'laravel_admin');
+        Auth::shouldUse($guard);
+
+        $user = Auth::guard($guard)->user();
 
         if (! $user) {
             $this->sidebarMenuCategories = collect();
@@ -45,7 +48,7 @@ class LeftMenu extends Component
         }
 
         // Super Admin은 모든 메뉴 카테고리 접근 가능
-        if ($user->hasRole('Super Admin')) {
+        if ($user->hasRole(config('laravel-admin.super_admin_role', 'Super Admin'))) {
             $this->sidebarMenuCategories = MenuCategory::with(['activeMenus' => function ($q) {
                 $q->ordered();
             }])->active()->ordered()->get();
