@@ -13,7 +13,6 @@ return [
     'route_name_prefix' => 'admin.',
     'middleware' => ['web', AuthenticateAdmin::class, 'verified'],
     'auth' => [
-        'register_fortify_views' => false,
         'guard' => 'laravel_admin',
         'provider' => 'laravel_admin_users',
         'admin_login' => [

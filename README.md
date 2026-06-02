@@ -46,13 +46,12 @@ laravel({
 
 ## Authentication
 
-The package does not override the host app's `/login`, `/register`, or Fortify views by default. This avoids route and view conflicts with Breeze, Jetstream, or an existing custom auth stack.
+The package does not override the host app's `/login`, `/register`, or Fortify views. This avoids route and view conflicts with Breeze, Jetstream, or an existing custom auth stack.
 
 To enable a separate admin login screen at `/admin/login`, set:
 
 ```php
 'auth' => [
-    'register_fortify_views' => false,
     'guard' => 'laravel_admin',
     'provider' => 'laravel_admin_users',
     'admin_login' => [

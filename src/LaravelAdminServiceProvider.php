@@ -7,10 +7,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Fortify\Fortify;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
-use Ssh521\LaravelAdmin\Actions\Fortify\CreateNewUser;
 use Ssh521\LaravelAdmin\Console\Commands\MakeSuperAdminCommand;
 use Ssh521\LaravelAdmin\Livewire\Admin\HeaderNav;
 use Ssh521\LaravelAdmin\Livewire\Admin\LeftMenu;
@@ -50,9 +48,6 @@ class LaravelAdminServiceProvider extends ServiceProvider
         $this->registerViewLocations();
 
         $this->registerRoutes();
-        if (config('laravel-admin.auth.register_fortify_views', false)) {
-            $this->registerFortifyViews();
-        }
         $this->registerLivewireComponents();
         $this->registerPolicies();
         $this->registerCommands();
@@ -94,21 +89,6 @@ class LaravelAdminServiceProvider extends ServiceProvider
             'driver' => 'session',
             'provider' => $provider,
         ]);
-    }
-
-    private function registerFortifyViews(): void
-    {
-        if (! class_exists(Fortify::class)) {
-            return;
-        }
-
-        Fortify::createUsersUsing(CreateNewUser::class);
-        Fortify::loginView(fn () => view('auth.login'));
-        Fortify::registerView(fn () => view('auth.register'));
-        Fortify::requestPasswordResetLinkView(fn () => view('auth.forgot-password'));
-        Fortify::resetPasswordView(fn (array $request) => view('auth.reset-password', ['request' => $request]));
-        Fortify::confirmPasswordView(fn () => view('auth.confirm-password'));
-        Fortify::twoFactorChallengeView(fn () => view('auth.two-factor-challenge'));
     }
 
     private function registerLivewireComponents(): void
