@@ -7,6 +7,8 @@
 @source "../../../vendor/ssh521/laravel-admin/resources/js/**/*.js";
 @source "../../views/vendor/laravel-admin/**/*.blade.php";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 [x-cloak] {
     display: none;
 }
@@ -321,7 +323,7 @@ span.cursor-pointer:hover {
     vertical-align: middle;
   }
   .dtree a {
-    color: #333;
+    color: #000;
     text-decoration: none;
   }
   .dtree a.node,
@@ -331,7 +333,7 @@ span.cursor-pointer:hover {
   }
   .dtree a.node:hover,
   .dtree a.nodeSel:hover {
-    color: #333;
+    color: #000;
     text-decoration: underline;
   }
   .dtree a.nodeSel {
@@ -354,17 +356,42 @@ span.cursor-pointer:hover {
     flex-shrink: 0;
     vertical-align: middle;
   }
-  /* dTree: 다크모드 시에도 링크 스타일 유지 */
+  /* dTree: 고정 배경 이미지를 사용하므로 다크모드 시에도 링크 스타일 유지 */
   .dark .dtree a {
-    color: #333;
+    color: #000;
   }
   .dark .dtree a:hover {
-    color: #333;
+    color: #000;
+    text-decoration: underline;
   }
   .dark .dtree a.nodeSel {
     background-color: #c0d2ec;
-    color: #333;
+    color: #000;
   }
+}
+
+/* Left menu uses a fixed background image, so keep its palette independent from dark mode. */
+.dtree,
+.dtree .dtree-text,
+.dtree a,
+.dtree a.node,
+.dtree a.nodeSel,
+.dark .dtree,
+.dark .dtree .dtree-text,
+.dark .dtree a,
+.dark .dtree a.node,
+.dark .dtree a.nodeSel {
+    color: #000 !important;
+}
+
+.dtree a:hover,
+.dtree a.node:hover,
+.dtree a.nodeSel:hover,
+.dark .dtree a:hover,
+.dark .dtree a.node:hover,
+.dark .dtree a.nodeSel:hover {
+    color: #000 !important;
+    text-decoration: underline !important;
 }
 
 @media (min-width: 768px) {

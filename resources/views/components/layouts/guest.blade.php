@@ -16,10 +16,23 @@
 
     <script>
         (function() {
-            const theme = localStorage.getItem('theme');
-            if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-            }
+            const applyTheme = () => {
+                let theme = null;
+
+                try {
+                    theme = window.localStorage?.getItem('theme') || null;
+                } catch (error) {
+                }
+
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const isDark = theme === 'dark' || theme === 'system' && prefersDark || (!theme && prefersDark);
+
+                document.documentElement.classList.toggle('dark', isDark);
+            };
+
+            applyTheme();
+            window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+            document.addEventListener('livewire:navigated', applyTheme);
         })();
     </script>
 

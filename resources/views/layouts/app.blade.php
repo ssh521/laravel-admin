@@ -13,6 +13,28 @@
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
         <link rel="manifest" href="/site.webmanifest">
 
+        <!-- Dark mode FOUC prevention -->
+        <script>
+            (function() {
+                const applyTheme = () => {
+                    let theme = null;
+
+                    try {
+                        theme = window.localStorage?.getItem('theme') || null;
+                    } catch (error) {
+                    }
+
+                    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    const isDark = theme === 'dark' || theme === 'system' && prefersDark || (!theme && prefersDark);
+
+                    document.documentElement.classList.toggle('dark', isDark);
+                };
+
+                applyTheme();
+                window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+                document.addEventListener('livewire:navigated', applyTheme);
+            })();
+        </script>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

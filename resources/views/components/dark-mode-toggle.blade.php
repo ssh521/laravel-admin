@@ -2,22 +2,43 @@
 <div {{ $attributes->merge(['class' => '-mr-3']) }}>
   <button x-data="{
               dark: false,
+              getStoredTheme() {
+                  try {
+                      return window.localStorage?.getItem('theme') || null;
+                  } catch (error) {
+                      return null;
+                  }
+              },
+              setStoredTheme(theme) {
+                  try {
+                      window.localStorage?.setItem('theme', theme);
+                  } catch (error) {
+                  }
+              },
               updateDarkState() {
-                  const theme = localStorage.getItem('theme');
-                  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  const theme = this.getStoredTheme();
+                  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
                   const isDark = theme === 'dark' || (theme === 'system' && prefersDark) || (!theme && prefersDark);
                   this.dark = isDark;
+              },
+              toggleDarkState() {
+                  this.dark = !this.dark;
+                  this.setStoredTheme(this.dark ? 'dark' : 'light');
+                  document.documentElement.classList.toggle('dark', this.dark);
+                  window.dispatchEvent(new Event('storage'));
               },
               init() {
                   this.updateDarkState();
                   // localStorage 변경 감지
                   window.addEventListener('storage', () => this.updateDarkState());
                   // 같은 탭에서의 localStorage 변경 감지 (storage 이벤트는 다른 탭에서만 발생)
-                  const originalSetItem = localStorage.setItem;
-                  localStorage.setItem = function(...args) {
-                      originalSetItem.apply(this, args);
-                      window.dispatchEvent(new Event('storage'));
-                  };
+                  if (window.localStorage) {
+                      const originalSetItem = window.localStorage.setItem;
+                      window.localStorage.setItem = function(...args) {
+                          originalSetItem.apply(this, args);
+                          window.dispatchEvent(new Event('storage'));
+                      };
+                  }
                   // DOM 변경 감지 (appearance 페이지에서 직접 클래스를 변경하는 경우)
                   const observer = new MutationObserver(() => this.updateDarkState());
                   observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
@@ -25,7 +46,7 @@
                   document.addEventListener('livewire:navigated', () => this.updateDarkState());
               }
           }"
-          @click="dark = !dark; localStorage.setItem('theme', dark ? 'dark' : 'light'); document.documentElement.classList.toggle('dark', dark); window.dispatchEvent(new Event('storage'));"
+          @click="toggleDarkState()"
           class="w-10 h-10 p-0 flex items-center justify-center rounded-full transition-colors bg-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200">
       <!-- 태양 아이콘 (라이트 모드로 전환 액션 표시) -->
       <svg x-show="!dark" x-cloak class="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
