@@ -17,7 +17,7 @@ class AdminLoginController extends Controller
             return redirect()->intended($this->redirectPath());
         }
 
-        return view('auth.login', [
+        return view('admin.auth.login', [
             'loginRoute' => $this->routeName('login'),
             'showRegisterLink' => false,
             'showPasswordResetLink' => false,
