@@ -23,6 +23,7 @@ use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserRoleForm;
 use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserSearchModal;
 use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserTable;
 use Ssh521\LaravelAdmin\Livewire\DynamicModalManager;
+use Ssh521\LaravelAdmin\Livewire\Menus\ChangeCategoryModal;
 use Ssh521\LaravelAdmin\Models\AdminUser;
 use Ssh521\LaravelAdmin\Models\Menu;
 use Ssh521\LaravelAdmin\Models\MenuCategory;
@@ -98,6 +99,7 @@ class LaravelAdminServiceProvider extends ServiceProvider
         Livewire::component('admin.left-menu-mobile', LeftMenuMobile::class);
         Livewire::component('admin.menu-categories.menu-category-list', MenuCategoryList::class);
         Livewire::component('admin.menus.menu-order-modal', MenuOrderModal::class);
+        Livewire::component('menus.change-category-modal', ChangeCategoryModal::class);
         Livewire::component('admin.roles.role-detail-modal', RoleDetailModal::class);
         Livewire::component('admin.roles.role-form', RoleForm::class);
         Livewire::component('admin.users.user-detail-modal', UserDetailModal::class);
