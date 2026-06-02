@@ -152,16 +152,16 @@ class LaravelAdminServiceProvider extends ServiceProvider
             __DIR__.'/../config/laravel-admin.php' => config_path('laravel-admin.php'),
         ], 'laravel-admin-config');
 
-        $this->publishesMigrations([
-            __DIR__.'/../database/migrations' => database_path('migrations'),
-        ]);
-
         $this->publishes([
-            __DIR__.'/../database/migrations' => database_path('migrations'),
+            __DIR__.'/../database/migrations/2025_07_22_231822_create_permission_tables.php' => $this->migrationPath('2025_07_22_231822_create_permission_tables.php'),
+            __DIR__.'/../database/migrations/2025_07_25_000001_create_menu_system_tables.php' => $this->migrationPath('2025_07_25_000001_create_menu_system_tables.php'),
+            __DIR__.'/../database/migrations/2025_09_14_093413_add_sort_order_to_permissions_table.php' => $this->migrationPath('2025_09_14_093413_add_sort_order_to_permissions_table.php'),
+            __DIR__.'/../database/migrations/2025_09_14_094345_add_description_to_permissions_table.php' => $this->migrationPath('2025_09_14_094345_add_description_to_permissions_table.php'),
+            __DIR__.'/../database/migrations/2026_06_01_000001_create_admin_users_table.php' => $this->migrationPath('2026_06_01_000001_create_admin_users_table.php'),
         ], 'laravel-admin-migrations');
 
         $this->publishes([
-            __DIR__.'/../database/migrations/2026_06_01_000001_create_admin_users_table.php' => database_path('migrations/2026_06_01_000001_create_admin_users_table.php'),
+            __DIR__.'/../database/migrations/2026_06_01_000001_create_admin_users_table.php' => $this->migrationPath('2026_06_01_000001_create_admin_users_table.php'),
         ], 'laravel-admin-admin-users-migration');
 
         $this->publishes([
@@ -181,5 +181,15 @@ class LaravelAdminServiceProvider extends ServiceProvider
             __DIR__.'/../resources/js' => resource_path('vendor/laravel-admin'),
             __DIR__.'/../public/images/dtree' => public_path('images/dtree'),
         ], 'laravel-admin-assets');
+    }
+
+    private function migrationPath(string $migrationFile): string
+    {
+        $migrationName = preg_replace('/^\d{4}_\d{2}_\d{2}_\d{6}_/', '', $migrationFile);
+        $existingMigrations = glob(database_path('migrations/*_'.$migrationName)) ?: [];
+
+        sort($existingMigrations);
+
+        return $existingMigrations[0] ?? database_path('migrations/'.$migrationFile);
     }
 }
