@@ -88,7 +88,7 @@ class RolePermissionSeeder extends Seeder
             'guard_name' => $guardName,
         ]);
 
-        // Admin 역할에 모든 권한 부여
+        // Super Admin 역할에 모든 권한 부여
         $superAdminRole->syncPermissions($permissions);
 
         // 관리자 역할

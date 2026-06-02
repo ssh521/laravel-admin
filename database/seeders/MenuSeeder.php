@@ -32,38 +32,43 @@ class MenuSeeder extends Seeder
 
         // 메뉴 카테고리 생성
         $categories = [
-            [
+            'general' => [
                 'name' => '일반',
                 'sort_order' => 1,
                 'is_active' => true,
             ],
-            [
+            'member' => [
                 'name' => '회원 관리',
                 'sort_order' => 2,
                 'is_active' => true,
             ],
-            [
+            'menu' => [
                 'name' => '메뉴 관리',
                 'sort_order' => 3,
+                'is_active' => true,
+            ],
+            'admin_only' => [
+                'name' => '관리자 전용',
+                'sort_order' => 4,
                 'is_active' => true,
             ],
         ];
 
         $categoryMap = [];
-        foreach ($categories as $index => $categoryData) {
+        foreach ($categories as $key => $categoryData) {
             $category = MenuCategory::create($categoryData);
-            $categoryMap[$index + 1] = $category->id;
+            $categoryMap[$key] = $category->id;
         }
 
         // 메뉴 생성
         $menus = [
-            // 일반 카테고리 (category_id: 1)
+            // 일반 카테고리
             [
                 'name' => '홈',
                 'route_name' => 'home',
                 'url' => '/',
                 'target' => '_self',
-                'category_id' => $categoryMap[1],
+                'category_id' => $categoryMap['general'],
                 'parent_id' => null,
                 'sort_order' => 0,
                 'is_active' => true,
@@ -75,7 +80,7 @@ class MenuSeeder extends Seeder
                 'route_name' => 'admin.index',
                 'url' => '/admin',
                 'target' => '_self',
-                'category_id' => $categoryMap[1],
+                'category_id' => $categoryMap['general'],
                 'parent_id' => null,
                 'sort_order' => 1,
                 'is_active' => true,
@@ -87,7 +92,7 @@ class MenuSeeder extends Seeder
                 'route_name' => 'dashboard',
                 'url' => '/dashboard',
                 'target' => '_self',
-                'category_id' => $categoryMap[1],
+                'category_id' => $categoryMap['general'],
                 'parent_id' => null,
                 'sort_order' => 2,
                 'is_active' => true,
@@ -95,25 +100,27 @@ class MenuSeeder extends Seeder
                 'description' => '사용자 대시보드',
             ],
 
-            // 회원 관리 카테고리 (category_id: 2)
+            // 관리자 전용 카테고리
             [
                 'name' => '관리자 계정',
                 'route_name' => 'admin.admin-users.index',
                 'url' => '/admin/admin-users',
                 'target' => '_self',
-                'category_id' => $categoryMap[2],
+                'category_id' => $categoryMap['admin_only'],
                 'parent_id' => null,
                 'sort_order' => 0,
                 'is_active' => true,
                 'icon' => 'fas fa-user-shield',
                 'description' => '관리자 계정 관리',
             ],
+
+            // 회원 관리 카테고리
             [
                 'name' => '회원',
                 'route_name' => 'admin.users.index',
                 'url' => '/admin/users',
                 'target' => '_self',
-                'category_id' => $categoryMap[2],
+                'category_id' => $categoryMap['member'],
                 'parent_id' => null,
                 'sort_order' => 1,
                 'is_active' => true,
@@ -125,7 +132,7 @@ class MenuSeeder extends Seeder
                 'route_name' => 'admin.roles.index',
                 'url' => '/admin/roles',
                 'target' => '_self',
-                'category_id' => $categoryMap[2],
+                'category_id' => $categoryMap['member'],
                 'parent_id' => null,
                 'sort_order' => 2,
                 'is_active' => true,
@@ -137,7 +144,7 @@ class MenuSeeder extends Seeder
                 'route_name' => 'admin.permissions.index',
                 'url' => '/admin/permissions',
                 'target' => '_self',
-                'category_id' => $categoryMap[2],
+                'category_id' => $categoryMap['member'],
                 'parent_id' => null,
                 'sort_order' => 3,
                 'is_active' => true,
@@ -145,13 +152,13 @@ class MenuSeeder extends Seeder
                 'description' => '시스템 권한 관리',
             ],
 
-            // 메뉴 관리 카테고리 (category_id: 3)
+            // 메뉴 관리 카테고리
             [
                 'name' => '메뉴 리스트',
                 'route_name' => 'admin.menus.index',
                 'url' => '/admin/menus',
                 'target' => '_self',
-                'category_id' => $categoryMap[3],
+                'category_id' => $categoryMap['menu'],
                 'parent_id' => null,
                 'sort_order' => 0,
                 'is_active' => true,
@@ -163,7 +170,7 @@ class MenuSeeder extends Seeder
                 'route_name' => 'admin.menu-categories.index',
                 'url' => '/admin/menu-categories',
                 'target' => '_self',
-                'category_id' => $categoryMap[3],
+                'category_id' => $categoryMap['menu'],
                 'parent_id' => null,
                 'sort_order' => 1,
                 'is_active' => true,
@@ -189,11 +196,16 @@ class MenuSeeder extends Seeder
     }
 
     /**
-     * @param  array<int, int>  $categoryMap
+     * @param  array<string, int>  $categoryMap
      */
     private function seedMenuCategoryRoles(array $categoryMap): void
     {
         $guardName = config('laravel-admin.auth.guard', 'laravel_admin');
+
+        $superAdminRole = Role::query()
+            ->where('name', config('laravel-admin.super_admin_role', 'Super Admin'))
+            ->where('guard_name', $guardName)
+            ->first();
 
         $adminRole = Role::query()
             ->where('name', 'Admin')
@@ -205,18 +217,27 @@ class MenuSeeder extends Seeder
             ->where('guard_name', $guardName)
             ->first();
 
-        if (! $adminRole && ! $userRole) {
+        if (! $superAdminRole && ! $adminRole && ! $userRole) {
             $this->command?->warn('RolePermissionSeeder를 먼저 실행하면 메뉴 카테고리 역할이 할당됩니다.');
 
             return;
         }
 
-        $generalCategoryId = $categoryMap[1] ?? null;
-        $memberCategoryId = $categoryMap[2] ?? null;
-        $menuCategoryId = $categoryMap[3] ?? null;
+        $generalCategoryId = $categoryMap['general'] ?? null;
+        $memberCategoryId = $categoryMap['member'] ?? null;
+        $adminOnlyCategoryId = $categoryMap['admin_only'] ?? null;
+        $menuCategoryId = $categoryMap['menu'] ?? null;
 
         if ($generalCategoryId && $userRole) {
             MenuCategory::find($generalCategoryId)?->roles()->syncWithoutDetaching([$userRole->id]);
+        }
+
+        if ($superAdminRole) {
+            $superAdminCategoryIds = array_filter([$generalCategoryId, $memberCategoryId, $adminOnlyCategoryId, $menuCategoryId]);
+
+            foreach ($superAdminCategoryIds as $categoryId) {
+                MenuCategory::find($categoryId)?->roles()->syncWithoutDetaching([$superAdminRole->id]);
+            }
         }
 
         if ($adminRole) {
