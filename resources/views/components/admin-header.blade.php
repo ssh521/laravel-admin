@@ -5,7 +5,7 @@
         </h2>
     </div>
     <div class="flex items-center justify-center">
-        <a href="{{ route('home') }}"><x-laravel-admin::site-logo class="w-[28px] h-[28px] dark:text-purple-200" /></a>
+        <a href="{{ route('home') }}"><x-laravel-admin::site-logo size="w-16 h-16" class="dark:text-purple-200" /></a>
     </div>
     <div class="flex items-end justify-end">
         <h2 class="text-sm leading-tight">
