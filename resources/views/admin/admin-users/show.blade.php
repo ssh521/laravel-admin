@@ -12,63 +12,68 @@
         </x-laravel-admin::admin-header>
     </x-slot>
 
-    <div class="w-full md:max-w-5xl mx-auto">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl p-6">
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h3 class="text-lg font-medium">{{ $adminUser->name }}</h3>
-                    <p class="mt-1 text-sm">{{ $adminUser->email }}</p>
-                </div>
-                <a href="{{ route('admin.admin-users.edit', $adminUser->getKey()) }}" class="text-blue-600 hover:text-blue-800">{{ __('Edit') }}</a>
+    <div class="mx-auto w-full max-w-7xl bg-white px-2 py-2 dark:bg-gray-900">
+        <div class="min-h-[720px] bg-white px-8 py-10 sm:px-16 lg:px-24 dark:bg-gray-800">
+            <div class="mb-10">
+                <h1 class="text-[26px] font-bold leading-none text-[#222222] dark:text-gray-100">{{ __('Admin User Information') }}</h1>
             </div>
 
-            <div class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <x-laravel-admin::input-label :value="__('Name')" />
-                        <div class="mt-2 font-bold">{{ $adminUser->name }}</div>
+            <div class="border border-dashed border-[#bdbdbd] bg-[#f7f7f7] px-8 py-10 text-[15px] font-bold text-[#222222] sm:px-16 lg:px-24 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
+                <div class="mx-auto max-w-[980px]">
+                    <div class="space-y-4">
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('이름') }} :</div>
+                            <div>{{ $adminUser->name }}</div>
+                        </div>
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('E-mail') }} :</div>
+                            <div>{{ $adminUser->email }}</div>
+                        </div>
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('인증상태') }} :</div>
+                            <div>
+                                @if ($adminUser->email_verified_at)
+                                    {{ __('Verified') }} : {{ $adminUser->email_verified_at->format('Y-m-d H:i:s') }}
+                                @else
+                                    {{ __('Not Verified') }}
+                                @endif
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <x-laravel-admin::input-label :value="__('Email')" />
-                        <div class="mt-2 font-bold">{{ $adminUser->email }}</div>
+
+                    <div class="my-8 border-t border-[#8d8d8d]"></div>
+
+                    <div class="space-y-4">
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('역할') }} :</div>
+                            <div>
+                                @forelse ($adminUser->getRoleNames() as $role)
+                                    <span>{{ $role }}</span>@if (! $loop->last)<span>, </span>@endif
+                                @empty
+                                    {{ __('No roles assigned') }}
+                                @endforelse
+                            </div>
+                        </div>
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('등록일') }} :</div>
+                            <div>{{ $adminUser->created_at?->format('Y-m-d H:i:s') }}</div>
+                        </div>
+                        <div class="flex min-h-[28px] flex-col sm:flex-row">
+                            <div class="w-[150px] shrink-0 text-right sm:pr-4">{{ __('수정일') }} :</div>
+                            <div>{{ $adminUser->updated_at?->format('Y-m-d H:i:s') }}</div>
+                        </div>
                     </div>
+
                 </div>
+            </div>
 
-                <x-laravel-admin::section-border />
-
-                <div>
-                    <h4 class="text-md font-medium mb-4">{{ __('Roles') }}</h4>
-                    <div class="flex flex-wrap gap-2">
-                        @forelse ($adminUser->getRoleNames() as $role)
-                            <span class="inline-flex items-center rounded-full bg-gray-100 dark:bg-gray-700 px-3 py-1 text-sm">{{ $role }}</span>
-                        @empty
-                            <span class="text-sm text-gray-500">{{ __('No roles assigned') }}</span>
-                        @endforelse
-                    </div>
-                </div>
-
-                <x-laravel-admin::section-border />
-
-                <div>
-                    <x-laravel-admin::input-label :value="__('Email Verification Status')" />
-                    <div class="mt-2">
-                        @if ($adminUser->email_verified_at)
-                            <span class="text-green-600 dark:text-green-400">{{ __('Verified') }}: {{ $adminUser->email_verified_at->format('Y-m-d H:i:s') }}</span>
-                        @else
-                            <span class="text-red-600 dark:text-red-400">{{ __('Not Verified') }}</span>
-                        @endif
-                    </div>
-                </div>
-
-                <div class="flex justify-end">
-                    <form action="{{ route('admin.admin-users.destroy', $adminUser->getKey()) }}" method="POST" onsubmit="return confirm('{{ __('Are you sure you want to delete this admin user?') }}');">
-                        @csrf
-                        @method('DELETE')
-                        <x-laravel-admin::danger-button type="submit">
-                            {{ __('Delete Admin User') }}
-                        </x-laravel-admin::danger-button>
-                    </form>
-                </div>
+            <div class="mt-8 flex flex-wrap justify-center gap-2">
+                <a href="{{ route('admin.admin-users.index') }}" class="inline-flex h-[34px] min-w-[120px] items-center justify-center border border-[#777777] bg-[#eeeeee] px-6 text-[15px] font-bold text-[#111111] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                    {{ __('목록보기') }}
+                </a>
+                <a href="{{ route('admin.admin-users.edit', $adminUser->getKey()) }}" class="inline-flex h-[34px] min-w-[120px] items-center justify-center border border-[#777777] bg-[#eeeeee] px-6 text-[15px] font-bold text-[#111111] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                    {{ __('수정하기') }}
+                </a>
             </div>
         </div>
     </div>

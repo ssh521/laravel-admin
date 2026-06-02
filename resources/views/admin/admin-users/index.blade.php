@@ -11,81 +11,98 @@
         </x-laravel-admin::admin-header>
     </x-slot>
 
-    <div class="w-full mx-auto">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl p-6">
-            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
-                <div>
-                    <h3 class="text-lg font-medium">{{ __('Admin Users') }}</h3>
-                    <p class="mt-1 text-sm">{{ __('패키지 전용 관리자 계정을 관리합니다.') }}</p>
+    <div class="w-full bg-white border border-[#d8d8d0] px-2 py-2 dark:bg-gray-900 dark:border-gray-700">
+        <div class="min-h-[560px] border border-[#d9d9d9] bg-white px-6 py-7 sm:px-10 sm:py-10 dark:bg-gray-800 dark:border-gray-700">
+            <div class="mb-2">
+                <h1 class="text-[26px] font-bold leading-none text-[#222222] dark:text-gray-100">{{ __('Admin Users') }}</h1>
+
+                <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-[14px] font-semibold">
+                    <a href="{{ route('admin.admin-users.index') }}">{{ __('목록보기') }}</a>
+                    <span class="text-[#222222] dark:text-gray-400">|</span>
+                    <a href="{{ route('admin.admin-users.create') }}">{{ __('등록하기') }}</a>
                 </div>
-                <a href="{{ route('admin.admin-users.create') }}" class="inline-flex items-center justify-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-gray-100">
-                    {{ __('Create Admin User') }}
-                </a>
             </div>
 
             <x-laravel-admin::session-messages />
 
-            <form method="GET" action="{{ route('admin.admin-users.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6">
-                <x-laravel-admin::input name="search" type="text" :value="request('search')" placeholder="Search name or email" class="md:col-span-2" />
-                <select name="role" class="border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 rounded-md shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            <form method="GET" action="{{ route('admin.admin-users.index') }}" class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+                <select name="role" class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-[14px] text-[#111111] outline-none sm:w-[150px] dark:bg-gray-700 dark:border-gray-600 dark:text-white" onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';" onblur="this.style.borderColor='#7d7d7d'; this.style.boxShadow='none';">
                     <option value="">{{ __('All Roles') }}</option>
                     @foreach ($roles as $role)
                         <option value="{{ $role->name }}" @selected(request('role') === $role->name)>{{ $role->name }}</option>
                     @endforeach
                 </select>
-                <x-laravel-admin::primary-button>
-                    {{ __('Search') }}
-                </x-laravel-admin::primary-button>
+                <input
+                    name="search"
+                    type="text"
+                    value="{{ request('search') }}"
+                    placeholder="{{ __('Search name or email') }}"
+                    class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-[14px] text-[#111111] outline-none sm:w-[260px] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';"
+                    onblur="this.style.borderColor='#7d7d7d'; this.style.boxShadow='none';"
+                >
+                <button type="submit" class="h-[28px] cursor-pointer rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-4 text-[14px] font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                    {{ __('검색') }}
+                </button>
             </form>
 
+            <div class="mb-1 flex flex-wrap items-center gap-x-1 text-[12px] font-semibold">
+                <a href="#">{{ __('전체') }}</a>
+                <span class="text-[#222222] dark:text-gray-400">|</span>
+                <a href="#">{{ __('해지') }}</a>
+                <span class="text-[#222222] dark:text-gray-400">|</span>
+                <a href="#">{{ __('반전') }}</a>
+            </div>
+
+
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead class="bg-gray-50 dark:bg-gray-700">
-                        <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">{{ __('Name') }}</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">{{ __('Email') }}</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">{{ __('Roles') }}</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">{{ __('Verified') }}</th>
-                            <th class="px-4 py-3 text-right text-xs font-medium uppercase">{{ __('Actions') }}</th>
+                <table class="min-w-full border-collapse text-[14px] text-[#111111] dark:text-gray-100">
+                    <thead>
+                        <tr class="border-y border-[#cfcfcf] bg-[#dedede] text-[#555555] dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                            <th class="h-12 px-2 text-left font-bold">{{ __('Name') }}</th>
+                            <th class="h-12 px-2 text-left font-bold">{{ __('Email') }}</th>
+                            <th class="h-12 px-2 text-left font-bold">{{ __('Roles') }}</th>
+                            <th class="h-12 px-2 text-left font-bold">{{ __('Verified') }}</th>
+                            <th class="h-12 px-2 text-right font-bold">{{ __('Actions') }}</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody>
                         @forelse ($adminUsers as $adminUser)
-                            <tr>
-                                <td class="px-4 py-3 whitespace-nowrap font-medium">{{ $adminUser->name }}</td>
-                                <td class="px-4 py-3 whitespace-nowrap">{{ $adminUser->email }}</td>
-                                <td class="px-4 py-3">
-                                    <div class="flex flex-wrap gap-1">
+                            <tr class="border-b border-[#e6e6e6] bg-[#fbfbfb] transition-colors hover:bg-white dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+                                <td class="h-12 whitespace-nowrap px-4 font-bold">{{ $adminUser->name }}</td>
+                                <td class="h-12 whitespace-nowrap px-4">{{ $adminUser->email }}</td>
+                                <td class="h-12 px-4">
+                                    <div class="flex flex-wrap gap-x-2 gap-y-1">
                                         @forelse ($adminUser->getRoleNames() as $role)
-                                            <span class="inline-flex items-center rounded-full bg-gray-100 dark:bg-gray-700 px-2 py-1 text-xs">{{ $role }}</span>
+                                            <span>{{ $role }}</span>
                                         @empty
-                                            <span class="text-sm text-gray-500">{{ __('No roles') }}</span>
+                                            <span class="text-gray-500 dark:text-gray-400">{{ __('No roles') }}</span>
                                         @endforelse
                                     </div>
                                 </td>
-                                <td class="px-4 py-3 whitespace-nowrap">
+                                <td class="h-12 whitespace-nowrap px-4">
                                     @if ($adminUser->email_verified_at)
-                                        <span class="text-green-600 dark:text-green-400">{{ __('Verified') }}</span>
+                                        <span>{{ __('Verified') }}</span>
                                     @else
-                                        <span class="text-red-600 dark:text-red-400">{{ __('Not Verified') }}</span>
+                                        <span>{{ __('Not Verified') }}</span>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 whitespace-nowrap text-right">
-                                    <a href="{{ route('admin.admin-users.show', $adminUser->getKey()) }}" class="text-blue-600 hover:text-blue-800">{{ __('View') }}</a>
-                                    <span class="mx-1 text-gray-300">|</span>
-                                    <a href="{{ route('admin.admin-users.edit', $adminUser->getKey()) }}" class="text-blue-600 hover:text-blue-800">{{ __('Edit') }}</a>
+                                <td class="h-12 whitespace-nowrap px-4 text-right">
+                                    <a href="{{ route('admin.admin-users.show', $adminUser->getKey()) }}">{{ __('View') }}</a>
+                                    <span class="mx-1 text-gray-400">|</span>
+                                    <a href="{{ route('admin.admin-users.edit', $adminUser->getKey()) }}">{{ __('Edit') }}</a>
                                 </td>
                             </tr>
                         @empty
-                            <tr>
-                                <td colspan="5" class="px-4 py-8 text-center text-gray-500">{{ __('No admin users found.') }}</td>
+                            <tr class="border-b border-[#e6e6e6] bg-[#fbfbfb] dark:border-gray-700 dark:bg-gray-800">
+                                <td colspan="5" class="h-12 px-4 text-center text-gray-500 dark:text-gray-400">{{ __('No admin users found.') }}</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
 
-            <div class="mt-6">
+            <div class="mt-6 text-[14px]">
                 {{ $adminUsers->withQueryString()->links() }}
             </div>
         </div>

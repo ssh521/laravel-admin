@@ -12,23 +12,19 @@
         </x-laravel-admin::admin-header>
     </x-slot>
 
-    <div class="w-full md:max-w-5xl mx-auto">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl p-6">
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h3 class="text-lg font-medium">{{ __('Admin User Information') }}</h3>
-                    <p class="mt-1 text-sm">{{ __('새로운 관리자 계정을 등록합니다.') }}</p>
-                </div>
-                <a href="{{ route('admin.admin-users.index') }}" class="text-blue-600 hover:text-blue-800">← {{ __('Back') }}</a>
+    <div class="mx-auto w-full max-w-7xl bg-white px-2 py-2 dark:bg-gray-900 dark:border-gray-700">
+        <div class="min-h-[720px] bg-white px-8 py-10 sm:px-16 lg:px-24 dark:bg-gray-800 dark:border-gray-700">
+            <div class="mb-10">
+                <h1 class="text-[26px] font-bold leading-none text-[#222222] dark:text-gray-100">{{ __('Admin User Information') }}</h1>
             </div>
 
-            <form action="{{ route('admin.admin-users.store') }}" method="POST" class="space-y-6">
+            <form action="{{ route('admin.admin-users.store') }}" method="POST">
                 @csrf
 
                 @include('admin.admin-users.partials.form', [
                     'adminUser' => null,
                     'roles' => $roles,
-                    'submitLabel' => __('Create Admin User'),
+                    'submitLabel' => __('등록하기'),
                 ])
             </form>
         </div>

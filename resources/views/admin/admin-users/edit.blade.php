@@ -12,26 +12,31 @@
         </x-laravel-admin::admin-header>
     </x-slot>
 
-    <div class="w-full md:max-w-5xl mx-auto">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl p-6">
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h3 class="text-lg font-medium">{{ __('Admin User Information') }}</h3>
-                    <p class="mt-1 text-sm">{{ __('관리자 계정 정보를 수정합니다.') }}</p>
-                </div>
-                <a href="{{ route('admin.admin-users.index') }}" class="text-blue-600 hover:text-blue-800">← {{ __('Back') }}</a>
+    <div class="mx-auto w-full max-w-7xl bg-white px-2 py-2 dark:bg-gray-900 dark:border-gray-700">
+        <div class="min-h-[720px] bg-white px-8 py-10 sm:px-16 lg:px-24 dark:bg-gray-800 dark:border-gray-700">
+            <div class="mb-10">
+                <h1 class="text-[26px] font-bold leading-none text-[#222222] dark:text-gray-100">{{ __('Admin User Information') }}</h1>
             </div>
 
-            <form action="{{ route('admin.admin-users.update', $adminUser->getKey()) }}" method="POST" class="space-y-6">
+            <form action="{{ route('admin.admin-users.update', $adminUser->getKey()) }}" method="POST">
                 @csrf
                 @method('PUT')
 
                 @include('admin.admin-users.partials.form', [
                     'adminUser' => $adminUser,
                     'roles' => $roles,
-                    'submitLabel' => __('Update Admin User'),
+                    'submitLabel' => __('수정하기'),
                 ])
             </form>
+
         </div>
     </div>
+
+    <form action="{{ route('admin.admin-users.destroy', $adminUser->getKey()) }}" method="POST" onsubmit="return confirm('{{ __('Are you sure you want to delete this admin user?') }}');" class="mx-auto mt-3 flex w-full max-w-7xl justify-start px-2">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="cursor-pointer text-[13px] font-semibold text-[#003399] hover:underline dark:text-[#e7e7d6]">
+            {{ __('삭제하기') }}
+        </button>
+    </form>
 </x-laravel-admin::layouts.admin>

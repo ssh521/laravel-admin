@@ -406,3 +406,16 @@ span.cursor-pointer:hover {
         transform: translateY(0);
     }
 }
+
+.admin-focus-border:focus,
+.admin-focus-border:focus-visible {
+    border-color: #005fcc !important;
+    box-shadow: 0 0 0 1px #005fcc !important;
+    outline: none !important;
+}
+
+.dark .admin-focus-border:focus,
+.dark .admin-focus-border:focus-visible {
+    border-color: #60a5fa !important;
+    box-shadow: 0 0 0 1px #60a5fa !important;
+}
