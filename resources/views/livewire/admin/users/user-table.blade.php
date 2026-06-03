@@ -52,7 +52,7 @@
                 wire:model.live.debounce.300ms="search"
                 x-ref="searchInput"
                 class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-[14px] text-[#111111] outline-none sm:w-[260px] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                placeholder="사용자 검색"
+                placeholder="{{ __('사용자 검색') }}"
                 onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';"
                 onblur="this.style.borderColor='#7d7d7d'; this.style.boxShadow='none';"
             >
@@ -144,13 +144,13 @@
                         <tr class="border-b border-[#e6e6e6] bg-[#fbfbfb] dark:border-gray-700 dark:bg-gray-800">
                             <td colspan="7" class="h-12 px-4 text-center text-gray-500 dark:text-gray-400">
                                 @if($search && $role)
-                                    "{{ $search }}" 검색 결과 중 {{ $role }} Role 사용자가 없습니다.
+                                    {{ __('":keyword" 검색 결과 중 :role Role 사용자가 없습니다.', ['keyword' => $search, 'role' => $role]) }}
                                 @elseif($search)
-                                    "{{ $search }}"에 대한 검색 결과가 없습니다.
+                                    {{ __('":keyword"에 대한 검색 결과가 없습니다.', ['keyword' => $search]) }}
                                 @elseif($role)
-                                    {{ $role }} Role 사용자가 없습니다.
+                                    {{ __(':role Role 사용자가 없습니다.', ['role' => $role]) }}
                                 @else
-                                    등록된 사용자가 없습니다.
+                                    {{ __('등록된 사용자가 없습니다.') }}
                                 @endif
                             </td>
                         </tr>

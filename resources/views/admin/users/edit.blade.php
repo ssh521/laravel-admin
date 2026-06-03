@@ -165,7 +165,7 @@
 
     @if($user->id != auth()->user()->id)
         @can('delete', $user)
-            <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('정말 삭제하시겠습니까?')" class="mx-auto mt-3 flex w-full max-w-7xl justify-start px-2">
+            <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('{{ __('정말 삭제하시겠습니까?') }}')" class="mx-auto mt-3 flex w-full max-w-7xl justify-start px-2">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="cursor-pointer text-[13px] font-semibold text-[#003399] hover:underline dark:text-[#e7e7d6]">
