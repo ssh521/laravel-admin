@@ -48,7 +48,7 @@
                     name="search"
                     value="{{ request('search') }}"
                     class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-[14px] text-[#111111] outline-none sm:w-[260px] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                    placeholder="메뉴 검색"
+                    placeholder="{{ __('메뉴 검색') }}"
                     onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';"
                     onblur="this.style.borderColor='#7d7d7d'; this.style.boxShadow='none';"
                 >
@@ -74,29 +74,16 @@
             {{-- 메뉴 목록 테이블 --}}
             <div class="overflow-x-auto">
                         @php
-                            // 정렬 관련 변수들을 한 번에 정의
-                            $currentSort = request('sort', 'id');
-                            $currentDirection = request('direction', 'desc');
+                            $currentSort = $sort;
+                            $currentDirection = $direction;
 
-                            // 정렬 방향 결정 함수
-                            $getNextDirection = function($sortField) use ($currentSort, $currentDirection) {
-                                return ($currentSort === $sortField && $currentDirection === 'asc') ? 'desc' : 'asc';
-                            };
+                            $getNextDirection = fn($f) => ($currentSort === $f && $currentDirection === 'asc') ? 'desc' : 'asc';
 
-                            // 정렬 아이콘 렌더링 함수
-                            $renderSortIcon = function($sortField) use ($currentSort, $currentDirection) {
-                                if ($currentSort === $sortField) {
-                                    if ($currentDirection === 'asc') {
-                                        return '<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M3.293 12.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L10 7.414l-5.293 5.293a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                                                </svg>';
-                                    } else {
-                                        return '<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M16.707 7.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6A1 1 0 014.707 7.293L10 12.586l5.293-5.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                                </svg>';
-                                    }
-                                }
-                                return '';
+                            $renderSortIcon = function($f) use ($currentSort, $currentDirection) {
+                                if ($currentSort !== $f) return '';
+                                return $currentDirection === 'asc'
+                                    ? '<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 20 20" fill="currentColor" aria-label="오름차순"><path fill-rule="evenodd" d="M3.293 12.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L10 7.414l-5.293 5.293a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>'
+                                    : '<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 20 20" fill="currentColor" aria-label="내림차순"><path fill-rule="evenodd" d="M16.707 7.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6A1 1 0 014.707 7.293L10 12.586l5.293-5.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>';
                             };
                         @endphp
 
@@ -217,14 +204,14 @@
                     {{-- 활성/비활성 상태 --}}
                     <td class="h-12 whitespace-nowrap px-4">
                         <span class="{{ $menu->is_active ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300' }}">
-                            {{ $menu->is_active ? '활성' : '비활성' }}
+                            {{ $menu->is_active ? __('활성') : __('비활성') }}
                         </span>
                     </td>
 
                     {{-- 액션 버튼 --}}
                     <td class="h-12 whitespace-nowrap px-4 text-right">
                         @can('update', $menu)
-                        <a href="{{ route('admin.menus.edit', $menu) }}">수정</a>
+                        <a href="{{ route('admin.menus.edit', $menu) }}">{{ __('수정') }}</a>
                         @endcan
                     </td>
                 </tr>
@@ -233,9 +220,9 @@
                     <tr class="border-b border-[#e6e6e6] bg-[#fbfbfb] dark:border-gray-700 dark:bg-gray-800">
                         <td colspan="6" class="h-12 px-4 text-center text-gray-500 dark:text-gray-400">
                             @if(request('search'))
-                                "{{ request('search') }}"에 대한 검색 결과가 없습니다.
+                                {{ __('":keyword"에 대한 검색 결과가 없습니다.', ['keyword' => request('search')]) }}
                             @else
-                                등록된 메뉴가 없습니다.
+                                {{ __('등록된 메뉴가 없습니다.') }}
                             @endif
                         </td>
                     </tr>
@@ -284,7 +271,7 @@
         function openCategorySelectionModal() {
             const selectedIds = getSelectedCheckboxValues();
             if (selectedIds.length === 0) {
-                alert('카테고리를 변경할 메뉴를 먼저 선택해주세요.');
+                alert('{{ __('카테고리를 변경할 메뉴를 먼저 선택해주세요.') }}');
                 return;
             }
             // Livewire로 선택 목록 전달 (객체로 래핑)

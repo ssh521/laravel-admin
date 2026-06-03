@@ -48,7 +48,7 @@ class MenuController extends Controller
         // 카테고리 목록도 함께 전달
         $categories = MenuCategory::active()->ordered()->get();
 
-        return view('admin.menus.index', compact('menus', 'categories'));
+        return view('admin.menus.index', compact('menus', 'categories', 'sort', 'direction'));
     }
 
     /**

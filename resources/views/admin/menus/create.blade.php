@@ -25,6 +25,8 @@
                 <h1 class="text-[26px] font-bold leading-none text-[#222222] dark:text-gray-100">{{ __('Menu Information') }}</h1>
             </div>
 
+            <x-laravel-admin::session-messages />
+
             <form action="{{ route('admin.menus.store') }}" method="POST">
                 @csrf
 

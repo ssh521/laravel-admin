@@ -213,7 +213,7 @@
                             name="search"
                             value="{{ request('search') }}"
                             class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-[14px] text-[#111111] outline-none sm:w-[260px] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            placeholder="카테고리 검색"
+                            placeholder="{{ __('카테고리 검색') }}"
                             onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';"
                             onblur="this.style.borderColor='#7d7d7d'; this.style.boxShadow='none';"
                         >
@@ -298,10 +298,10 @@
                                     </td>
                                     <td class="h-12 whitespace-nowrap px-4">
                                         <span class="{{ $category->is_active ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300' }}">
-                                            {{ $category->is_active ? '활성' : '비활성' }}
+                                            {{ $category->is_active ? __('활성') : __('비활성') }}
                                         </span>
                                     </td>
-                                    <td class="h-12 px-4">
+                                    <td class="h-12 px-4" data-roles-cell="{{ $category->id }}">
                                         @if($category->roles->count() > 0)
                                         <div class="flex flex-wrap gap-x-2 gap-y-1">
                                             @foreach($category->roles as $role)
@@ -309,7 +309,7 @@
                                             @endforeach
                                         </div>
                                         @else
-                                        <span class="text-gray-500 dark:text-gray-400">없음</span>
+                                        <span class="text-gray-500 dark:text-gray-400">{{ __('없음') }}</span>
                                         @endif
                                     </td>
                                     <td class="h-12 whitespace-nowrap px-4">
@@ -334,9 +334,9 @@
                                 <tr class="border-b border-[#e6e6e6] bg-[#fbfbfb] dark:border-gray-700 dark:bg-gray-800">
                                     <td colspan="9" class="h-12 px-4 text-center text-gray-500 dark:text-gray-400">
                                         @if(request('search'))
-                                        "{{ request('search') }}"에 대한 검색 결과가 없습니다.
+                                        {{ __('":keyword"에 대한 검색 결과가 없습니다.', ['keyword' => request('search')]) }}
                                         @else
-                                        등록된 카테고리가 없습니다.
+                                        {{ __('등록된 카테고리가 없습니다.') }}
                                         @endif
                                     </td>
                                 </tr>
@@ -373,11 +373,11 @@
                     <button type="button"
                         @click="$dispatch('close-modal', { modalId: 'roles-modal', action: 'close' })"
                         class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">
-                        취소
+                        {{ __('취소') }}
                     </button>
-                    <button type="submit"
-                        class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        저장
+                    <button id="roles-submit-btn" type="submit"
+                        class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                        {{ __('저장') }}
                     </button>
                 </div>
             </form>
@@ -405,15 +405,22 @@
             }
         });
 
+        const getRolesModalUrlBase = '{{ route('admin.menu-categories.get-roles-modal', ['menuCategory' => '__ID__']) }}';
+
         function loadCategoryRoles(categoryId) {
-            fetch(`/admin/menu-categories/${categoryId}/roles/modal`, {
+            fetch(getRolesModalUrlBase.replace('__ID__', categoryId), {
                 method: 'GET',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error(response.status);
+                const ct = response.headers.get('content-type');
+                if (!ct || !ct.includes('application/json')) throw new Error('Unexpected response type');
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     renderRoles(data.availableRoles, data.selectedRoles);
@@ -429,12 +436,15 @@
 
         function renderRoles(availableRoles, selectedRoles) {
             const container = document.getElementById('roles-container');
+            const submitBtn = document.getElementById('roles-submit-btn');
             container.innerHTML = '';
 
             if (availableRoles.length === 0) {
-                container.innerHTML = '<p class="text-gray-500 dark:text-gray-400">사용 가능한 역할이 없습니다.</p>';
+                container.innerHTML = '<p class="text-gray-500 dark:text-gray-400">{{ __('사용 가능한 역할이 없습니다.') }}</p>';
+                submitBtn.disabled = true;
                 return;
             }
+            submitBtn.disabled = false;
 
             availableRoles.forEach(role => {
                 const isSelected = selectedRoles.includes(role.id);
@@ -468,8 +478,10 @@
             const selectedRoles = Array.from(this.querySelectorAll('input[name="roles[]"]:checked'))
                 .map(input => input.value);
 
+        const updateRolesUrlBase = '{{ route('admin.menu-categories.update-roles-api', ['menuCategory' => '__ID__']) }}';
+
             // API로 권한 저장
-            fetch(`/admin/menu-categories/${currentCategoryId}/roles`, {
+            fetch(updateRolesUrlBase.replace('__ID__', currentCategoryId), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -478,18 +490,28 @@
                 },
                 body: JSON.stringify({ roles: selectedRoles })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error(response.status);
+                const ct = response.headers.get('content-type');
+                if (!ct || !ct.includes('application/json')) throw new Error('Unexpected response type');
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     showNotification(data.message || '권한이 성공적으로 저장되었습니다.', 'success');
+                    // 테이블 역할 셀 동적 업데이트
+                    const rolesCell = document.querySelector(`[data-roles-cell="${currentCategoryId}"]`);
+                    if (rolesCell && data.roles !== undefined) {
+                        if (data.roles.length > 0) {
+                            rolesCell.innerHTML = `<div class="flex flex-wrap gap-x-2 gap-y-1">${data.roles.map(r => `<span>${r.name}</span>`).join('')}</div>`;
+                        } else {
+                            rolesCell.innerHTML = '<span class="text-gray-500 dark:text-gray-400">없음</span>';
+                        }
+                    }
                     // 모달 닫기
                     window.dispatchEvent(new CustomEvent('draggable-modal-close', {
                         detail: { modalId: 'roles-modal' }
                     }));
-                    // 페이지 새로고침하여 변경사항 반영
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
                 } else {
                     showNotification(data.message || '권한 저장 중 오류가 발생했습니다.', 'error');
                 }

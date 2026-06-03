@@ -323,6 +323,7 @@ class MenuCategoryController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => '허용 역할이 저장되었습니다.',
+                'roles' => $menuCategory->roles()->select('id', 'name')->get(),
             ]);
         } catch (\Exception $e) {
             Log::error('MenuCategoryController: 역할 저장 중 오류 발생', [
