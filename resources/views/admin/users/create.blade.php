@@ -28,6 +28,8 @@
                 <h1 class="text-[26px] font-bold leading-none text-[#222222] dark:text-gray-100">{{ __('User Information') }}</h1>
             </div>
 
+            <x-laravel-admin::session-messages />
+
             <form action="{{ route('admin.users.store') }}" method="POST">
                 @csrf
 
@@ -37,7 +39,7 @@
                             <div class="{{ $rowClass }}">
                                 <label for="name" class="{{ $labelClass }}">{{ __('이름') }} :</label>
                                 <div class="w-full sm:w-[320px]">
-                                    <input id="name" name="name" type="text" value="{{ old('name') }}" autocomplete="name" placeholder="Enter user name" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
+                                    <input id="name" name="name" type="text" value="{{ old('name') }}" autocomplete="name" placeholder="Enter user name" required class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
                                     <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('name')" />
                                 </div>
                             </div>
@@ -45,7 +47,7 @@
                             <div class="{{ $rowClass }}">
                                 <label for="email" class="{{ $labelClass }}">{{ __('E-mail') }} :</label>
                                 <div class="w-full sm:w-[520px]">
-                                    <input id="email" name="email" type="email" value="{{ old('email') }}" autocomplete="email" placeholder="Enter email address" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
+                                    <input id="email" name="email" type="email" value="{{ old('email') }}" autocomplete="email" placeholder="Enter email address" required class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
                                     <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('email')" />
                                 </div>
                             </div>
@@ -57,7 +59,7 @@
                             <div class="{{ $rowClass }}">
                                 <label for="password" class="{{ $labelClass }}">{{ __('비밀번호') }} :</label>
                                 <div class="w-full sm:w-[320px]">
-                                    <input id="password" name="password" type="password" autocomplete="new-password" placeholder="Enter password" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
+                                    <input id="password" name="password" type="password" autocomplete="new-password" placeholder="Enter password" required class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
                                     <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('password')" />
                                 </div>
                             </div>
@@ -65,7 +67,7 @@
                             <div class="{{ $rowClass }}">
                                 <label for="confirm-password" class="{{ $labelClass }}">{{ __('확인') }} :</label>
                                 <div class="w-full sm:w-[320px]">
-                                    <input id="confirm-password" name="confirm-password" type="password" autocomplete="new-password" placeholder="Confirm password" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
+                                    <input id="confirm-password" name="confirm-password" type="password" autocomplete="new-password" placeholder="Confirm password" required class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
                                     <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('confirm-password')" />
                                 </div>
                             </div>

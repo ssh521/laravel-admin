@@ -83,7 +83,7 @@
                             @foreach($menuCategory->menus as $menu)
                                 <tr class="border-b border-[#e6e6e6] bg-[#fbfbfb] dark:border-gray-700 dark:bg-gray-800">
                                     <td class="h-12 whitespace-nowrap px-4 font-bold">{{ $menu->name }}</td>
-                                    <td class="h-12 whitespace-nowrap px-4">{{ $menu->link_file }}</td>
+                                    <td class="h-12 whitespace-nowrap px-4">{{ $menu->route_name ?: ($menu->url ?: '-') }}</td>
                                     <td class="h-12 whitespace-nowrap px-4">{{ $menu->is_active ? __('활성') : __('비활성') }}</td>
                                     <td class="h-12 whitespace-nowrap px-4 text-right">
                                         <a href="{{ route('admin.menus.show', $menu) }}">{{ __('View') }}</a>
