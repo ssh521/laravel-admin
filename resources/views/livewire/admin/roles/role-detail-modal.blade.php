@@ -12,45 +12,43 @@
 
         <div class="px-2 py-2">
                 @if($role)
-                    <div class="space-y-2">
-                        <!-- 기본 정보 -->
-                        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                            <h3 class="text-md font-medium text-gray-900 dark:text-white mb-3">기본 정보</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">역할 이름</label>
-                                    <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $role->name }}</p>
+                    <div class="text-[#111111] dark:text-gray-100">
+                        <div class="border-t border-[#8d8d8d] pt-5">
+                            <h3 class="text-[20px] font-bold leading-none text-[#222222] dark:text-gray-100">{{ $role->name }}</h3>
+                            <div class="mt-5 space-y-3 text-[14px]">
+                                <div class="flex">
+                                    <span class="w-[116px] shrink-0 pr-4 text-right font-bold">{{ __('생성일') }} :</span>
+                                    <span>{{ $role->created_at->format('Y-m-d H:i:s') }}</span>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">생성일</label>
-                                    <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $role->created_at->format('Y-m-d H:i:s') }}</p>
+                                <div class="flex">
+                                    <span class="w-[116px] shrink-0 pr-4 text-right font-bold">{{ __('수정일') }} :</span>
+                                    <span>{{ $role->updated_at->format('Y-m-d H:i:s') }}</span>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">마지막 업데이트</label>
-                                    <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $role->updated_at->format('Y-m-d H:i:s') }}</p>
+                                <div class="flex">
+                                    <span class="w-[116px] shrink-0 pr-4 text-right font-bold">{{ __('권한 수') }} :</span>
+                                    <span>{{ $role->permissions->count() }}개</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 권한 정보 -->
-                        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                            <h3 class="text-md font-medium text-gray-900 dark:text-white mb-3">할당된 권한</h3>
+                        <div class="mt-6 border-t border-[#8d8d8d] pt-5">
+                            <h3 class="text-[15px] font-bold text-[#111111] dark:text-gray-100">할당된 권한</h3>
                             @if($role->permissions->count() > 0)
-                                <div class="flex flex-wrap gap-2">
+                                <div class="mt-3 max-h-56 overflow-y-auto pr-1">
+                                    <div class="flex flex-wrap gap-x-3 gap-y-2 text-[14px] font-bold">
                                     @foreach($role->permissions as $permission)
-                                        <span class="px-3 py-1 text-sm bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 rounded-full">
-                                            {{ $permission->name }}
-                                        </span>
+                                        <span>{{ $permission->name }}</span>
                                     @endforeach
+                                    </div>
                                 </div>
                             @else
-                                <p class="text-sm text-gray-500 dark:text-gray-400">할당된 권한이 없습니다.</p>
+                                <p class="mt-3 text-[14px] text-gray-500 dark:text-gray-400">할당된 권한이 없습니다.</p>
                             @endif
                         </div>
                     </div>
 
                     <!-- 액션 버튼 -->
-                    <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-600">
+                    <div class="flex flex-wrap justify-end gap-2 mt-6 pt-4 border-t border-gray-200 dark:border-gray-600">
                         @can('update', $role)
                         <x-laravel-admin::danger-button type="button" wire:click="openEditModal">
                             모달창에서 수정하기

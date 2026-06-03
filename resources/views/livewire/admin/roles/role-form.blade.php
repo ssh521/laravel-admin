@@ -2,59 +2,61 @@
     @if($showModal)
         @if($parentModalId)
             {{-- draggable-modal 안에 있을 때는 자체 모달 UI 사용 안 함 --}}
-            <div class="p-6">
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <div class="p-4 text-[#111111] dark:text-gray-100">
+                <h2 class="text-[20px] font-bold text-[#222222] dark:text-gray-100">
                     {{ $mode === 'create' ? '새 역할 추가' : ($mode === 'view' ? '역할 보기' : '역할 편집') }}
                 </h2>
+                <p class="mt-1 mb-4 text-[13px] text-gray-500 dark:text-gray-400">역할 이름과 연결할 권한을 선택합니다.</p>
         @else
             {{-- 독립적으로 사용될 때는 자체 모달 UI 사용 --}}
             <div class="fixed inset-0 z-40 flex items-center justify-center">
                 <div class="absolute inset-0 bg-black/50" wire:click="close"></div>
                 <div class="relative z-50 w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                    <h2 class="text-[20px] font-bold text-[#222222] dark:text-gray-100">
                         {{ $mode === 'create' ? '새 역할 추가' : ($mode === 'view' ? '역할 보기' : '역할 편집') }}
                     </h2>
+                    <p class="mt-1 mb-4 text-[13px] text-gray-500 dark:text-gray-400">역할 이름과 연결할 권한을 선택합니다.</p>
         @endif
 
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">역할 이름</label>
-                        <input type="text" class="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white" wire:model.defer="name" @if($mode==='view') disabled @endif>
+                <div class="space-y-5 border-t border-[#8d8d8d] pt-5">
+                    <div class="flex flex-col gap-1 sm:flex-row sm:items-start">
+                        <label class="w-[96px] shrink-0 pr-4 text-right text-[15px] font-bold leading-[32px] text-[#111111] dark:text-gray-100">역할 이름 :</label>
+                        <div class="w-full">
+                        <input type="text" class="admin-focus-border h-[32px] w-full rounded-sm border border-transparent border-b-[#777777] bg-[#fafafa] px-3 text-[14px] font-bold text-[#111111] outline-none dark:bg-gray-700 dark:text-white dark:border-b-gray-500" wire:model.defer="name" @if($mode==='view') disabled @endif>
                         @error('name')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-[13px] text-red-600">{{ $message }}</p>
                         @enderror
+                        </div>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">권한</label>
-                        <div class="max-h-60 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-gray-50 dark:bg-gray-700">
+                    <div class="flex flex-col gap-1 sm:flex-row sm:items-start">
+                        <span class="w-[96px] shrink-0 pr-4 text-right text-[15px] font-bold leading-[32px] text-[#111111] dark:text-gray-100">권한 :</span>
+                        <div class="grid max-h-60 w-full grid-cols-1 gap-x-6 gap-y-3 overflow-y-auto pt-1 sm:grid-cols-2">
                             @forelse($availablePermissions as $permission)
-                                <div class="flex items-center py-1">
+                                <label for="permission-{{ $permission['id'] }}" class="flex items-center gap-2 text-[14px] font-bold">
                                     <input 
                                         type="checkbox" 
                                         id="permission-{{ $permission['id'] }}" 
                                         wire:model.defer="permissionIds"
                                         value="{{ $permission['id'] }}"
                                         @if($mode==='view') disabled @endif
-                                        class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:bg-gray-600 dark:border-gray-500">
-                                    <label for="permission-{{ $permission['id'] }}" class="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                                        {{ $permission['name'] }}
-                                    </label>
-                                </div>
+                                        class="size-5 border-[#777777] text-[#663601] focus:ring-[#663601]">
+                                    <span>{{ $permission['name'] }}</span>
+                                </label>
                             @empty
-                                <p class="text-sm text-gray-500 dark:text-gray-400">사용 가능한 권한이 없습니다.</p>
+                                <p class="text-[14px] text-gray-500 dark:text-gray-400">사용 가능한 권한이 없습니다.</p>
                             @endforelse
-                        </div>
                         @error('permissionIds')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="col-span-full mt-1 text-[13px] text-red-600">{{ $message }}</p>
                         @enderror
+                        </div>
                     </div>
                 </div>
 
-                <div class="mt-6 flex justify-end gap-2">
-                    <button class="px-4 py-2 rounded border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300" wire:click.stop="close">취소</button>
+                <div class="mt-7 flex justify-center gap-2 border-t border-[#8d8d8d] pt-6">
+                    <button class="h-[34px] min-w-[100px] border border-[#777777] bg-[#eeeeee] px-6 text-[15px] font-bold text-[#111111] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100" wire:click.stop="close">취소</button>
                     @if($mode!=='view')
-                        <button class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700" wire:click.stop="save">저장</button>
+                        <button class="h-[34px] min-w-[100px] border border-[#777777] bg-[#eeeeee] px-6 text-[15px] font-bold text-[#111111] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100" wire:click.stop="save">저장</button>
                     @endif
                 </div>
             @if($parentModalId)

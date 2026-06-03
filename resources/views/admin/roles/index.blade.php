@@ -14,124 +14,110 @@
 
     </x-slot>
 
-    <div class="w-full lg:max-w-7xl mx-auto">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl px-6 py-2">
-            <div class="text-2xl text-left mt-1 font-bold dark:text-white">
-                {{ __('역할 리스트') }}
-                @if(request('search'))
-                    <span class="text-lg font-normal text-gray-600 dark:text-gray-400">
-                        - "{{ request('search') }}" 검색 결과
-                    </span>
-                @endif
-            </div>
+    <div class="w-full bg-white border border-[#d8d8d0] px-2 py-2 dark:bg-gray-900 dark:border-gray-700">
+        <div class="min-h-[560px] border border-[#d9d9d9] bg-white px-6 py-7 sm:px-10 sm:py-10 dark:bg-gray-800 dark:border-gray-700">
+            <div class="mb-2">
+                <h1 class="text-[26px] font-bold leading-none text-[#222222] dark:text-gray-100">{{ __('Roles') }}</h1>
 
-            <div class="flex justify-between items-center pb-4">
-
-                <div>
+                <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-[14px] font-semibold">
                     @can('viewAny', \Spatie\Permission\Models\Role::class)
-                    <a href="{{ route('admin.roles.index') }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">목록보기</a>
-                    <span class="mx-1">|</span>
+                    <a href="{{ route('admin.roles.index') }}">{{ __('목록보기') }}</a>
+                    <span class="text-[#222222] dark:text-gray-400">|</span>
                     @endcan
 
                     @can('create', \Spatie\Permission\Models\Role::class)
-                    <a href="{{ route('admin.roles.create') }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">등록하기</a>
+                    <a href="{{ route('admin.roles.create') }}">{{ __('등록하기') }}</a>
+                    <span class="text-[#222222] dark:text-gray-400">|</span>
                     @endcan
 
-                    <span class="mx-1">|</span>
-
-                    {{-- 메뉴 카테고리 선택 버튼 --}}
                     <button type="button"
                             id="open-menu-category-selector"
-                            class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
-                        메뉴 카테고리 관리
+                            class="cursor-pointer font-semibold text-[#003399] hover:underline dark:text-[#e7e7d6]">
+                        {{ __('메뉴 카테고리 관리') }}
                     </button>
                 </div>
 
-                <div>
-                    <form class="flex items-center ml-1 space-x-2" action="{{ route('admin.roles.index') }}" method="GET">
-                        <label for="simple-search" class="sr-only">Search</label>
-                        <div class="w-full relative">
-                            <input type="text" name="search" value="{{ request('search') }}"
-                                class="bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 dark:focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-500 block w-40 pl-2 pr-8 p-1.5"
-                                placeholder="역할 검색">
-                            @if(request('search'))
-                                <a href="{{ route('admin.roles.index') }}"
-                                   class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                </a>
-                            @endif
-                        </div>
-
-                        <button type="submit"
-                            class="p-1 text-sm font-medium text-white bg-gray-500 rounded-lg border border-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 30 30"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-2-2m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
-                            <span class="sr-only">Search</span>
-                        </button>
-                    </form>
-                </div>
+                @if(request('search'))
+                    <p class="mt-3 text-[13px] font-semibold text-[#555555] dark:text-gray-400">"{{ request('search') }}" 검색 결과</p>
+                @endif
             </div>
 
             <x-laravel-admin::session-messages />
 
+            <form class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end" action="{{ route('admin.roles.index') }}" method="GET">
+                    <label for="role-search" class="sr-only">역할 검색</label>
+                    <div class="relative w-full sm:w-[260px]">
+                        <input id="role-search" type="text" name="search" value="{{ request('search') }}"
+                            class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 pr-8 text-[14px] text-[#111111] outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';"
+                            onblur="this.style.borderColor='#7d7d7d'; this.style.boxShadow='none';"
+                            placeholder="역할 이름 검색">
+                        @if(request('search'))
+                            <a href="{{ route('admin.roles.index') }}"
+                               class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </a>
+                        @endif
+                    </div>
+
+                    <button type="submit"
+                        class="h-[28px] cursor-pointer rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-4 text-[14px] font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                        {{ __('검색') }}
+                    </button>
+                </form>
+
             <div
-                class="relative overflow-x-auto my-2 border-gray-200 dark:border-gray-700 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
-                <table class="w-full min-w-[300px] text-sm text-left rtl:text-right">
+                class="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
+                <table class="min-w-full border-collapse text-[14px] text-[#111111] dark:text-gray-100">
             <thead
-                class="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-200 dark:bg-gray-700 border-b border-t border-gray-300 dark:border-gray-600">
+                class="border-y border-[#cfcfcf] bg-[#dedede] text-[#555555] dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                 <tr>
-                    <th scope="col" class="px-2 py-3 whitespace-nowrap">
+                    <th scope="col" class="h-12 px-2 text-left font-bold whitespace-nowrap">
                         {{ __('Role Name') }}
                     </th>
-                    <th scope="col" class="px-2 py-3 whitespace-nowrap">
+                    <th scope="col" class="h-12 px-2 text-left font-bold whitespace-nowrap">
                         {{ __('Assigned Permissions') }}
                     </th>
-                    <th scope="col" class="px-2 py-3 whitespace-nowrap">
+                    <th scope="col" class="h-12 px-2 text-right font-bold whitespace-nowrap">
                         <span class="sr-only">Edit</span>
                     </th>
                 </tr>
             </thead>
             <tbody>
                 @forelse ($data as $key => $role)
-                <tr
-                    class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <tr
+                    class="border-b border-[#e6e6e6] bg-[#fbfbfb] transition-colors hover:bg-white dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
                                     <th scope="row"
-                                        class="px-2 py-2 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                                        class="h-12 px-4 font-bold whitespace-nowrap">
                                         @can('view', $role)
                                         <button type="button"
                                             onclick="window.dispatchEvent(new CustomEvent('admin-roles:role-detail-modal:show', { detail: {{ $role->id }} }))"
-                                            class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-left">
+                                            class="cursor-pointer font-bold text-[#003399] hover:underline dark:text-[#e7e7d6] text-left">
                                             {{ $role->name }}
                                         </button>
                                         @else
                                         {{ $role->name }}
                                         @endcan
                                     </th>
-                                    <td class="px-2 py-2">
+                                    <td class="h-12 px-4">
                                         @if($role->permissions->count() > 0)
-                                            <div class="flex flex-wrap gap-1">
+                                            <div class="flex max-h-20 flex-wrap gap-x-2 gap-y-1 overflow-y-auto pr-1">
                                                 @foreach($role->permissions as $permission)
-                                                <span
-                                                    class="px-2 py-1 text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 rounded-full">
-                                                    {{ $permission->name }}
-                                                </span>
+                                                <span>{{ $permission->name }}</span>
                                                 @endforeach
                                             </div>
                                         @else
-                                            <span class="text-gray-400 dark:text-gray-500 text-xs">권한 없음</span>
+                                            <span class="text-gray-500 dark:text-gray-400">권한 없음</span>
                                         @endif
                                     </td>
-                                    <td class="px-2 py-2 text-right whitespace-nowrap">
+                                    <td class="h-12 px-4 text-right whitespace-nowrap">
 
                                         @can('update', $role)
                                         <button type="button"
                                             onclick="window.dispatchEvent(new CustomEvent('admin-roles:role-detail-modal:show', { detail: {{ $role->id }} }))"
-                                            class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                                            class="cursor-pointer font-semibold text-[#003399] hover:underline dark:text-[#e7e7d6]">
                                             상세보기
                                         </button>
                                         @endcan
@@ -140,7 +126,7 @@
                                 </tr>
                 @empty
                     <tr>
-                        <td colspan="3" class="px-2 py-4 text-center">
+                        <td colspan="3" class="h-12 px-4 text-center text-gray-500 dark:text-gray-400">
                             @if(request('search'))
                                 "{{ request('search') }}"에 대한 검색 결과가 없습니다.
                             @else
@@ -153,7 +139,7 @@
         </table>
     </div>
 
-    <div class="my-3">
+    <div class="mt-6 text-[14px]">
         {!! $data->appends(request()->query())->links() !!}
     </div>
     </div>

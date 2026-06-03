@@ -11,75 +11,75 @@
         </x-laravel-admin::admin-header>
     </x-slot>
 
-    <div class="w-full lg:max-w-7xl mx-auto">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl px-6 py-2">
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h3 class="text-lg font-medium dark:text-white">
-                        {{ __('Role Information') }}
-                    </h3>
-                    <p class="mt-1 text-sm dark:text-gray-400">
-                        {{ __('Register a new role.') }}
-                    </p>
-                </div>
-                <div>
-                    <a href="{{ route('admin.roles.index') }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
-                        ← {{ __('Back to Roles') }}
-                    </a>
-                </div>
+    @php
+        $inputClass = 'admin-focus-border h-[32px] rounded-sm border border-transparent border-b-[#777777] bg-[#fafafa] px-3 text-[14px] font-bold text-[#111111] outline-none dark:bg-gray-700 dark:text-white dark:border-b-gray-500';
+        $labelClass = 'w-[116px] shrink-0 pr-4 text-right text-[15px] font-bold leading-[32px] text-[#111111] dark:text-gray-100';
+        $rowClass = 'flex flex-col gap-1 sm:flex-row sm:items-start';
+        $focusIn = "this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';";
+        $focusOut = "this.style.borderColor='transparent'; this.style.borderBottomColor='#777777'; this.style.boxShadow='none';";
+    @endphp
+
+    <div class="mx-auto w-full max-w-7xl bg-white px-2 py-2 dark:bg-gray-900 dark:border-gray-700">
+        <div class="min-h-[720px] bg-white px-8 py-10 sm:px-16 lg:px-24 dark:bg-gray-800 dark:border-gray-700">
+            <div class="mb-10">
+                <h1 class="text-[26px] font-bold leading-none text-[#222222] dark:text-gray-100">{{ __('Role Information') }}</h1>
             </div>
 
-            <form action="{{ route('admin.roles.store') }}" method="POST" class="space-y-6">
+            <form action="{{ route('admin.roles.store') }}" method="POST">
                 @csrf
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Role Name Field -->
-                    <div>
-                        <x-laravel-admin::label for="name" :value="__('Role Name')" />
-                        <x-laravel-admin::input id="name" name="name" type="text" class="mt-1 block w-full"
-                                     :value="old('name')" placeholder="{{ __('Enter role name') }}" autocomplete="name" />
-                        @if ($errors->has('name'))
-                            <x-laravel-admin::input-error-message :messages="['Please enter a role name!']" />
-                        @endif
-                    </div>
-
-                    <!-- Role Description Field -->
-                    <div>
-                        <x-laravel-admin::label for="description" :value="__('Description')" />
-                        <x-laravel-admin::input id="description" name="description" type="text" class="mt-1 block w-full"
-                                     :value="old('description')" placeholder="{{ __('Enter role description') }}" />
-                        <x-laravel-admin::input-error-message class="mt-2" :messages="$errors->get('description')" />
-                    </div>
-                </div>
-
-                <x-laravel-admin::section-border />
-
-                <!-- Permissions Section -->
-                <div>
-                    <h4 class="text-md font-medium text-gray-900 dark:text-white mb-4">{{ __('Assign Permissions') }}</h4>
-                    <x-laravel-admin::input-label for="permissions_multiple" :value="__('Select Permissions')" />
-                    <div class="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                        @foreach($permissions as $permission)
-                            <div class="flex items-center">
-                                <input id="permission_{{ $permission->id }}" name="permissions[]" type="checkbox"
-                                       value="{{ $permission->id }}" {{ in_array($permission->id, old('permissions', [])) ? 'checked' : '' }}
-                                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                <label for="permission_{{ $permission->id }}"
-                                       class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                    {{ $permission->name }}
-                                </label>
+                <div class="mx-auto max-w-[1060px] text-[#111111] dark:text-gray-100">
+                    <div class="border-t border-[#8d8d8d] pt-7">
+                        <div class="space-y-4">
+                            <div class="{{ $rowClass }}">
+                                <label for="name" class="{{ $labelClass }}">{{ __('Role Name') }} :</label>
+                                <div class="w-full sm:w-[320px]">
+                                    <input id="name" name="name" type="text" value="{{ old('name') }}" autocomplete="name" placeholder="{{ __('Enter role name') }}" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
+                                    @if ($errors->has('name'))
+                                        <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="['Please enter a role name!']" />
+                                    @endif
+                                </div>
                             </div>
-                        @endforeach
-                    </div>
-                    @if ($errors->has('permissions'))
-                        <x-laravel-admin::input-error-message class="mt-2" :messages="['Please select at least one permission!']" />
-                    @endif
-                </div>
 
-                <div class="flex items-center justify-end mt-6">
-                    <x-laravel-admin::primary-button>
-                        {{ __('Create Role') }}
-                    </x-laravel-admin::primary-button>
+                            <div class="{{ $rowClass }}">
+                                <label for="description" class="{{ $labelClass }}">{{ __('Description') }} :</label>
+                                <div class="w-full sm:w-[520px]">
+                                    <input id="description" name="description" type="text" value="{{ old('description') }}" placeholder="{{ __('Enter role description') }}" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
+                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('description')" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-7 border-t border-[#8d8d8d] pt-7">
+                        <div class="{{ $rowClass }}">
+                            <span class="{{ $labelClass }}">{{ __('권한') }} :</span>
+                            <div class="grid min-h-[32px] w-full max-w-[760px] grid-cols-1 gap-x-6 gap-y-3 pt-1 sm:grid-cols-2 lg:grid-cols-3">
+                                @foreach($permissions as $permission)
+                                    <label for="permission_{{ $permission->id }}" class="flex items-center gap-2 text-[14px] font-bold">
+                                        <input id="permission_{{ $permission->id }}" name="permissions[]" type="checkbox"
+                                               value="{{ $permission->id }}" {{ in_array($permission->id, old('permissions', [])) ? 'checked' : '' }}
+                                               class="size-5 border-[#777777] text-[#663601] focus:ring-[#663601]">
+                                        <span>{{ $permission->name }}</span>
+                                    </label>
+                                @endforeach
+                                @if ($errors->has('permissions'))
+                                    <x-laravel-admin::input-error-message class="col-span-full mt-1 text-[13px]" :messages="['Please select at least one permission!']" />
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-7 border-t border-[#8d8d8d] pt-10">
+                        <div class="flex justify-center gap-2">
+                            <a href="{{ route('admin.roles.index') }}" class="inline-flex h-[34px] min-w-[120px] items-center justify-center border border-[#777777] bg-[#eeeeee] px-6 text-[15px] font-bold text-[#111111] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                                {{ __('목록보기') }}
+                            </a>
+                            <button type="submit" class="h-[34px] min-w-[140px] border border-[#777777] bg-[#eeeeee] px-8 text-[15px] font-bold leading-none text-[#111111] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                                {{ __('등록하기') }}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
