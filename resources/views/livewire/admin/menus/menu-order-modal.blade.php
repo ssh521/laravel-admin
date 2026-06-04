@@ -46,7 +46,7 @@
                     </div>
                 </div>
                 <div class="flex-shrink-0 ml-2">
-                    <button 
+                    <button
                         type="button"
                         @click.stop="
                             $dispatch('close-modal', { modalId: 'menu-order-modal' });
@@ -54,7 +54,7 @@
                                 window.location.href = '{{ route('admin.menus.edit', ['menu' => $menu['id']]) }}';
                             }, 100);
                         "
-                        class="px-3 py-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-md transition-colors"
+                        class="cursor-pointer px-3 py-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-md transition-colors"
                         title="메뉴 수정">
                         수정
                     </button>
@@ -74,12 +74,11 @@
 
     {{-- 모달 푸터 버튼들 --}}
     <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-        <button 
-            type="button" 
-            @click="$dispatch('close-modal', { modalId: 'menu-order-modal' })"
-            class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md">
+        <x-laravel-admin::admin.primary-button
+            type="button"
+            @click="$dispatch('close-modal', { modalId: 'menu-order-modal' })">
             닫기
-        </button>
+        </x-laravel-admin::admin.primary-button>
     </div>
 
     <script>

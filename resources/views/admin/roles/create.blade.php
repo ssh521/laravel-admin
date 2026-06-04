@@ -75,9 +75,9 @@
                             <a href="{{ route('admin.roles.index') }}" class="inline-flex h-[34px] min-w-[120px] items-center justify-center border border-[#777777] bg-[#eeeeee] px-6 text-[15px] font-bold text-[#111111] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
                                 {{ __('목록보기') }}
                             </a>
-                            <button type="submit" class="h-[34px] min-w-[140px] border border-[#777777] bg-[#eeeeee] px-8 text-[15px] font-bold leading-none text-[#111111] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                            <x-laravel-admin::admin.primary-button class="min-w-[140px] justify-center px-8">
                                 {{ __('등록하기') }}
-                            </button>
+                            </x-laravel-admin::admin.primary-button>
                         </div>
                     </div>
                 </div>

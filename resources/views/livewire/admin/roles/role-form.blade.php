@@ -54,9 +54,13 @@
                 </div>
 
                 <div class="mt-7 flex justify-center gap-2 border-t border-[#8d8d8d] pt-6">
-                    <button class="h-[34px] min-w-[100px] border border-[#777777] bg-[#eeeeee] px-6 text-[15px] font-bold text-[#111111] hover:bg-[#e3e3e3] cursor-pointer dark:bg-gray-700 dark:text-gray-100" wire:click.stop="close">취소</button>
+                    <x-laravel-admin::admin.secondary-button type="button" class="min-w-[100px] justify-center" wire:click.stop="close">
+                        취소
+                    </x-laravel-admin::admin.secondary-button>
                     @if($mode!=='view')
-                        <button class="h-[34px] min-w-[100px] border border-[#777777] bg-[#eeeeee] px-6 text-[15px] font-bold text-[#111111] hover:bg-[#e3e3e3] cursor-pointer dark:bg-gray-700 dark:text-gray-100" wire:click.stop="save">저장</button>
+                        <x-laravel-admin::admin.primary-button type="button" class="min-w-[100px] justify-center" wire:click.stop="save">
+                            저장
+                        </x-laravel-admin::admin.primary-button>
                     @endif
                 </div>
             @if($parentModalId)

@@ -93,7 +93,7 @@
                                         class="h-12 px-4 font-bold whitespace-nowrap">
                                         @can('view', $role)
                                         <button type="button"
-                                            onclick="window.dispatchEvent(new CustomEvent('admin-roles:role-detail-modal:show', { detail: {{ $role->id }} }))"
+                                            onclick="Livewire.dispatch('admin-roles:role-detail-modal:show', { roleId: {{ Js::from($role->id) }} })"
                                             class="cursor-pointer font-bold text-[#003399] hover:underline dark:text-[#e7e7d6] text-left">
                                             {{ $role->name }}
                                         </button>
@@ -116,7 +116,7 @@
 
                                         @can('update', $role)
                                         <button type="button"
-                                            onclick="window.dispatchEvent(new CustomEvent('admin-roles:role-detail-modal:show', { detail: {{ $role->id }} }))"
+                                            onclick="Livewire.dispatch('admin-roles:role-detail-modal:show', { roleId: {{ Js::from($role->id) }} })"
                                             class="cursor-pointer font-semibold text-[#003399] hover:underline dark:text-[#e7e7d6]">
                                             상세보기
                                         </button>
@@ -233,11 +233,9 @@
 
             {{-- 모달 푸터 --}}
             <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <button type="button"
-                        id="close-menu-category-selector"
-                        class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors duration-200">
+                <x-laravel-admin::admin.secondary-button type="button" id="close-menu-category-selector">
                     닫기
-                </button>
+                </x-laravel-admin::admin.secondary-button>
             </div>
         </div>
     </x-laravel-admin::admin.draggable-modal>
@@ -274,16 +272,12 @@
             </div>
 
             <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <button type="button"
-                        id="cancel-role-management"
-                        class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors duration-200">
+                <x-laravel-admin::admin.secondary-button type="button" id="cancel-role-management">
                     취소
-                </button>
-                <button type="button"
-                        id="save-role-management"
-                        class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md transition-colors duration-200">
+                </x-laravel-admin::admin.secondary-button>
+                <x-laravel-admin::admin.primary-button type="button" id="save-role-management">
                     저장
-                </button>
+                </x-laravel-admin::admin.primary-button>
             </div>
         </div>
     </x-laravel-admin::admin.draggable-modal>

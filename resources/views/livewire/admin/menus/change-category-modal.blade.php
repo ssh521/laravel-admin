@@ -27,19 +27,19 @@
     </div>
 
     <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-        <button type="button"
-                class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md"
-                wire:click="$dispatch('close-modal', { modalId: 'category-selection-modal' })">
+        <x-laravel-admin::admin.secondary-button
+            type="button"
+            wire:click="$dispatch('close-modal', { modalId: 'category-selection-modal' })">
             취소
-        </button>
-        <button type="button"
-                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-                wire:click="save"
-                @disabled(count($selectedMenuIds) === 0)
-        >
-            변경
-        </button>
+        </x-laravel-admin::admin.secondary-button>
+        @if (count($selectedMenuIds) === 0)
+            <x-laravel-admin::admin.primary-button type="button" wire:click="save" disabled>
+                변경
+            </x-laravel-admin::admin.primary-button>
+        @else
+            <x-laravel-admin::admin.primary-button type="button" wire:click="save">
+                변경
+            </x-laravel-admin::admin.primary-button>
+        @endif
     </div>
 </div>
-
-

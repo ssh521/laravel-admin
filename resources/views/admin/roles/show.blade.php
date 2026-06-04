@@ -99,12 +99,10 @@
                             <form action="{{ route('admin.roles.destroy', $role) }}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit"
-                                        class="inline-flex items-center px-4 py-2 bg-red-600 dark:bg-red-500 border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-red-500 dark:hover:bg-red-400 active:bg-red-700 dark:active:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 transition ease-in-out duration-150"
-                                        style="color: white !important;"
+                                <x-laravel-admin::admin.danger-button type="submit"
                                         onclick="return confirm('{{ __('정말 삭제하시겠습니까?') }}')">
                                     {{ __('Delete Role') }}
-                                </button>
+                                </x-laravel-admin::admin.danger-button>
     </form>
     @endcan
     </div>

@@ -36,18 +36,16 @@
                 </div>
 
                 <div class="flex items-center justify-end space-x-3 pt-4 mt-6 border-t border-gray-200 dark:border-gray-700">
-                    <button 
+                    <x-laravel-admin::admin.secondary-button
                         type="button"
-                        wire:click="close"
-                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">
+                        wire:click="close">
                         취소
-                    </button>
-                    <button 
+                    </x-laravel-admin::admin.secondary-button>
+                    <x-laravel-admin::admin.primary-button
                         type="button"
-                        wire:click="save"
-                        class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer">
+                        wire:click="save">
                         저장
-                    </button>
+                    </x-laravel-admin::admin.primary-button>
                 </div>
             @endif
         </div>
