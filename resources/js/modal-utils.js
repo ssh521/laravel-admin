@@ -63,54 +63,6 @@ export function removeDragResizeListeners(onMove, onEnd) {
 }
 
 /**
- * data-dm-payload 기반 Dynamic Modal 트리거( javascript 모드 ) 초기화
- */
-export function initDynamicModalTriggerJavaScript() {
-    if (window.__dynamicModalTriggerBound) {
-        return;
-    }
-
-    window.__dynamicModalTriggerBound = true;
-
-    document.addEventListener('click', (event) => {
-        const triggerEl = event.target?.closest?.('[data-dm-trigger="dynamic-modal"][data-dm-payload]');
-        if (!triggerEl) {
-            return;
-        }
-
-        event.preventDefault();
-
-        if (!window.Livewire) {
-            console.error('Livewire가 로드되지 않았습니다.');
-            return;
-        }
-
-        const payloadRaw = triggerEl.dataset.dmPayload;
-        if (!payloadRaw) {
-            return;
-        }
-
-        let payload = null;
-        try {
-            payload = JSON.parse(payloadRaw);
-        } catch (error) {
-            console.error('Dynamic modal payload JSON 파싱에 실패했습니다.', error);
-            return;
-        }
-
-        if (typeof payload?.params === 'string') {
-            try {
-                payload.params = JSON.parse(payload.params);
-            } catch (error) {
-                payload.params = {};
-            }
-        }
-
-        window.Livewire.dispatch('dynamic-modal:open', [payload]);
-    });
-}
-
-/**
  * 드래그 핸들러 생성 (공통 로직)
  */
 export function createDragHandler(config) {
@@ -258,4 +210,3 @@ export function createResizeHandler(config) {
         addDragResizeListeners(handleMove, handleEnd);
     };
 }
-

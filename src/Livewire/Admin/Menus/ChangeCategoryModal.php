@@ -1,6 +1,6 @@
 <?php
 
-namespace Ssh521\LaravelAdmin\Livewire\Menus;
+namespace Ssh521\LaravelAdmin\Livewire\Admin\Menus;
 
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
@@ -36,7 +36,7 @@ class ChangeCategoryModal extends Component
             ->toArray();
     }
 
-    #[On('menus:change-category-modal:set-selected')]
+    #[On('admin-menus:change-category-modal:set-selected')]
     public function setSelectedMenuIds($ids): void
     {
         // 객체로 전달된 경우 ids 키에서 배열 추출
@@ -77,6 +77,6 @@ class ChangeCategoryModal extends Component
 
     public function render()
     {
-        return view('livewire.menus.change-category-modal');
+        return view('livewire.admin.menus.change-category-modal');
     }
 }

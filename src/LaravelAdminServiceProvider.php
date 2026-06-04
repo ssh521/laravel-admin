@@ -14,6 +14,7 @@ use Ssh521\LaravelAdmin\Livewire\Admin\HeaderNav;
 use Ssh521\LaravelAdmin\Livewire\Admin\LeftMenu;
 use Ssh521\LaravelAdmin\Livewire\Admin\LeftMenuMobile;
 use Ssh521\LaravelAdmin\Livewire\Admin\MenuCategories\MenuCategoryList;
+use Ssh521\LaravelAdmin\Livewire\Admin\Menus\ChangeCategoryModal;
 use Ssh521\LaravelAdmin\Livewire\Admin\Menus\MenuOrderModal;
 use Ssh521\LaravelAdmin\Livewire\Admin\Roles\RoleDetailModal;
 use Ssh521\LaravelAdmin\Livewire\Admin\Roles\RoleForm;
@@ -22,8 +23,6 @@ use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserForm;
 use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserRoleForm;
 use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserSearchModal;
 use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserTable;
-use Ssh521\LaravelAdmin\Livewire\DynamicModalManager;
-use Ssh521\LaravelAdmin\Livewire\Menus\ChangeCategoryModal;
 use Ssh521\LaravelAdmin\Models\AdminUser;
 use Ssh521\LaravelAdmin\Models\Menu;
 use Ssh521\LaravelAdmin\Models\MenuCategory;
@@ -99,7 +98,7 @@ class LaravelAdminServiceProvider extends ServiceProvider
         Livewire::component('admin.left-menu-mobile', LeftMenuMobile::class);
         Livewire::component('admin.menu-categories.menu-category-list', MenuCategoryList::class);
         Livewire::component('admin.menus.menu-order-modal', MenuOrderModal::class);
-        Livewire::component('menus.change-category-modal', ChangeCategoryModal::class);
+        Livewire::component('admin.menus.change-category-modal', ChangeCategoryModal::class);
         Livewire::component('admin.roles.role-detail-modal', RoleDetailModal::class);
         Livewire::component('admin.roles.role-form', RoleForm::class);
         Livewire::component('admin.users.user-detail-modal', UserDetailModal::class);
@@ -107,7 +106,6 @@ class LaravelAdminServiceProvider extends ServiceProvider
         Livewire::component('admin.users.user-role-form', UserRoleForm::class);
         Livewire::component('admin.users.user-search-modal', UserSearchModal::class);
         Livewire::component('admin.users.user-table', UserTable::class);
-        Livewire::component('dynamic-modal-manager', DynamicModalManager::class);
     }
 
     private function registerPolicies(): void

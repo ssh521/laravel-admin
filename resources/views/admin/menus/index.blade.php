@@ -1,8 +1,8 @@
 {{-- 메뉴 관리 페이지 - 메뉴 목록 조회, 검색, 정렬, 순서 변경 기능 --}}
-<x-laravel-admin::layouts.admin title="메뉴 관리">
+<x-laravel-admin::admin.layouts.admin title="메뉴 관리">
     {{-- 페이지 헤더 --}}
     <x-slot name="header">
-        <x-laravel-admin::admin-header>
+        <x-laravel-admin::admin.admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
@@ -10,7 +10,7 @@
             <x-slot name="description">
                 {{ __('Menu List') }}
             </x-slot>
-        </x-laravel-admin::admin-header>
+        </x-laravel-admin::admin.admin-header>
     </x-slot>
 
     {{-- 메인 컨텐츠 영역 --}}
@@ -38,7 +38,7 @@
                 </div>
             </div>
 
-            <x-laravel-admin::session-messages />
+            <x-laravel-admin::admin.session-messages />
 
             <form class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end" action="{{ route('admin.menus.index') }}" method="GET">
                 <label for="menu-search" class="sr-only">Search</label>
@@ -66,7 +66,7 @@
 
             {{-- 체크박스 제어 컴포넌트 --}}
             <div class="mb-1 flex flex-wrap items-center gap-x-1 text-[12px] font-semibold">
-                <x-laravel-admin::checkbox-controls />
+                <x-laravel-admin::admin.checkbox-controls />
                 <span class="text-[#222222] dark:text-gray-400">|</span>
                 <a href="javascript:void(0)" onclick="openCategorySelectionModal()">{{ __('분류선택') }}</a>
             </div>
@@ -137,7 +137,7 @@
 
                     {{-- 메뉴 ID --}}
                     <th scope="row" class="h-12 px-4 font-medium">
-                        <x-laravel-admin::checkbox :value="$menu->id" />
+                        <x-laravel-admin::admin.checkbox :value="$menu->id" />
                     </th>
 
                     {{-- 메뉴명 (링크 가능) --}}
@@ -157,7 +157,7 @@
                     {{-- 카테고리 (순서 변경 모달 트리거) --}}
                     <td class="h-12 whitespace-nowrap px-4">
                         @if($menu->category)
-                            <x-laravel-admin::modal-trigger
+                            <x-laravel-admin::admin.modal-trigger
                                 text="{{ $menu->category->name }}"
                                 modal-id="menu-order-modal"
                                 variant="primary"
@@ -238,18 +238,18 @@
     </div>
 
     {{-- 카테고리 선택 모달 (draggable + Livewire) --}}
-    <x-laravel-admin::draggable-modal
+    <x-laravel-admin::admin.draggable-modal
         id="category-selection-modal"
         title="메뉴 카테고리 변경"
         width="500"
         height="700"
         :close-on-backdrop-click="false"
     >
-        <livewire:menus.change-category-modal />
-    </x-laravel-admin::draggable-modal>
+        <livewire:admin.menus.change-category-modal />
+    </x-laravel-admin::admin.draggable-modal>
 
     {{-- 메뉴 순서 변경 모달 (Livewire 컴포넌트) --}}
-    <x-laravel-admin::draggable-modal
+    <x-laravel-admin::admin.draggable-modal
         id="menu-order-modal"
         title="메뉴 순서 변경"
         width="600"
@@ -257,7 +257,7 @@
         :close-on-backdrop-click="false"
     >
         <livewire:admin.menus.menu-order-modal />
-    </x-laravel-admin::draggable-modal>
+    </x-laravel-admin::admin.draggable-modal>
 
     {{-- 메뉴 순서 변경 및 카테고리 변경 관련 JavaScript --}}
     <script>
@@ -275,7 +275,7 @@
                 return;
             }
             // Livewire로 선택 목록 전달 (객체로 래핑)
-            Livewire.dispatch('menus:change-category-modal:set-selected', { ids: selectedIds });
+            Livewire.dispatch('admin-menus:change-category-modal:set-selected', { ids: selectedIds });
 
             // 드래그 모달 열기
             window.dispatchEvent(new CustomEvent('open-modal', {
@@ -324,4 +324,4 @@
         });
     </script>
 
-</x-laravel-admin::layouts.admin>
+</x-laravel-admin::admin.layouts.admin>

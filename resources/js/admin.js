@@ -1,7 +1,5 @@
 import './bootstrap';
 import draggableModal, { draggableModalAlert } from './modal-manager';
-import { initDynamicModalStore, dynamicModal } from './dynamic-modal-store';
-import { initDynamicModalTriggerJavaScript } from './modal-utils'; // 공통 유틸리티 로드
 import './sidebarBackground';
 import './dtree';
 import Sortable from 'sortablejs';
@@ -9,20 +7,13 @@ import Sortable from 'sortablejs';
 // SortableJS를 전역으로 노출 (기존 코드와의 호환성을 위해)
 window.Sortable = Sortable;
 
-initDynamicModalTriggerJavaScript();
-
 // Alpine.js 컴포넌트들
 document.addEventListener('alpine:init', () => {
-
-    // 다이나믹 모달 스토어 초기화
-    initDynamicModalStore();
     
     // 다중 모달을 지원하는 드래그 가능한 모달 컴포넌트
     Alpine.data('draggableModal', draggableModal);
     // Alert 전용 모달 컴포넌트 등록
     Alpine.data('draggableModalAlert', draggableModalAlert);
-    // 다이나믹 모달 컴포넌트 등록
-    Alpine.data('dynamicModal', dynamicModal);
     
     // 리스트 Sortable 관리 컴포넌트
     Alpine.data('listSortable', () => ({
@@ -132,21 +123,8 @@ document.addEventListener('alpine:init', () => {
                 modalWidth = forcedWidth;
                 source = 'Event';
             } else {
-                // 동적 모달에서는 부모 모달 컨테이너를 찾음
-                const modalContainer = this.$el.closest('[x-data*="dynamicModal"]');
-                if (modalContainer) {
-                    const modalBox = modalContainer.querySelector('[x-ref="content"]') || modalContainer;
-                    if (modalBox) {
-                        modalWidth = modalBox.offsetWidth;
-                        source = 'DOM-ModalBox';
-                    } else {
-                        modalWidth = 900;
-                        source = 'Default';
-                    }
-                } else {
-                    modalWidth = 900;
-                    source = 'Default';
-                }
+                modalWidth = 900;
+                source = 'Default';
             }
             
             if (modalWidth !== this.lastModalWidth && modalWidth > 0) {
@@ -229,30 +207,8 @@ document.addEventListener('alpine:init', () => {
                 });
             }, 200);
             
-            // 동적 모달의 리사이즈 감지
-            const resizeObserver = new ResizeObserver((entries) => {
-                for (let entry of entries) {
-                    const width = entry.contentRect.width;
-                    if (width > 0) {
-                        this.updateCols(width);
-                    }
-                }
-            });
-            
-            // 부모 모달 컨테이너를 관찰
-            this.$nextTick(() => {
-                const modalContainer = this.$el.closest('[x-data*="dynamicModal"]');
-                if (modalContainer) {
-                    const content = modalContainer.querySelector('[x-ref="content"]') || modalContainer;
-                    if (content) {
-                        resizeObserver.observe(content);
-                    }
-                }
-            });
-            
             // 컴포넌트가 파괴될 때 정리
             this.$el.addEventListener('livewire:before-destroy', () => {
-                resizeObserver.disconnect();
                 if (this.sortableInstance) {
                     try {
                         this.sortableInstance.destroy();
