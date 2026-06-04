@@ -39,6 +39,12 @@
             <x-laravel-admin::admin.session-messages />
 
             <form class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end" action="{{ route('admin.permissions.index') }}" method="GET">
+                    @if(request('sort'))
+                        <input type="hidden" name="sort" value="{{ request('sort') }}">
+                    @endif
+                    @if(request('direction'))
+                        <input type="hidden" name="direction" value="{{ request('direction') }}">
+                    @endif
                     <label for="permission-search" class="sr-only">권한 검색</label>
                     <div class="relative w-full sm:w-[260px]">
                         <input id="permission-search" type="text" name="search" value="{{ request('search') }}"
@@ -142,7 +148,7 @@
                                         <span x-show="sortMode === 'drag'" class="text-gray-400 cursor-move">⋮⋮</span>
                                     </td>
                                     <th scope="row"
-                                        class="h-12 px-4 font-bold whitespace-nowrap">
+                                        class="h-12 px-4 text-left font-bold whitespace-nowrap">
                                         {{ $permission->name }}
                                     </th>
                                     <td class="h-12 px-4 text-left">
@@ -171,9 +177,11 @@
             </table>
         </div>
 
+        @if($data->hasPages())
         <div class="mt-6 text-[14px]">
-            {!! $data->appends(request()->query())->links() !!}
+            {!! $data->withQueryString()->links() !!}
         </div>
+        @endif
     </div>
 
     <script>
@@ -237,9 +245,10 @@
                 },
 
                 updateOrder(evt) {
+                    const pageOffset = ({{ $data->currentPage() }} - 1) * {{ $data->perPage() }};
                     const newOrder = Array.from(evt.to.children).map((row, index) => ({
                         id: row.dataset.id,
-                        order: index + 1
+                        order: pageOffset + index + 1
                     }));
 
                     // 서버에 새로운 순서 저장

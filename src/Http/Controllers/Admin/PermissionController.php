@@ -45,8 +45,7 @@ class PermissionController extends Controller
             )
             ->orderBy($sort, $direction)
             ->orderBy('sort_order', 'asc') // sort_order를 보조 정렬로 추가
-            ->paginate(500)
-            ->appends($request->query());
+            ->paginate(15);
 
         return view('admin.permissions.index', compact('data'));
     }
