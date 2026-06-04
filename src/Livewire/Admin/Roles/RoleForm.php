@@ -3,6 +3,7 @@
 namespace Ssh521\LaravelAdmin\Livewire\Admin\Roles;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -33,16 +34,20 @@ class RoleForm extends Component
     public function __construct()
     {
         $this->roleService = app(RoleService::class);
+        $this->useAdminGuard();
     }
 
     public function mount(): void
     {
+        $this->useAdminGuard();
         $this->loadAvailablePermissions();
     }
 
     #[On('admin-roles:role-form:open')]
     public function open(array $payload = []): void
     {
+        $this->useAdminGuard();
+
         $this->resetValidation();
         $this->resetForm();
 
@@ -94,6 +99,8 @@ class RoleForm extends Component
 
     public function save(): void
     {
+        $this->useAdminGuard();
+
         if ($this->mode === 'view') {
             return;
         }
@@ -155,5 +162,13 @@ class RoleForm extends Component
     public function render()
     {
         return view('livewire.admin.roles.role-form');
+    }
+
+    private function useAdminGuard(): void
+    {
+        $guard = config('laravel-admin.auth.guard', 'laravel_admin');
+
+        Auth::shouldUse($guard);
+        request()->setUserResolver(fn () => Auth::guard($guard)->user());
     }
 }
