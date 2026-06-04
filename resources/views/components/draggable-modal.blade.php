@@ -59,7 +59,7 @@ $centerY = $initialY ?? 'Math.floor((window.innerHeight - (' . $clampedHeightExp
             </span>
 
             @if($showCloseButton)
-            <button @click.stop="close" @touchstart.stop="close" class="hover:bg-indigo-500 dark:hover:bg-indigo-600 rounded-full p-1 transition-colors duration-200">
+            <button @click.stop="close" @touchstart.stop="close" class="cursor-pointer hover:bg-indigo-500 dark:hover:bg-indigo-600 rounded-full p-1 transition-colors duration-200">
                 <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path
                         d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
@@ -75,6 +75,16 @@ $centerY = $initialY ?? 'Math.floor((window.innerHeight - (' . $clampedHeightExp
 
         <!-- 리사이즈 핸들 -->
         @if($showResizeHandle)
+        <div class="absolute bottom-0 left-0 w-6 h-6 cursor-sw-resize flex items-center justify-center touch-none z-10"
+            @mousedown.stop.prevent="resizeStart($event, 'sw')"
+            @touchstart.stop.prevent="resizeStart($event, 'sw')"
+            style="pointer-events: auto;">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                    d="M2 22H4V20H2V22ZM2 18H4V16H2V18ZM6 22H8V20H6V22ZM6 18H8V16H6V18ZM10 22H12V20H10V22ZM2 14H4V12H2V14Z" />
+            </svg>
+        </div>
+
         <div class="absolute bottom-0 right-0 w-6 h-6 cursor-se-resize flex items-center justify-center touch-none z-10"
             @mousedown.stop.prevent="resizeStart($event, 'se')"
             @touchstart.stop.prevent="resizeStart($event, 'se')"

@@ -3,6 +3,7 @@
 namespace Ssh521\LaravelAdmin\Livewire\Admin\Users;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Ssh521\LaravelAdmin\Services\UserService;
@@ -18,13 +19,25 @@ class UserDetailModal extends Component
     public function boot(UserService $userService): void
     {
         $this->userService = $userService;
+        $this->useAdminGuard();
+    }
+
+    private function useAdminGuard(): void
+    {
+        $guard = config('laravel-admin.auth.guard', 'laravel_admin');
+
+        Auth::shouldUse($guard);
+        request()->setUserResolver(fn () => Auth::guard($guard)->user());
     }
 
     // 사용자 상세 모달 열기
     #[On('admin-users:user-detail-modal:open')]
-    public function open(array $payload = []): void
+    public function open(mixed $payload = null, mixed $userId = null): void
     {
-        $userId = $payload['userId'] ?? null;
+        $this->useAdminGuard();
+
+        $payload = $this->normalizePayload($payload);
+        $userId = $payload['userId'] ?? $userId;
 
         if (! $userId) {
             return;
@@ -44,6 +57,19 @@ class UserDetailModal extends Component
                 detail: { modalId: 'user-detail-modal' } 
             }));
         ");
+    }
+
+    private function normalizePayload(mixed $payload): array
+    {
+        if (is_array($payload)) {
+            return $payload;
+        }
+
+        if (is_object($payload)) {
+            return (array) $payload;
+        }
+
+        return [];
     }
 
     // 사용자 수정 (Blade 페이지로 이동)
