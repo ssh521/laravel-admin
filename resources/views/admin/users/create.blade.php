@@ -1,6 +1,6 @@
-<x-laravel-admin::layouts.admin title="사용자 등록">
+<x-laravel-admin::admin.layouts.admin title="사용자 등록">
     <x-slot name="header">
-        <x-laravel-admin::admin-header>
+        <x-laravel-admin::admin.admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
@@ -11,7 +11,7 @@
             <x-slot name="description">
                 {{ __('Create New User') }}
             </x-slot>
-        </x-laravel-admin::admin-header>
+        </x-laravel-admin::admin.admin-header>
     </x-slot>
 
     @php
@@ -28,7 +28,7 @@
                 <h1 class="text-[26px] font-bold leading-none text-[#222222] dark:text-gray-100">{{ __('User Information') }}</h1>
             </div>
 
-            <x-laravel-admin::session-messages />
+            <x-laravel-admin::admin.session-messages />
 
             <form action="{{ route('admin.users.store') }}" method="POST">
                 @csrf
@@ -40,7 +40,7 @@
                                 <label for="name" class="{{ $labelClass }}">{{ __('이름') }} :</label>
                                 <div class="w-full sm:w-[320px]">
                                     <input id="name" name="name" type="text" value="{{ old('name') }}" autocomplete="name" placeholder="Enter user name" required class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('name')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('name')" />
                                 </div>
                             </div>
 
@@ -48,7 +48,7 @@
                                 <label for="email" class="{{ $labelClass }}">{{ __('E-mail') }} :</label>
                                 <div class="w-full sm:w-[520px]">
                                     <input id="email" name="email" type="email" value="{{ old('email') }}" autocomplete="email" placeholder="Enter email address" required class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('email')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('email')" />
                                 </div>
                             </div>
                         </div>
@@ -60,7 +60,7 @@
                                 <label for="password" class="{{ $labelClass }}">{{ __('비밀번호') }} :</label>
                                 <div class="w-full sm:w-[320px]">
                                     <input id="password" name="password" type="password" autocomplete="new-password" placeholder="Enter password" required class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('password')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('password')" />
                                 </div>
                             </div>
 
@@ -68,7 +68,7 @@
                                 <label for="confirm-password" class="{{ $labelClass }}">{{ __('확인') }} :</label>
                                 <div class="w-full sm:w-[320px]">
                                     <input id="confirm-password" name="confirm-password" type="password" autocomplete="new-password" placeholder="Confirm password" required class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('confirm-password')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('confirm-password')" />
                                 </div>
                             </div>
                         </div>
@@ -93,7 +93,7 @@
                                             <span>{{ $role->name }}</span>
                                         </label>
                                     @endforeach
-                                    <x-laravel-admin::input-error-message class="col-span-full mt-1 text-[13px]" :messages="$errors->get('roles')" />
+                                    <x-laravel-admin::admin.input-error-message class="col-span-full mt-1 text-[13px]" :messages="$errors->get('roles')" />
                                 </div>
                             </div>
                         </div>
@@ -126,4 +126,4 @@
             </form>
         </div>
     </div>
-</x-laravel-admin::layouts.admin>
+</x-laravel-admin::admin.layouts.admin>

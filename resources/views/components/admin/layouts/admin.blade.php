@@ -49,7 +49,7 @@
     @livewireStyles
 </head>
 <body class="font-sans antialiased bg-[#E7E7D6] dark:bg-gray-900 h-full min-h-screen">
-    <x-laravel-admin::banner />
+    <x-laravel-admin::admin.banner />
 
     <div x-data="{
             isMobileMenuOpen: false,
@@ -111,10 +111,7 @@
         </div>
     </div>
 
-    <x-laravel-admin::client-notification />
-
-    <!-- Dynamic Modal Manager -->
-    @livewire('dynamic-modal-manager')
+    <x-laravel-admin::admin.client-notification />
 
     @livewireScripts
 </body>

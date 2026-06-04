@@ -1,6 +1,6 @@
-<x-laravel-admin::layouts.admin title="사용자 수정">
+<x-laravel-admin::admin.layouts.admin title="사용자 수정">
     <x-slot name="header">
-        <x-laravel-admin::admin-header>
+        <x-laravel-admin::admin.admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
@@ -11,7 +11,7 @@
             <x-slot name="description">
                 {{ __('Edit User') }}
             </x-slot>
-        </x-laravel-admin::admin-header>
+        </x-laravel-admin::admin.admin-header>
     </x-slot>
 
     @php
@@ -39,7 +39,7 @@
                                 <label for="name" class="{{ $labelClass }}">{{ __('이름') }} :</label>
                                 <div class="w-full sm:w-[320px]">
                                     <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}" autocomplete="name" placeholder="Enter user name" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('name')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('name')" />
                                 </div>
                             </div>
 
@@ -47,7 +47,7 @@
                                 <label for="email" class="{{ $labelClass }}">{{ __('E-mail') }} :</label>
                                 <div class="w-full sm:w-[520px]">
                                     <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" autocomplete="email" placeholder="Enter email address" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('email')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('email')" />
                                 </div>
                             </div>
                         </div>
@@ -59,7 +59,7 @@
                                 <label for="password" class="{{ $labelClass }}">{{ __('비밀번호') }} :</label>
                                 <div class="w-full sm:w-[320px]">
                                     <input id="password" name="password" type="password" autocomplete="new-password" placeholder="Enter new password (leave blank to keep current)" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('password')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('password')" />
                                 </div>
                             </div>
 
@@ -67,7 +67,7 @@
                                 <label for="confirm-password" class="{{ $labelClass }}">{{ __('확인') }} :</label>
                                 <div class="w-full sm:w-[320px]">
                                     <input id="confirm-password" name="confirm-password" type="password" autocomplete="new-password" placeholder="Confirm new password" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('confirm-password')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('confirm-password')" />
                                 </div>
                             </div>
                         </div>
@@ -104,7 +104,7 @@
                                                 </label>
                                             @endforeach
                                         </div>
-                                        <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('roles')" />
+                                        <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('roles')" />
                                     @else
                                         <div class="text-[14px] font-bold">
                                             @forelse ($user->roles as $role)
@@ -224,4 +224,4 @@
             }
         });
     </script>
-</x-laravel-admin::layouts.admin>
+</x-laravel-admin::admin.layouts.admin>

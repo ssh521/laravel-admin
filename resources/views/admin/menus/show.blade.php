@@ -1,13 +1,13 @@
-<x-laravel-admin::layouts.admin title="메뉴 상세">
+<x-laravel-admin::admin.layouts.admin title="메뉴 상세">
     <x-slot name="header">
-        <x-laravel-admin::admin-header>
+        <x-laravel-admin::admin.admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
                 - <a href="{{ route('admin.menus.index') }}">메뉴 관리</a>
             </x-slot>
             <x-slot name="description">{{ __('Menu Detail') }}</x-slot>
-        </x-laravel-admin::admin-header>
+        </x-laravel-admin::admin.admin-header>
     </x-slot>
 
     <div class="mx-auto w-full max-w-7xl bg-white px-2 py-2 dark:bg-gray-900">
@@ -16,7 +16,7 @@
                 <h1 class="text-[26px] font-bold leading-none text-[#222222] dark:text-gray-100">{{ __('Menu Information') }}</h1>
             </div>
 
-            <x-laravel-admin::session-messages />
+            <x-laravel-admin::admin.session-messages />
 
             <div class="border border-dashed border-[#bdbdbd] bg-[#f7f7f7] px-8 py-10 text-[15px] font-bold text-[#222222] sm:px-16 lg:px-24 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
                 <div class="mx-auto max-w-[980px]">
@@ -147,4 +147,4 @@
             </button>
         </form>
     @endcan
-</x-laravel-admin::layouts.admin>
+</x-laravel-admin::admin.layouts.admin>

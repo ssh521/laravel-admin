@@ -1,6 +1,6 @@
-<x-laravel-admin::layouts.admin title="메뉴 카테고리 역할 관리">
+<x-laravel-admin::admin.layouts.admin title="메뉴 카테고리 역할 관리">
     <x-slot name="header">
-        <x-laravel-admin::admin-header>
+        <x-laravel-admin::admin.admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
@@ -9,7 +9,7 @@
             <x-slot name="description">
                 {{ __('Menu Category Role Management') }}
             </x-slot>
-        </x-laravel-admin::admin-header>
+        </x-laravel-admin::admin.admin-header>
     </x-slot>
 
     <div class="w-full lg:max-w-7xl mx-auto">
@@ -46,7 +46,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         @foreach($roles as $role)
                             <label class="flex items-center">
-                                <x-laravel-admin::checkbox name="roles[]" value="{{ $role->id }}" :checked="in_array($role->id, $allowedRoleIds)" />
+                                <x-laravel-admin::admin.checkbox name="roles[]" value="{{ $role->id }}" :checked="in_array($role->id, $allowedRoleIds)" />
                                 <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">{{ $role->name }}</span>
                             </label>
                         @endforeach
@@ -54,11 +54,11 @@
                 </div>
 
                 <div class="flex items-center justify-end mt-6">
-                    <x-laravel-admin::primary-button>
+                    <x-laravel-admin::admin.primary-button>
                         {{ __('Save Changes') }}
-                    </x-laravel-admin::primary-button>
+                    </x-laravel-admin::admin.primary-button>
                 </div>
             </form>
         </div>
     </div>
-</x-laravel-admin::layouts.admin>
+</x-laravel-admin::admin.layouts.admin>

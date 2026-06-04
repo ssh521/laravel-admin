@@ -11,7 +11,7 @@
                     @endif
                 </div>
 
-                <x-laravel-admin::session-messages />
+                <x-laravel-admin::admin.session-messages />
 
                 <div class="flex justify-between items-center pb-4">
                     <div>
@@ -148,7 +148,7 @@
                                 </td>
                                 <td class="px-2 py-2 text-right">
                                     @if($canUpdate($category))
-                                    <x-laravel-admin::modal-trigger
+                                    <x-laravel-admin::admin.modal-trigger
                                         text="권한"
                                         modal-id="roles-modal"
                                         type="link"
@@ -348,7 +348,7 @@
 </style>
 
 <!-- 권한 관리 모달 -->
-<x-laravel-admin::draggable-modal id="roles-modal" title="권한 관리" :width="600" :height="500">
+<x-laravel-admin::admin.draggable-modal id="roles-modal" title="권한 관리" :width="600" :height="500">
     <div class="p-6">
         <div class="mb-4">
             <h3 class="text-lg font-medium text-gray-900 dark:text-white" id="modal-category-name">
@@ -378,7 +378,7 @@
             </div>
         </form>
     </div>
-</x-laravel-admin::draggable-modal>
+</x-laravel-admin::admin.draggable-modal>
 
 <script>
     let currentCategoryId = null;

@@ -1,8 +1,8 @@
-<x-laravel-admin::layouts.admin title="메뉴 카테고리 관리">
+<x-laravel-admin::admin.layouts.admin title="메뉴 카테고리 관리">
 
     <x-slot name="header">
 
-        <x-laravel-admin::admin-header>
+        <x-laravel-admin::admin.admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
@@ -10,7 +10,7 @@
             <x-slot name="description">
                 {{ __('Menu Categories') }}
             </x-slot>
-        </x-laravel-admin::admin-header>
+        </x-laravel-admin::admin.admin-header>
 
     </x-slot>
 
@@ -202,7 +202,7 @@
                         </div>
                     </div>
 
-                    <x-laravel-admin::session-messages />
+                    <x-laravel-admin::admin.session-messages />
 
                     <form class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end" action="{{ route('admin.menu-categories.index') }}" method="GET">
                         <label for="category-search" class="sr-only">Search</label>
@@ -318,7 +318,7 @@
                                     <td class="h-12 whitespace-nowrap px-4 text-right">
 
                                         @can('update', $category)
-                                        <x-laravel-admin::modal-trigger
+                                        <x-laravel-admin::admin.modal-trigger
                                             text="권한"
                                             modal-id="roles-modal"
                                             type="link"
@@ -352,7 +352,7 @@
     </div>
 
     <!-- 권한 관리 모달 -->
-    <x-laravel-admin::draggable-modal id="roles-modal" title="권한 관리" :width="600" :height="500">
+    <x-laravel-admin::admin.draggable-modal id="roles-modal" title="권한 관리" :width="600" :height="500">
         <div class="p-6">
             <div class="mb-4">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white" id="modal-category-name">
@@ -382,7 +382,7 @@
                 </div>
             </form>
         </div>
-    </x-laravel-admin::draggable-modal>
+    </x-laravel-admin::admin.draggable-modal>
 
     <script>
         let currentCategoryId = null;
@@ -522,4 +522,4 @@
             });
         });
     </script>
-</x-laravel-admin::layouts.admin>
+</x-laravel-admin::admin.layouts.admin>

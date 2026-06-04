@@ -1,13 +1,13 @@
-<x-laravel-admin::layouts.admin title="메뉴 수정">
+<x-laravel-admin::admin.layouts.admin title="메뉴 수정">
     <x-slot name="header">
-        <x-laravel-admin::admin-header>
+        <x-laravel-admin::admin.admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
                 - <a href="{{ route('admin.menus.index') }}">메뉴 관리</a>
             </x-slot>
             <x-slot name="description">{{ __('Edit Menu') }}</x-slot>
-        </x-laravel-admin::admin-header>
+        </x-laravel-admin::admin.admin-header>
     </x-slot>
 
     @php
@@ -36,7 +36,7 @@
                                 <label for="name" class="{{ $labelClass }}">{{ __('메뉴명') }} :</label>
                                 <div class="w-full sm:w-[520px]">
                                     <input id="name" name="name" type="text" value="{{ old('name', $menu->name) }}" autocomplete="name" placeholder="Enter menu name" required class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('name')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('name')" />
                                 </div>
                             </div>
 
@@ -49,7 +49,7 @@
                                             <option value="{{ $category->id }}" @selected(old('category_id', $menu->category_id) == $category->id)>{{ $category->name }}</option>
                                         @endforeach
                                     </select>
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('category_id')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('category_id')" />
                                 </div>
                             </div>
 
@@ -62,7 +62,7 @@
                                             <option value="{{ $parentMenu->id }}" @selected(old('parent_id', $menu->parent_id) == $parentMenu->id)>{{ $parentMenu->name }}</option>
                                         @endforeach
                                     </select>
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('parent_id')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('parent_id')" />
                                 </div>
                             </div>
                         </div>
@@ -74,7 +74,7 @@
                                 <label for="route_name" class="{{ $labelClass }}">{{ __('Route Name') }} :</label>
                                 <div class="w-full sm:w-[520px]">
                                     <input id="route_name" name="route_name" type="text" value="{{ old('route_name', $menu->route_name) }}" placeholder="예: users.index" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('route_name')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('route_name')" />
                                 </div>
                             </div>
 
@@ -82,7 +82,7 @@
                                 <label for="route_parameters" class="{{ $labelClass }}">{{ __('Route Params') }} :</label>
                                 <div class="w-full sm:w-[520px]">
                                     <input id="route_parameters" name="route_parameters" type="text" value="{{ old('route_parameters', $menu->route_parameters) }}" placeholder='예: {"id": 1}' class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('route_parameters')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('route_parameters')" />
                                 </div>
                             </div>
 
@@ -90,7 +90,7 @@
                                 <label for="url" class="{{ $labelClass }}">{{ __('Direct URL') }} :</label>
                                 <div class="w-full sm:w-[520px]">
                                     <input id="url" name="url" type="text" value="{{ old('url', $menu->getRawUrlAttribute()) }}" placeholder="예: /admin/users" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('url')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('url')" />
                                 </div>
                             </div>
 
@@ -104,7 +104,7 @@
                                         <option value="_parent" @selected(old('target', $menu->target) == '_parent')>{{ __('부모 창') }}</option>
                                         <option value="_top" @selected(old('target', $menu->target) == '_top')>{{ __('최상위 창') }}</option>
                                     </select>
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('target')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('target')" />
                                 </div>
                             </div>
                         </div>
@@ -116,7 +116,7 @@
                                 <label for="sort_order" class="{{ $labelClass }}">{{ __('정렬 순서') }} :</label>
                                 <div class="w-full sm:w-[160px]">
                                     <input id="sort_order" name="sort_order" type="number" value="{{ old('sort_order', $menu->sort_order) }}" min="0" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('sort_order')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('sort_order')" />
                                 </div>
                             </div>
 
@@ -124,7 +124,7 @@
                                 <label for="icon" class="{{ $labelClass }}">{{ __('Icon') }} :</label>
                                 <div class="w-full sm:w-[320px]">
                                     <input id="icon" name="icon" type="text" value="{{ old('icon', $menu->icon) }}" placeholder="fas fa-home" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('icon')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('icon')" />
                                 </div>
                             </div>
 
@@ -140,7 +140,7 @@
                                 <label for="description" class="{{ $labelClass }}">{{ __('설명') }} :</label>
                                 <div class="w-full sm:w-[620px]">
                                     <textarea id="description" name="description" rows="3" class="{{ $textareaClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">{{ old('description', $menu->description) }}</textarea>
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('description')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('description')" />
                                 </div>
                             </div>
                         </div>
@@ -167,4 +167,4 @@
             </button>
         </form>
     @endcan
-</x-laravel-admin::layouts.admin>
+</x-laravel-admin::admin.layouts.admin>

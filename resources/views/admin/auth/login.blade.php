@@ -1,77 +1,108 @@
-<x-laravel-admin::guest-layout>
+<!doctype html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{{ __('Admin Login') }} - {{ config('app.name', 'Laravel') }}</title>
+
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+
+    <script>
+        (function() {
+            const theme = window.localStorage?.getItem('theme') || null;
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDark = theme === 'dark' || theme === 'system' && prefersDark || (!theme && prefersDark);
+
+            document.documentElement.classList.toggle('dark', isDark);
+        })();
+    </script>
+
+    @vite(config('laravel-admin.vite', ['resources/vendor/laravel-admin/admin.css', 'resources/vendor/laravel-admin/admin.js']))
+</head>
+<body class="min-h-screen bg-[#E7E7D6] font-sans antialiased text-[#222222] dark:bg-gray-900 dark:text-gray-100">
     @php
-        $loginRoute = $loginRoute ?? 'login';
-        $showPasswordResetLink = $showPasswordResetLink ?? true;
-        $showRegisterLink = $showRegisterLink ?? true;
+        $loginRoute = $loginRoute ?? config('laravel-admin.route_name_prefix', 'admin.').'login';
     @endphp
 
-    <x-laravel-admin::authentication-card>
+    <main class="flex min-h-screen items-center justify-center px-4 py-10">
+        <section class="w-full max-w-[420px] border border-[#d8d8d0] bg-white p-2 dark:border-gray-700 dark:bg-gray-900">
+            <div class="border border-[#d9d9d9] bg-white px-6 py-8 dark:border-gray-700 dark:bg-gray-800">
+                <div class="mb-8 text-center">
+                    <div class="mb-4 flex justify-center">
+                        <x-laravel-admin::admin.site-logo size="w-16 h-16" class="dark:text-purple-200" />
+                    </div>
+                    <h1 class="text-[26px] font-bold leading-none">
+                        {{ __('관리자 로그인') }}
+                    </h1>
+                </div>
 
-        <x-slot name="logo">
-            <x-laravel-admin::site-logo />
-        </x-slot>
-
-        <x-laravel-admin::validation-errors class="mb-4" />
-
-        @session('status')
-            <div class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
-                {{ $value }}
-            </div>
-        @endsession
-
-        <form method="POST" action="{{ route($loginRoute) }}">
-            @csrf
-
-            <div>
-                <x-laravel-admin::label for="email" value="{{ __('Email') }}" />
-                <x-laravel-admin::input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            </div>
-
-            <div class="mt-4">
-                <x-laravel-admin::label for="password" value="{{ __('Password') }}" />
-                <x-laravel-admin::input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="current-password" />
-            </div>
-
-            <div class="block mt-4">
-                <label for="remember_me" class="flex items-center">
-                    <x-laravel-admin::checkbox id="remember_me" name="remember" />
-                    <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-                </label>
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                @if ($showPasswordResetLink && Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                        {{ __('Forgot your password?') }}
-                    </a>
+                @if ($errors->any())
+                    <div class="mb-4 border border-red-300 bg-red-50 px-3 py-2 text-[13px] text-red-700 dark:border-red-700 dark:bg-red-950/40 dark:text-red-200">
+                        <ul class="list-inside list-disc space-y-1">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                 @endif
 
-                <x-laravel-admin::button class="ms-4">
-                    {{ __('Log in') }}
-                </x-laravel-admin::button>
-            </div>
-        </form>
+                @session('status')
+                    <div class="mb-4 border border-green-300 bg-green-50 px-3 py-2 text-[13px] text-green-700 dark:border-green-700 dark:bg-green-950/40 dark:text-green-200">
+                        {{ $value }}
+                    </div>
+                @endsession
 
-        @if (Route::has('kakao.redirect'))
-            <div class="mt-6">
-                <a href="{{ route('kakao.redirect') }}" class="inline-flex items-center w-full justify-center gap-2 rounded-md bg-yellow-400 px-4 py-2 font-semibold text-black shadow hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-                        <path d="M12 3C6.477 3 2 6.335 2 10.451c0 2.5 1.73 4.68 4.33 5.936-.152.57-.552 2.064-.632 2.386-.099.398.146.392.307.285.126-.083 2.005-1.363 2.817-1.914.392.057.796.087 1.21.087 5.523 0 10-3.335 10-7.48C20.032 6.335 17.523 3 12 3z"/>
-                    </svg>
-                    카카오로 로그인
-                </a>
-            </div>
-        @endif
+                <form method="POST" action="{{ route($loginRoute) }}" class="space-y-4">
+                    @csrf
 
-        @if ($showRegisterLink && Route::has('register'))
-            <x-slot name="footer">
-                <div class="flex items-center justify-center mt-4">
-                    <span class="text-sm text-gray-600 dark:text-gray-400">{{ __('Don\'t have an account?') }}</span>
-                    <a href="{{ route('register') }}" class="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-900 dark:hover:text-purple-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 dark:focus:ring-offset-gray-800 ml-1">
-                        {{ __('Sign up') }}
-                    </a>
-                </div>
-            </x-slot>
-        @endif
-    </x-laravel-admin::authentication-card>
-</x-laravel-admin::guest-layout>
+                    <div>
+                        <label for="email" class="mb-1 block text-[14px] font-semibold">
+                            {{ __('Email') }}
+                        </label>
+                        <input
+                            id="email"
+                            type="email"
+                            name="email"
+                            value="{{ old('email') }}"
+                            required
+                            autofocus
+                            autocomplete="username"
+                            class="admin-focus-border h-[34px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-[14px] text-[#111111] outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="password" class="mb-1 block text-[14px] font-semibold">
+                            {{ __('Password') }}
+                        </label>
+                        <input
+                            id="password"
+                            type="password"
+                            name="password"
+                            required
+                            autocomplete="current-password"
+                            class="admin-focus-border h-[34px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-[14px] text-[#111111] outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                        >
+                    </div>
+
+                    <label for="remember_me" class="flex items-center gap-2 text-[14px] text-gray-700 dark:text-gray-300">
+                        <input
+                            id="remember_me"
+                            type="checkbox"
+                            name="remember"
+                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                        >
+                        <span>{{ __('Remember me') }}</span>
+                    </label>
+
+                    <button type="submit" class="h-[34px] w-full cursor-pointer rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-4 text-[14px] font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                        {{ __('Log in') }}
+                    </button>
+                </form>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

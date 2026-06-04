@@ -1,6 +1,6 @@
-<x-laravel-admin::layouts.admin title="관리자 계정 관리">
+<x-laravel-admin::admin.layouts.admin title="관리자 계정 관리">
     <x-slot name="header">
-        <x-laravel-admin::admin-header>
+        <x-laravel-admin::admin.admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
@@ -8,7 +8,7 @@
             <x-slot name="description">
                 {{ __('Admin User List') }}
             </x-slot>
-        </x-laravel-admin::admin-header>
+        </x-laravel-admin::admin.admin-header>
     </x-slot>
 
     <div class="w-full bg-white border border-[#d8d8d0] px-2 py-2 dark:bg-gray-900 dark:border-gray-700">
@@ -23,7 +23,7 @@
                 </div>
             </div>
 
-            <x-laravel-admin::session-messages />
+            <x-laravel-admin::admin.session-messages />
 
             <form method="GET" action="{{ route('admin.admin-users.index') }}" class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
                 <select name="role" class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-[14px] text-[#111111] outline-none sm:w-[150px] dark:bg-gray-700 dark:border-gray-600 dark:text-white" onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';" onblur="this.style.borderColor='#7d7d7d'; this.style.boxShadow='none';">
@@ -107,4 +107,4 @@
             </div>
         </div>
     </div>
-</x-laravel-admin::layouts.admin>
+</x-laravel-admin::admin.layouts.admin>

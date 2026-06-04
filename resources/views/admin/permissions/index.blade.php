@@ -1,8 +1,8 @@
-<x-laravel-admin::layouts.admin title="권한 관리">
+<x-laravel-admin::admin.layouts.admin title="권한 관리">
 
     <x-slot name="header">
 
-        <x-laravel-admin::admin-header>
+        <x-laravel-admin::admin.admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">{{ __('Admin Home') }}</a>
@@ -10,7 +10,7 @@
             <x-slot name="description">
                 {{ __('Permission List') }}
             </x-slot>
-        </x-laravel-admin::admin-header>
+        </x-laravel-admin::admin.admin-header>
 
     </x-slot>
 
@@ -36,7 +36,7 @@
                 @endif
             </div>
 
-            <x-laravel-admin::session-messages />
+            <x-laravel-admin::admin.session-messages />
 
             <form class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end" action="{{ route('admin.permissions.index') }}" method="GET">
                     <label for="permission-search" class="sr-only">권한 검색</label>
@@ -297,4 +297,4 @@
         }
     </style>
 
-</x-laravel-admin::layouts.admin>
+</x-laravel-admin::admin.layouts.admin>

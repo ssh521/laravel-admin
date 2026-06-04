@@ -28,7 +28,7 @@
             </div>
         </div>
 
-        <x-laravel-admin::session-messages />
+        <x-laravel-admin::admin.session-messages />
 
         <form class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end" x-data x-init="$nextTick(() => $refs.searchInput?.focus())">
             <label for="user-role-filter" class="sr-only">Role</label>

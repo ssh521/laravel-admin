@@ -1,15 +1,15 @@
-<x-laravel-admin::layouts.admin title="관리자 홈">
+<x-laravel-admin::admin.layouts.admin title="관리자 홈">
 
     <x-slot name="header">
 
-        <x-laravel-admin::admin-header>
+        <x-laravel-admin::admin.admin-header>
                 <x-slot name="navigation">
                     <a href="{{ route('home') }}">HOME</a>
                 </x-slot>
                 <x-slot name="description">
                     {{ __('Dashboard') }}
                 </x-slot>
-        </x-laravel-admin::admin-header>
+        </x-laravel-admin::admin.admin-header>
 
     </x-slot>
 
@@ -124,4 +124,4 @@
         </div>
     </div>
 
-</x-laravel-admin::layouts.admin>
+</x-laravel-admin::admin.layouts.admin>

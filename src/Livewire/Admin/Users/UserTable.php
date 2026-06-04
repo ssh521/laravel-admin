@@ -14,7 +14,7 @@ use Spatie\Permission\Models\Role;
 use Ssh521\LaravelAdmin\Models\User;
 use Ssh521\LaravelAdmin\Services\UserService;
 
-#[Layout('components.layouts.admin')]
+#[Layout('components.admin.layouts.admin')]
 #[Title('사용자 관리')]
 
 class UserTable extends Component

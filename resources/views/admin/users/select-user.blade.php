@@ -1,4 +1,4 @@
-<x-laravel-admin::layouts.admin title="부모창-자식창 데이터 전달 테스트">
+<x-laravel-admin::admin.layouts.admin title="부모창-자식창 데이터 전달 테스트">
 
     <div class="container mx-auto p-6">
         <h1 class="text-2xl font-bold mb-6">부모창-자식창 데이터 전달 테스트</h1>
@@ -62,7 +62,7 @@
         </div>
 
         <!-- 사용자 검색 모달 -->
-        <x-laravel-admin::draggable-modal
+        <x-laravel-admin::admin.draggable-modal
             id="user-search-modal"
             title="사용자 검색"
             width="800"
@@ -70,7 +70,7 @@
             <livewire:admin.users.user-search-modal
                 :modal-id="'user-search-modal'"
             />
-        </x-laravel-admin::draggable-modal>
+        </x-laravel-admin::admin.draggable-modal>
     </div>
 
     <script>
@@ -127,4 +127,4 @@
             }
         }
     </script>
-</x-laravel-admin::layouts.admin>
+</x-laravel-admin::admin.layouts.admin>

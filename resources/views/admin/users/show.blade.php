@@ -1,6 +1,6 @@
-<x-laravel-admin::layouts.admin title="사용자 정보">
+<x-laravel-admin::admin.layouts.admin title="사용자 정보">
     <x-slot name="header">
-        <x-laravel-admin::admin-header>
+        <x-laravel-admin::admin.admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
@@ -11,7 +11,7 @@
             <x-slot name="description">
                 {{ __('User Information') }}
             </x-slot>
-        </x-laravel-admin::admin-header>
+        </x-laravel-admin::admin.admin-header>
     </x-slot>
 
     <div class="mx-auto w-full max-w-7xl bg-white px-2 py-2 dark:bg-gray-900">
@@ -102,4 +102,4 @@
             </form>
         @endcan
     @endif
-</x-laravel-admin::layouts.admin>
+</x-laravel-admin::admin.layouts.admin>

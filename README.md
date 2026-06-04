@@ -106,7 +106,7 @@ By default, `MenuSeeder` creates a `관리자 전용` menu folder for administra
 
 ## Blade Component Rules
 
-Package-owned anonymous components live in `resources/views/components` and are registered with the `laravel-admin` namespace. Use them as `<x-laravel-admin::button>`, `<x-laravel-admin::layouts.admin>`, and `<x-laravel-admin::admin.input>` inside package views.
+Package-owned admin components live in `resources/views/components/admin` and are registered with the `laravel-admin` namespace. Use them as `<x-laravel-admin::admin.primary-button>`, `<x-laravel-admin::admin.layouts.admin>`, and `<x-laravel-admin::admin.input>` inside package views.
 
 Do not add or use unprefixed package components such as `<x-button>`, `<x-input>`, or `<x-layouts.admin>`. Those names belong to the host Laravel application and may already be provided by Breeze, Jetstream, Flux, or custom app components.
 

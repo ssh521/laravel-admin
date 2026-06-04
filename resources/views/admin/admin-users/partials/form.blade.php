@@ -11,7 +11,7 @@
                 <label for="name" class="{{ $labelClass }}">{{ __('이름') }} :</label>
                 <div class="w-full sm:w-[320px]">
                     <input id="name" name="name" type="text" value="{{ old('name', $adminUser?->name) }}" autocomplete="name" class="{{ $inputClass }} w-full" onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';" onblur="this.style.borderColor='transparent'; this.style.borderBottomColor='#777777'; this.style.boxShadow='none';">
-                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('name')" />
+                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('name')" />
                 </div>
             </div>
 
@@ -19,7 +19,7 @@
                 <label for="email" class="{{ $labelClass }}">{{ __('E-mail') }} :</label>
                 <div class="w-full sm:w-[520px]">
                     <input id="email" name="email" type="email" value="{{ old('email', $adminUser?->email) }}" autocomplete="email" class="{{ $inputClass }} w-full" onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';" onblur="this.style.borderColor='transparent'; this.style.borderBottomColor='#777777'; this.style.boxShadow='none';">
-                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('email')" />
+                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('email')" />
                 </div>
             </div>
         </div>
@@ -31,7 +31,7 @@
                 <label for="password" class="{{ $labelClass }}">{{ __('비밀번호') }} :</label>
                 <div class="w-full sm:w-[320px]">
                     <input id="password" name="password" type="password" autocomplete="new-password" class="{{ $inputClass }} w-full" onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';" onblur="this.style.borderColor='transparent'; this.style.borderBottomColor='#777777'; this.style.boxShadow='none';">
-                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('password')" />
+                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('password')" />
                 </div>
             </div>
 
@@ -39,7 +39,7 @@
                 <label for="confirm-password" class="{{ $labelClass }}">{{ __('확인') }} :</label>
                 <div class="w-full sm:w-[320px]">
                     <input id="confirm-password" name="confirm-password" type="password" autocomplete="new-password" class="{{ $inputClass }} w-full" onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';" onblur="this.style.borderColor='transparent'; this.style.borderBottomColor='#777777'; this.style.boxShadow='none';">
-                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('confirm-password')" />
+                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('confirm-password')" />
                 </div>
             </div>
         </div>
@@ -64,7 +64,7 @@
                             <span>{{ $role->name }}</span>
                         </label>
                     @endforeach
-                    <x-laravel-admin::input-error-message class="col-span-full mt-1 text-[13px]" :messages="$errors->get('roles')" />
+                    <x-laravel-admin::admin.input-error-message class="col-span-full mt-1 text-[13px]" :messages="$errors->get('roles')" />
                 </div>
             </div>
         </div>

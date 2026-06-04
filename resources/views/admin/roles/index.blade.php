@@ -1,8 +1,8 @@
-<x-laravel-admin::layouts.admin title="역할 관리">
+<x-laravel-admin::admin.layouts.admin title="역할 관리">
 
     <x-slot name="header">
 
-        <x-laravel-admin::admin-header>
+        <x-laravel-admin::admin.admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
@@ -10,7 +10,7 @@
             <x-slot name="description">
                 {{ __('Role List') }}
             </x-slot>
-        </x-laravel-admin::admin-header>
+        </x-laravel-admin::admin.admin-header>
 
     </x-slot>
 
@@ -42,7 +42,7 @@
                 @endif
             </div>
 
-            <x-laravel-admin::session-messages />
+            <x-laravel-admin::admin.session-messages />
 
             <form class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end" action="{{ route('admin.roles.index') }}" method="GET">
                     <label for="role-search" class="sr-only">역할 검색</label>
@@ -145,7 +145,7 @@
     </div>
 
     {{-- 메뉴 카테고리 선택 모달 --}}
-    <x-laravel-admin::draggable-modal
+    <x-laravel-admin::admin.draggable-modal
         id="menu-category-selector-modal"
         title="메뉴 카테고리 관리"
         width="600"
@@ -240,10 +240,10 @@
                 </button>
             </div>
         </div>
-    </x-laravel-admin::draggable-modal>
+    </x-laravel-admin::admin.draggable-modal>
 
     {{-- 역할 관리 모달 --}}
-    <x-laravel-admin::draggable-modal
+    <x-laravel-admin::admin.draggable-modal
         id="role-management-modal"
         title="카테고리 역할 관리"
         width="500"
@@ -286,7 +286,7 @@
                 </button>
             </div>
         </div>
-    </x-laravel-admin::draggable-modal>
+    </x-laravel-admin::admin.draggable-modal>
 
 
 
@@ -509,4 +509,4 @@
     {{-- 역할 상세 모달 --}}
     <livewire:admin.roles.role-detail-modal />
 
-</x-laravel-admin::layouts.admin>
+</x-laravel-admin::admin.layouts.admin>

@@ -1,6 +1,6 @@
-<x-laravel-admin::layouts.admin title="역할 등록">
+<x-laravel-admin::admin.layouts.admin title="역할 등록">
     <x-slot name="header">
-        <x-laravel-admin::admin-header>
+        <x-laravel-admin::admin.admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">Admin Home</a>
@@ -8,7 +8,7 @@
             <x-slot name="description">
                 {{ __('Create New Role') }}
             </x-slot>
-        </x-laravel-admin::admin-header>
+        </x-laravel-admin::admin.admin-header>
     </x-slot>
 
     @php
@@ -36,7 +36,7 @@
                                 <div class="w-full sm:w-[320px]">
                                     <input id="name" name="name" type="text" value="{{ old('name') }}" autocomplete="name" placeholder="{{ __('Enter role name') }}" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
                                     @if ($errors->has('name'))
-                                        <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="['Please enter a role name!']" />
+                                        <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="['Please enter a role name!']" />
                                     @endif
                                 </div>
                             </div>
@@ -45,7 +45,7 @@
                                 <label for="description" class="{{ $labelClass }}">{{ __('Description') }} :</label>
                                 <div class="w-full sm:w-[520px]">
                                     <input id="description" name="description" type="text" value="{{ old('description') }}" placeholder="{{ __('Enter role description') }}" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('description')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('description')" />
                                 </div>
                             </div>
                         </div>
@@ -64,7 +64,7 @@
                                     </label>
                                 @endforeach
                                 @if ($errors->has('permissions'))
-                                    <x-laravel-admin::input-error-message class="col-span-full mt-1 text-[13px]" :messages="['Please select at least one permission!']" />
+                                    <x-laravel-admin::admin.input-error-message class="col-span-full mt-1 text-[13px]" :messages="['Please select at least one permission!']" />
                                 @endif
                             </div>
                         </div>
@@ -84,4 +84,4 @@
             </form>
         </div>
     </div>
-</x-laravel-admin::layouts.admin>
+</x-laravel-admin::admin.layouts.admin>

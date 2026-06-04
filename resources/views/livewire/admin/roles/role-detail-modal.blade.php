@@ -1,5 +1,5 @@
 <div>
-    <x-laravel-admin::draggable-modal
+    <x-laravel-admin::admin.draggable-modal
         id="role-detail-modal"
         x-on:closed-modal.window="if ($event.detail.modalId === 'role-detail-modal') $wire.resetRole()"
         title="역할 상세 정보"
@@ -50,22 +50,22 @@
                     <!-- 액션 버튼 -->
                     <div class="flex flex-wrap justify-end gap-2 mt-6 pt-4 border-t border-gray-200 dark:border-gray-600">
                         @can('update', $role)
-                        <x-laravel-admin::danger-button type="button" wire:click="openEditModal">
+                        <x-laravel-admin::admin.danger-button type="button" wire:click="openEditModal">
                             모달창에서 수정하기
-                        </x-laravel-admin::danger-button>
-                        <x-laravel-admin::primary-button type="button" wire:click="editRole">
+                        </x-laravel-admin::admin.danger-button>
+                        <x-laravel-admin::admin.primary-button type="button" wire:click="editRole">
                             수정
-                        </x-laravel-admin::primary-button>
+                        </x-laravel-admin::admin.primary-button>
                         @endcan
-                        <x-laravel-admin::secondary-button type="button" @click="$dispatch('close-modal', { modalId: 'role-detail-modal' })">닫기</x-laravel-admin::secondary-button>
+                        <x-laravel-admin::admin.secondary-button type="button" @click="$dispatch('close-modal', { modalId: 'role-detail-modal' })">닫기</x-laravel-admin::admin.secondary-button>
 
                     </div>
                 @endif
             </div>
-        </x-laravel-admin::draggable-modal>
+        </x-laravel-admin::admin.draggable-modal>
 
         <!-- 자식 모달: 역할 수정 폼 -->
-        <x-laravel-admin::draggable-modal
+        <x-laravel-admin::admin.draggable-modal
             id="role-edit-modal"
             x-on:closed-modal.window="if ($event.detail.modalId === 'role-edit-modal') $wire.resetEditForm()"
             title="역할 수정"
@@ -78,5 +78,5 @@
             <div class="px-2 py-2">
                 <livewire:admin.roles.role-form parent-modal-id="role-edit-modal" />
             </div>
-        </x-laravel-admin::draggable-modal>
+        </x-laravel-admin::admin.draggable-modal>
 </div>

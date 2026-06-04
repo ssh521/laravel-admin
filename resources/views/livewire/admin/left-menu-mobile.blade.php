@@ -36,7 +36,7 @@
             </button>
             <!-- 로고 -->
             <a href="{{ route('admin.index') }}" class="flex items-center gap-2" style="text-decoration: none;">
-                <x-laravel-admin::site-logo class="w-[22px] -mb-1 dark:text-purple-200" />
+                <x-laravel-admin::admin.site-logo class="w-[22px] -mb-1 dark:text-purple-200" />
                 <span class="text-md lg:text-xl font-bold text-purple-700 dark:text-purple-200 tracking-tight">관리자 메뉴</span>
             </a>
         </div>

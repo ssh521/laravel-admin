@@ -1,8 +1,8 @@
 {{-- 사용자 관리 페이지 - 사용자 목록 조회, 검색, Role 필터, 상세 모달 기능 --}}
-<x-laravel-admin::layouts.admin title="사용자 관리">
+<x-laravel-admin::admin.layouts.admin title="사용자 관리">
     {{-- 페이지 헤더 --}}
     <x-slot name="header">
-        <x-laravel-admin::admin-header>
+        <x-laravel-admin::admin.admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
@@ -11,7 +11,7 @@
             <x-slot name="description">
                 {{ __('User List') }}
             </x-slot>
-        </x-laravel-admin::admin-header>
+        </x-laravel-admin::admin.admin-header>
     </x-slot>
 
     @php
@@ -51,7 +51,7 @@
                 </div>
             </div>
 
-            <x-laravel-admin::session-messages />
+            <x-laravel-admin::admin.session-messages />
 
             <form class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end" action="{{ route('admin.users.index') }}" method="GET">
                 <label for="user-role-filter" class="sr-only">Role</label>
@@ -114,7 +114,7 @@
                             <tr class="border-b border-[#e6e6e6] bg-[#fbfbfb] transition-colors hover:bg-white dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
                                 <th scope="row" class="h-12 whitespace-nowrap px-4 text-left font-bold">
                                     @can('view', $user)
-                                        <x-laravel-admin::modal-trigger
+                                        <x-laravel-admin::admin.modal-trigger
                                             text="{{ $user->name }}"
                                             modal-id="user-detail-modal"
                                             variant="primary"
@@ -218,4 +218,4 @@
             });
         });
     </script>
-</x-laravel-admin::layouts.admin>
+</x-laravel-admin::admin.layouts.admin>

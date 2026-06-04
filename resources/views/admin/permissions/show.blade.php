@@ -1,6 +1,6 @@
-<x-laravel-admin::layouts.admin title="권한 상세">
+<x-laravel-admin::admin.layouts.admin title="권한 상세">
     <x-slot name="header">
-        <x-laravel-admin::admin-header>
+        <x-laravel-admin::admin.admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
@@ -9,7 +9,7 @@
             <x-slot name="description">
                 {{ __('Permission Detail') }}
             </x-slot>
-        </x-laravel-admin::admin-header>
+        </x-laravel-admin::admin.admin-header>
     </x-slot>
 
     <div class="w-full lg:max-w-7xl mx-auto">
@@ -30,7 +30,7 @@
                 </div>
             </div>
 
-            <x-laravel-admin::session-messages />
+            <x-laravel-admin::admin.session-messages />
 
             <div class="space-y-6">
                 <!-- Permission Basic Information -->
@@ -39,13 +39,13 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <x-laravel-admin::label for="permission_name" :value="__('Permission Name')" />
+                                    <x-laravel-admin::admin.label for="permission_name" :value="__('Permission Name')" />
                                     <p class="mt-1 text-sm text-gray-900 dark:text-white font-medium">{{ $permission->name }}</p>
                                 </div>
 
                                 @if($permission->description)
                                 <div>
-                                    <x-laravel-admin::label for="permission_description" :value="__('Description')" />
+                                    <x-laravel-admin::admin.label for="permission_description" :value="__('Description')" />
                                     <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $permission->description }}</p>
                                 </div>
                                 @endif
@@ -53,18 +53,18 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                                 <div>
-                                    <x-laravel-admin::label for="created_at" :value="__('Created At')" />
+                                    <x-laravel-admin::admin.label for="created_at" :value="__('Created At')" />
                                     <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $permission->created_at->format('Y-m-d H:i:s') }}</p>
                                 </div>
 
                                 <div>
-                                    <x-laravel-admin::label for="updated_at" :value="__('Updated At')" />
+                                    <x-laravel-admin::admin.label for="updated_at" :value="__('Updated At')" />
                                     <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $permission->updated_at->format('Y-m-d H:i:s') }}</p>
                                 </div>
                 </div>
             </div>
 
-            <x-laravel-admin::section-border />
+            <x-laravel-admin::admin.section-border />
 
             <!-- Assigned Roles Section -->
             <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6">
@@ -109,4 +109,4 @@
     </div>
         </div>
     </div>
-</x-laravel-admin::layouts.admin>
+</x-laravel-admin::admin.layouts.admin>

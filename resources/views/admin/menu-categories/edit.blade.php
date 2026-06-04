@@ -1,13 +1,13 @@
-<x-laravel-admin::layouts.admin title="메뉴 카테고리 수정">
+<x-laravel-admin::admin.layouts.admin title="메뉴 카테고리 수정">
     <x-slot name="header">
-        <x-laravel-admin::admin-header>
+        <x-laravel-admin::admin.admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">관리자 홈</a>
                 - <a href="{{ route('admin.menu-categories.index') }}">메뉴 카테고리 관리</a>
             </x-slot>
             <x-slot name="description">{{ __('Edit Menu Category') }}</x-slot>
-        </x-laravel-admin::admin-header>
+        </x-laravel-admin::admin.admin-header>
     </x-slot>
 
     @php
@@ -24,7 +24,7 @@
                 <h1 class="text-[26px] font-bold leading-none text-[#222222] dark:text-gray-100">{{ __('Menu Category Information') }}</h1>
             </div>
 
-            <x-laravel-admin::session-messages />
+            <x-laravel-admin::admin.session-messages />
 
             <form action="{{ route('admin.menu-categories.update', $menuCategory) }}" method="POST">
                 @csrf
@@ -37,7 +37,7 @@
                                 <label for="name" class="{{ $labelClass }}">{{ __('카테고리명') }} :</label>
                                 <div class="w-full sm:w-[520px]">
                                     <input id="name" name="name" type="text" value="{{ old('name', $menuCategory->name) }}" autocomplete="name" placeholder="Enter category name" required class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('name')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('name')" />
                                 </div>
                             </div>
 
@@ -45,7 +45,7 @@
                                 <label for="sort_order" class="{{ $labelClass }}">{{ __('정렬 순서') }} :</label>
                                 <div class="w-full sm:w-[160px]">
                                     <input id="sort_order" name="sort_order" type="number" value="{{ old('sort_order', $menuCategory->sort_order) }}" min="0" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('sort_order')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('sort_order')" />
                                 </div>
                             </div>
 
@@ -83,4 +83,4 @@
             </button>
         </form>
     @endcan
-</x-laravel-admin::layouts.admin>
+</x-laravel-admin::admin.layouts.admin>

@@ -1,6 +1,6 @@
-<x-laravel-admin::layouts.admin title="권한 수정">
+<x-laravel-admin::admin.layouts.admin title="권한 수정">
     <x-slot name="header">
-        <x-laravel-admin::admin-header>
+        <x-laravel-admin::admin.admin-header>
             <x-slot name="navigation">
                 <a href="{{ route('home') }}">HOME</a>
                 - <a href="{{ route('admin.index') }}">Admin Home</a>
@@ -8,7 +8,7 @@
             <x-slot name="description">
                 {{ __('Edit Permission') }}
             </x-slot>
-        </x-laravel-admin::admin-header>
+        </x-laravel-admin::admin.admin-header>
     </x-slot>
 
     @php
@@ -37,7 +37,7 @@
                                 <div class="w-full sm:w-[420px]">
                                     <input id="name" name="name" type="text" value="{{ old('name', $permission->name) }}" autocomplete="name" placeholder="{{ __('Enter permission name') }}" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
                                     @if ($errors->has('name'))
-                                        <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="['Please enter a permission name!']" />
+                                        <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="['Please enter a permission name!']" />
                                     @endif
                                 </div>
                             </div>
@@ -46,7 +46,7 @@
                                 <label for="description" class="{{ $labelClass }}">{{ __('Description') }} :</label>
                                 <div class="w-full sm:w-[520px]">
                                     <input id="description" name="description" type="text" value="{{ old('description', $permission->description ?? '') }}" placeholder="{{ __('Enter permission description') }}" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
-                                    <x-laravel-admin::input-error-message class="mt-2 text-[13px]" :messages="$errors->get('description')" />
+                                    <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('description')" />
                                 </div>
                             </div>
                         </div>
@@ -76,4 +76,4 @@
             @endcan
         </div>
     </div>
-</x-laravel-admin::layouts.admin>
+</x-laravel-admin::admin.layouts.admin>
