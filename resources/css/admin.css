@@ -5,6 +5,7 @@
 @source "../js/**/*.js";
 @source "../../../vendor/ssh521/laravel-admin/resources/views/**/*.blade.php";
 @source "../../../vendor/ssh521/laravel-admin/resources/js/**/*.js";
+@source "../../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
 @source "../../views/vendor/laravel-admin/**/*.blade.php";
 
 @custom-variant dark (&:where(.dark, .dark *));

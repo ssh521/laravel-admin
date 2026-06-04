@@ -3,6 +3,7 @@
 namespace Ssh521\LaravelAdmin\Livewire\Admin\Users;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -18,6 +19,7 @@ class UserRoleForm extends Component
     public function __construct()
     {
         $this->userService = app(UserService::class);
+        $this->useAdminGuard();
     }
 
     public $user;
@@ -36,12 +38,14 @@ class UserRoleForm extends Component
 
     public function mount()
     {
+        $this->useAdminGuard();
         $this->loadRoles();
     }
 
     #[On('admin-users:user-role-form:open')]
     public function open(array $payload = []): void
     {
+        $this->useAdminGuard();
         $this->resetValidation();
         $this->resetForm();
 
@@ -108,6 +112,8 @@ class UserRoleForm extends Component
 
     public function loadRoles()
     {
+        $this->useAdminGuard();
+
         // 현재 사용자가 볼 수 있는 역할들만 로드
         $this->availableRoles = Role::all()->filter(function ($role) {
             return Gate::allows('view', $role);
@@ -116,6 +122,8 @@ class UserRoleForm extends Component
 
     public function loadAvailableRoles()
     {
+        $this->useAdminGuard();
+
         // 사용자에게 할당 가능한 역할들만 로드
         $this->availableRoles = Role::all()->filter(function ($role) {
             return Gate::allows('view', $role);
@@ -135,6 +143,8 @@ class UserRoleForm extends Component
 
     public function save()
     {
+        $this->useAdminGuard();
+
         if (! $this->user) {
             return;
         }
@@ -173,6 +183,16 @@ class UserRoleForm extends Component
 
     public function render()
     {
+        $this->useAdminGuard();
+
         return view('livewire.admin.users.user-role-form');
+    }
+
+    private function useAdminGuard(): void
+    {
+        $guard = config('laravel-admin.auth.guard', 'laravel_admin');
+
+        Auth::shouldUse($guard);
+        request()->setUserResolver(fn () => Auth::guard($guard)->user());
     }
 }

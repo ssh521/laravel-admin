@@ -27,6 +27,7 @@ class UserTable extends Component
     public function __construct()
     {
         $this->userService = app(UserService::class);
+        $this->useAdminGuard();
     }
 
     public $search = '';
@@ -134,6 +135,8 @@ class UserTable extends Component
 
     public function render()
     {
+        $this->useAdminGuard();
+
         // 권한 검사: 사용자 목록 조회 권한이 있는지 확인
         $this->authorize('viewAny', User::class);
 
@@ -168,11 +171,21 @@ class UserTable extends Component
      */
     private function getAvailableRoles()
     {
+        $this->useAdminGuard();
+
         $currentUser = Auth::user();
         if ($currentUser->roles->contains('name', 'Super Admin')) {
             return Role::all();
         } else {
             return Role::where('name', '!=', 'Super Admin')->get();
         }
+    }
+
+    private function useAdminGuard(): void
+    {
+        $guard = config('laravel-admin.auth.guard', 'laravel_admin');
+
+        Auth::shouldUse($guard);
+        request()->setUserResolver(fn () => Auth::guard($guard)->user());
     }
 }

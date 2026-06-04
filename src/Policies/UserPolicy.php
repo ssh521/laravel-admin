@@ -30,7 +30,7 @@ class UserPolicy
     public function view($user, $model): bool
     {
         // 사용자는 자신의 프로필을 볼 수 있음
-        if ($user->id === $model->id) {
+        if ($this->isSameAccount($user, $model)) {
             return true;
         }
 
@@ -67,7 +67,7 @@ class UserPolicy
     public function update($user, $model): bool
     {
         // 사용자는 자신의 프로필을 수정할 수 있음
-        if ($user->id === $model->id) {
+        if ($this->isSameAccount($user, $model)) {
             return true;
         }
 
@@ -88,7 +88,7 @@ class UserPolicy
     public function delete($user, $model): bool
     {
         // 사용자는 자신을 삭제할 수 없음
-        if ($user->id === $model->id) {
+        if ($this->isSameAccount($user, $model)) {
             return false;
         }
 
@@ -125,7 +125,7 @@ class UserPolicy
     public function forceDelete($user, $model): bool
     {
         // 사용자는 자신을 영구 삭제할 수 없음
-        if ($user->id === $model->id) {
+        if ($this->isSameAccount($user, $model)) {
             return false;
         }
 
@@ -146,11 +146,21 @@ class UserPolicy
     public function assignRoles($user, $model): bool
     {
         // 사용자는 자신에게 역할을 할당할 수 없음
-        if ($user->id === $model->id) {
+        if ($this->isSameAccount($user, $model)) {
             return false;
         }
 
         return $user->hasPermissionTo('user-assign-roles');
+    }
+
+    public function assignRolesView($user, $model): bool
+    {
+        return $this->view($user, $model);
+    }
+
+    public function assignRolesUpdate($user, $model): bool
+    {
+        return $this->assignRoles($user, $model);
     }
 
     /**
@@ -159,7 +169,7 @@ class UserPolicy
     public function assignPermissions($user, $model): bool
     {
         // 사용자는 자신에게 권한을 할당할 수 없음
-        if ($user->id === $model->id) {
+        if ($this->isSameAccount($user, $model)) {
             return false;
         }
 
@@ -172,5 +182,15 @@ class UserPolicy
     public function viewAuthList($user): bool
     {
         return $user->hasPermissionTo('user-view-auth-list');
+    }
+
+    private function isSameAccount($user, $model): bool
+    {
+        if (! method_exists($user, 'getTable') || ! method_exists($model, 'getTable')) {
+            return $user->id === $model->id;
+        }
+
+        return $user->getTable() === $model->getTable()
+            && $user->getKey() === $model->getKey();
     }
 }

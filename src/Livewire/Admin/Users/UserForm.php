@@ -3,6 +3,7 @@
 namespace Ssh521\LaravelAdmin\Livewire\Admin\Users;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -32,11 +33,13 @@ class UserForm extends Component
     public function __construct()
     {
         $this->userService = app(UserService::class);
+        $this->useAdminGuard();
     }
 
     #[On('admin-users:user-form:open')]
     public function open(array $payload = []): void
     {
+        $this->useAdminGuard();
         $this->resetValidation();
         $this->resetForm();
 
@@ -85,6 +88,8 @@ class UserForm extends Component
 
     public function save(): void
     {
+        $this->useAdminGuard();
+
         if ($this->mode === 'view') {
             return;
         }
@@ -141,8 +146,18 @@ class UserForm extends Component
 
     public function render()
     {
+        $this->useAdminGuard();
+
         return view('livewire.admin.users.user-form');
     }
 
     private UserService $userService;
+
+    private function useAdminGuard(): void
+    {
+        $guard = config('laravel-admin.auth.guard', 'laravel_admin');
+
+        Auth::shouldUse($guard);
+        request()->setUserResolver(fn () => Auth::guard($guard)->user());
+    }
 }
