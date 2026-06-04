@@ -3,6 +3,7 @@
 namespace Ssh521\LaravelAdmin\Livewire\Admin\Roles;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Ssh521\LaravelAdmin\Services\RoleService;
@@ -18,12 +19,29 @@ class RoleDetailModal extends Component
     public function boot(RoleService $roleService): void
     {
         $this->roleService = $roleService;
+        $this->useAdminGuard();
+    }
+
+    private function useAdminGuard(): void
+    {
+        $guard = config('laravel-admin.auth.guard', 'laravel_admin');
+
+        Auth::shouldUse($guard);
+        request()->setUserResolver(fn () => Auth::guard($guard)->user());
     }
 
     #[On('admin-roles:role-detail-modal:show')]
-    public function showRoleDetail($params): void
+    public function showRoleDetail(mixed $payload = null, mixed $roleId = null): void
     {
-        $roleId = is_array($params) ? $params[0] : $params;
+        $this->useAdminGuard();
+
+        $payload = $this->normalizePayload($payload);
+        $roleId = $payload['roleId'] ?? $roleId ?? $payload[0] ?? null;
+
+        if (! $roleId) {
+            return;
+        }
+
         $this->role = $this->roleService->getRoleDetail(['roleId' => $roleId]);
 
         if (! $this->role) {
@@ -38,6 +56,23 @@ class RoleDetailModal extends Component
                 detail: { modalId: 'role-detail-modal' } 
             }));
         ");
+    }
+
+    private function normalizePayload(mixed $payload): array
+    {
+        if (is_array($payload)) {
+            return $payload;
+        }
+
+        if (is_object($payload)) {
+            return (array) $payload;
+        }
+
+        if ($payload) {
+            return [$payload];
+        }
+
+        return [];
     }
 
     public function editRole(): void
