@@ -65,11 +65,11 @@
 
     <!-- 로고 -->
     <a href="{{ route('admin.index') }}" class="flex items-center gap-2" style="text-decoration: none;">
-        <x-laravel-admin::site-logo class="w-[22px] -mb-1 dark:text-purple-200" />
+        <x-laravel-admin::admin.site-logo class="w-[22px] -mb-1 dark:text-purple-200" />
         <span class="text-md lg:text-xl font-bold text-purple-700 dark:text-purple-200 tracking-tight">관리자 메뉴</span>
     </a>
 
-    <x-laravel-admin::dark-mode-toggle class="ml-0" />
+    <x-laravel-admin::admin.dark-mode-toggle class="ml-0" />
 
     <div class="flex-1">
 
@@ -136,7 +136,7 @@
             <div class="flex w-full justify-center relative">
                 <!-- 데스크탑: 검색창 -->
                 <div class="w-1/2 hidden sm:block relative">
-                    <x-laravel-admin::input x-ref="desktopSearch" x-model="searchQuery" @input="
+                    <x-laravel-admin::admin.input x-ref="desktopSearch" x-model="searchQuery" @input="
                             // 입력 시 앞뒤 공백 제거
                             searchQuery = searchQuery.trim();
                             clearTimeout(searchTimeout);
@@ -250,7 +250,7 @@
                 @click.away="searchOpen = false">
                 <div class="mt-20 w-11/12 max-w-md bg-white dark:bg-gray-900 rounded shadow-lg p-4 flex flex-col gap-2">
                     <div class="flex items-center gap-2">
-                        <x-laravel-admin::input x-model="searchQuery" @input="
+                        <x-laravel-admin::admin.input x-model="searchQuery" @input="
                                 // 입력 시 앞뒤 공백 제거
                                 searchQuery = searchQuery.trim();
                                 clearTimeout(searchTimeout);
@@ -365,7 +365,7 @@
         <!-- Teams Dropdown -->
         @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
         <div class="ms-3 relative">
-            <x-laravel-admin::dropdown align="right" width="60">
+            <x-laravel-admin::admin.dropdown align="right" width="60">
                 <x-slot name="trigger">
                     <span class="inline-flex rounded-md">
                         <button type="button"
@@ -386,13 +386,13 @@
                             {{ __('Manage Team') }}
                         </div>
                         <!-- Team Settings -->
-                        <x-laravel-admin::dropdown-link href="{{ route('teams.show', Auth::user()->currentTeam->id) }}">
+                        <x-laravel-admin::admin.dropdown-link href="{{ route('teams.show', Auth::user()->currentTeam->id) }}">
                             {{ __('Team Settings') }}
-                        </x-laravel-admin::dropdown-link>
+                        </x-laravel-admin::admin.dropdown-link>
                         @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
-                        <x-laravel-admin::dropdown-link href="{{ route('teams.create') }}">
+                        <x-laravel-admin::admin.dropdown-link href="{{ route('teams.create') }}">
                             {{ __('Create New Team') }}
-                        </x-laravel-admin::dropdown-link>
+                        </x-laravel-admin::admin.dropdown-link>
                         @endcan
                         <!-- Team Switcher -->
                         @if (Auth::user()->allTeams()->count() > 1)
@@ -401,18 +401,18 @@
                             {{ __('Switch Teams') }}
                         </div>
                         @foreach (Auth::user()->allTeams() as $team)
-                        <x-laravel-admin::switchable-team :team="$team" />
+                        <x-laravel-admin::admin.switchable-team :team="$team" />
                         @endforeach
                         @endif
                     </div>
                 </x-slot>
-            </x-laravel-admin::dropdown>
+            </x-laravel-admin::admin.dropdown>
         </div>
         @endif
 
         <!-- Settings Dropdown -->
         <div class="ms-3 relative">
-            <x-laravel-admin::dropdown align="right" width="48">
+            <x-laravel-admin::admin.dropdown align="right" width="48">
                 <x-slot name="trigger">
                     @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
                     <button
@@ -438,12 +438,12 @@
 
                     <!-- Admin Management -->
                     <div class="block px-4 py-2 text-xs text-gray-400">
-                        {{ __('User Dashboard') }}
+                        {{ __('Admin Management') }}
                     </div>
 
 
                     @if(auth()->user())
-                    <x-laravel-admin::dropdown-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                    <x-laravel-admin::admin.dropdown-link href="{{ route('admin.index') }}" :active="request()->routeIs('admin.index')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="w-4 h-4 mr-2 inline -mt-1">
@@ -451,8 +451,8 @@
                             <path
                                 d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09A1.65 1.65 0 0 0 11 3.09V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
                         </svg>
-                        {{ __('Dashboard') }}
-                    </x-laravel-admin::dropdown-link>
+                        {{ __('관리자 홈') }}
+                    </x-laravel-admin::admin.dropdown-link>
                     @endif
 
                     <div class="border-t border-gray-200 dark:border-gray-600"></div>
@@ -462,22 +462,22 @@
                         {{ __('Manage Account') }}
                     </div>
 
-                    <x-laravel-admin::dropdown-link href="{{ route('profile.show') }}">
+                    <x-laravel-admin::admin.dropdown-link href="{{ route('profile.show') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="w-4 h-4 mr-2 inline -mt-1">
                             <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>{{ __('Profile') }}
-                    </x-laravel-admin::dropdown-link>
+                    </x-laravel-admin::admin.dropdown-link>
                     @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
-                    <x-laravel-admin::dropdown-link href="{{ route('api-tokens.index') }}">
+                    <x-laravel-admin::admin.dropdown-link href="{{ route('api-tokens.index') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="w-4 h-4 mr-2  inline -mt-1">
                             <path d="M16 4h2v16H4V6h2M15 3H9v20"></path>
                         </svg>{{ __('API Tokens') }}
-                    </x-laravel-admin::dropdown-link>
+                    </x-laravel-admin::admin.dropdown-link>
                     @endif
 
                     <div class="border-t border-gray-200 dark:border-gray-600"></div>
@@ -490,7 +490,7 @@
 
                     <form method="POST" action="{{ route($logoutRoute) }}" x-data>
                         @csrf
-                        <x-laravel-admin::dropdown-link href="{{ route($logoutRoute) }}" @click.prevent="$root.submit();">
+                        <x-laravel-admin::admin.dropdown-link href="{{ route($logoutRoute) }}" @click.prevent="$root.submit();">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round" class="w-4 h-4 mr-2 inline -mt-1">
@@ -499,12 +499,12 @@
                                 <line x1="21" y1="12" x2="9" y2="12"></line>
                             </svg>
                             {{ __('Log Out') }}
-                        </x-laravel-admin::dropdown-link>
+                        </x-laravel-admin::admin.dropdown-link>
                     </form>
 
 
                 </x-slot>
-            </x-laravel-admin::dropdown>
+            </x-laravel-admin::admin.dropdown>
         </div>
     </div>
 </header>

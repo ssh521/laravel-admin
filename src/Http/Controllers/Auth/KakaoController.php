@@ -75,6 +75,6 @@ class KakaoController extends Controller
 
         Auth::login($user, true);
 
-        return Redirect::intended(route('dashboard'));
+        return Redirect::intended(route(config('laravel-admin.route_name_prefix', 'admin.').'index'));
     }
 }

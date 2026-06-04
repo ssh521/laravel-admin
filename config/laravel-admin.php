@@ -5,10 +5,6 @@ use Ssh521\LaravelAdmin\Http\Middleware\AuthenticateAdmin;
 use Ssh521\LaravelAdmin\Models\AdminUser;
 
 return [
-    'dashboard' => [
-        'path' => '/dashboard',
-        'middleware' => ['web', 'auth', 'verified'],
-    ],
     'route_prefix' => 'admin',
     'route_name_prefix' => 'admin.',
     'middleware' => ['web', AuthenticateAdmin::class, 'verified'],

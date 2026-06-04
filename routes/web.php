@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\AdminUserController;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\AdminController;
-use Ssh521\LaravelAdmin\Http\Controllers\DashboardController;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\MenuCategoryController;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\MenuController;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\PermissionController;
@@ -11,10 +10,6 @@ use Ssh521\LaravelAdmin\Http\Controllers\Admin\RoleController;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\UserController;
 use Ssh521\LaravelAdmin\Http\Controllers\Auth\AdminLoginController;
 use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserTable;
-
-Route::middleware(config('laravel-admin.dashboard.middleware', ['web', 'auth', 'verified']))
-    ->get(config('laravel-admin.dashboard.path', '/dashboard'), [DashboardController::class, 'index'])
-    ->name('dashboard');
 
 if (config('laravel-admin.auth.admin_login.enabled', false)) {
     Route::prefix(config('laravel-admin.route_prefix', 'admin'))
