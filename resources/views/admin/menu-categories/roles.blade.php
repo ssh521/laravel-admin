@@ -12,8 +12,8 @@
         </x-laravel-admin::admin.admin-header>
     </x-slot>
 
-    <div class="w-full lg:max-w-7xl mx-auto">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl px-6 py-2">
+    <div class="w-full lg:max-w-5xl mx-auto">
+        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl px-5 py-2">
             <div class="flex justify-between items-center mb-6">
                 <div>
                     <h3 class="text-lg font-medium dark:text-white">

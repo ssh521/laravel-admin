@@ -11,18 +11,18 @@
     </x-slot>
 
     @php
-        $inputClass = 'admin-focus-border h-[32px] rounded-sm border border-transparent border-b-[#777777] bg-[#fafafa] px-3 text-[14px] font-bold text-[#111111] outline-none dark:bg-gray-700 dark:text-white dark:border-b-gray-500';
-        $textareaClass = 'admin-focus-border rounded-sm border border-transparent border-b-[#777777] bg-[#fafafa] px-3 py-2 text-[14px] font-bold text-[#111111] outline-none dark:bg-gray-700 dark:text-white dark:border-b-gray-500';
-        $labelClass = 'w-[150px] shrink-0 pr-4 text-right text-[15px] font-bold leading-[32px] text-[#111111] dark:text-gray-100';
+        $inputClass = 'admin-focus-border h-[28px] rounded-sm border border-transparent border-b-[#777777] bg-[#fafafa] px-2 text-base font-bold text-[#111111] outline-none dark:bg-gray-700 dark:text-white dark:border-b-gray-500';
+        $textareaClass = 'admin-focus-border rounded-sm border border-transparent border-b-[#777777] bg-[#fafafa] px-2 py-2 text-base font-bold text-[#111111] outline-none dark:bg-gray-700 dark:text-white dark:border-b-gray-500';
+        $labelClass = 'w-[120px] shrink-0 pr-3 text-right text-sm font-bold leading-[28px] text-[#111111] dark:text-gray-100';
         $rowClass = 'flex flex-col gap-1 sm:flex-row sm:items-start';
         $focusIn = "this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';";
         $focusOut = "this.style.borderColor='transparent'; this.style.borderBottomColor='#777777'; this.style.boxShadow='none';";
     @endphp
 
-    <div class="mx-auto w-full max-w-7xl bg-white px-2 py-2 dark:bg-gray-900 dark:border-gray-700">
-        <div class="min-h-[720px] bg-white px-8 py-10 sm:px-16 lg:px-24 dark:bg-gray-800 dark:border-gray-700">
-            <div class="mb-10">
-                <h1 class="text-[26px] font-bold leading-none text-[#222222] dark:text-gray-100">{{ __('Menu Information') }}</h1>
+    <div class="mx-auto w-full max-w-5xl bg-white px-2 py-2 dark:bg-gray-900 dark:border-gray-700">
+        <div class="min-h-[600px] bg-white px-6 py-8 sm:px-12 lg:px-16 dark:bg-gray-800 dark:border-gray-700">
+            <div class="mb-8">
+                <h1 class="text-[22px] font-bold leading-none text-[#222222] dark:text-gray-100">{{ __('Menu Information') }}</h1>
             </div>
 
             <x-laravel-admin::admin.session-messages />
@@ -30,12 +30,12 @@
             <form action="{{ route('admin.menus.store') }}" method="POST">
                 @csrf
 
-                <div class="mx-auto max-w-[1060px] text-[#111111] dark:text-gray-100">
-                    <div class="border-t border-[#8d8d8d] pt-7">
-                        <div class="space-y-4">
+                <div class="mx-auto max-w-[860px] text-[#111111] dark:text-gray-100">
+                    <div class="border-t border-[#8d8d8d] pt-6">
+                        <div class="space-y-3">
                             <div class="{{ $rowClass }}">
                                 <label for="name" class="{{ $labelClass }}">{{ __('메뉴명') }} :</label>
-                                <div class="w-full sm:w-[520px]">
+                                <div class="w-full sm:w-[420px]">
                                     <input id="name" name="name" type="text" value="{{ old('name') }}" autocomplete="name" placeholder="Enter menu name" required class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
                                     <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('name')" />
                                 </div>
@@ -43,7 +43,7 @@
 
                             <div class="{{ $rowClass }}">
                                 <label for="category_id" class="{{ $labelClass }}">{{ __('카테고리') }} :</label>
-                                <div class="w-full sm:w-[320px]">
+                                <div class="w-full sm:w-[260px]">
                                     <select id="category_id" name="category_id" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
                                         <option value="">{{ __('선택하세요') }}</option>
                                         @foreach($categories as $category)
@@ -56,7 +56,7 @@
 
                             <div class="{{ $rowClass }}">
                                 <label for="parent_id" class="{{ $labelClass }}">{{ __('상위 메뉴') }} :</label>
-                                <div class="w-full sm:w-[320px]">
+                                <div class="w-full sm:w-[260px]">
                                     <select id="parent_id" name="parent_id" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
                                         <option value="">{{ __('선택하세요') }}</option>
                                         @foreach($parentMenus as $parentMenu)
@@ -69,11 +69,11 @@
                         </div>
                     </div>
 
-                    <div class="mt-7 border-t border-[#8d8d8d] pt-7">
-                        <div class="space-y-4">
+                    <div class="mt-6 border-t border-[#8d8d8d] pt-6">
+                        <div class="space-y-3">
                             <div class="{{ $rowClass }}">
                                 <label for="route_name" class="{{ $labelClass }}">{{ __('Route Name') }} :</label>
-                                <div class="w-full sm:w-[520px]">
+                                <div class="w-full sm:w-[420px]">
                                     <input id="route_name" name="route_name" type="text" value="{{ old('route_name') }}" placeholder="예: users.index" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
                                     <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('route_name')" />
                                 </div>
@@ -81,7 +81,7 @@
 
                             <div class="{{ $rowClass }}">
                                 <label for="route_parameters" class="{{ $labelClass }}">{{ __('Route Params') }} :</label>
-                                <div class="w-full sm:w-[520px]">
+                                <div class="w-full sm:w-[420px]">
                                     <input id="route_parameters" name="route_parameters" type="text" value="{{ old('route_parameters') }}" placeholder='예: {"id": 1}' class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
                                     <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('route_parameters')" />
                                 </div>
@@ -89,7 +89,7 @@
 
                             <div class="{{ $rowClass }}">
                                 <label for="url" class="{{ $labelClass }}">{{ __('Direct URL') }} :</label>
-                                <div class="w-full sm:w-[520px]">
+                                <div class="w-full sm:w-[420px]">
                                     <input id="url" name="url" type="text" value="{{ old('url') }}" placeholder="예: /admin/users" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
                                     <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('url')" />
                                 </div>
@@ -97,7 +97,7 @@
 
                             <div class="{{ $rowClass }}">
                                 <label for="target" class="{{ $labelClass }}">{{ __('Target') }} :</label>
-                                <div class="w-full sm:w-[320px]">
+                                <div class="w-full sm:w-[260px]">
                                     <select id="target" name="target" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
                                         <option value="">{{ __('선택하세요') }}</option>
                                         <option value="_self" @selected(old('target') == '_self')>{{ __('현재 창') }}</option>
@@ -111,8 +111,8 @@
                         </div>
                     </div>
 
-                    <div class="mt-7 border-t border-[#8d8d8d] pt-7">
-                        <div class="space-y-4">
+                    <div class="mt-6 border-t border-[#8d8d8d] pt-6">
+                        <div class="space-y-3">
                             <div class="{{ $rowClass }}">
                                 <label for="sort_order" class="{{ $labelClass }}">{{ __('정렬 순서') }} :</label>
                                 <div class="w-full sm:w-[160px]">
@@ -123,7 +123,7 @@
 
                             <div class="{{ $rowClass }}">
                                 <label for="icon" class="{{ $labelClass }}">{{ __('Icon') }} :</label>
-                                <div class="w-full sm:w-[320px]">
+                                <div class="w-full sm:w-[260px]">
                                     <input id="icon" name="icon" type="text" value="{{ old('icon') }}" placeholder="fas fa-home" class="{{ $inputClass }} w-full" onfocus="{{ $focusIn }}" onblur="{{ $focusOut }}">
                                     <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('icon')" />
                                 </div>
@@ -131,8 +131,8 @@
 
                             <div class="{{ $rowClass }}">
                                 <span class="{{ $labelClass }}">{{ __('상태') }} :</span>
-                                <label for="is_active" class="flex min-h-[32px] items-center gap-2 text-[14px] font-bold">
-                                    <input id="is_active" name="is_active" type="checkbox" value="1" @checked(old('is_active', true)) class="size-5 border-[#777777] text-[#663601] focus:ring-[#663601]">
+                                <label for="is_active" class="flex min-h-[24px] items-center gap-2 text-sm font-bold">
+                                    <input id="is_active" name="is_active" type="checkbox" value="1" @checked(old('is_active', true)) class="size-4 border-[#777777] text-[#663601] focus:ring-[#663601]">
                                     <span>{{ __('활성화') }}</span>
                                 </label>
                             </div>
@@ -147,11 +147,11 @@
                         </div>
                     </div>
 
-                    <div class="mt-7 border-t border-[#8d8d8d] pt-10">
+                    <div class="mt-6 border-t border-[#8d8d8d] pt-8">
                         <div class="flex justify-center">
-                            <button type="submit" class="h-[34px] min-w-[140px] border border-[#777777] bg-[#eeeeee] px-8 text-[15px] font-bold leading-none text-[#111111] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                            <x-laravel-admin::admin.primary-button class="min-w-[120px] justify-center px-5">
                                 {{ __('등록하기') }}
-                            </button>
+                            </x-laravel-admin::admin.primary-button>
                         </div>
                     </div>
                 </div>

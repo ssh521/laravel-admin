@@ -16,7 +16,7 @@
             <div class="mb-2">
                 <h1 class="text-[26px] font-bold leading-none text-[#222222] dark:text-gray-100">{{ __('Admin Users') }}</h1>
 
-                <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-[14px] font-semibold">
+                <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-base font-semibold">
                     <a href="{{ route('admin.admin-users.index') }}">{{ __('목록보기') }}</a>
                     <span class="text-[#222222] dark:text-gray-400">|</span>
                     <a href="{{ route('admin.admin-users.create') }}">{{ __('등록하기') }}</a>
@@ -26,7 +26,7 @@
             <x-laravel-admin::admin.session-messages />
 
             <form method="GET" action="{{ route('admin.admin-users.index') }}" class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
-                <select name="role" class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-[14px] text-[#111111] outline-none sm:w-[150px] dark:bg-gray-700 dark:border-gray-600 dark:text-white" onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';" onblur="this.style.borderColor='#7d7d7d'; this.style.boxShadow='none';">
+                <select name="role" class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-base text-[#111111] outline-none sm:w-[150px] dark:bg-gray-700 dark:border-gray-600 dark:text-white" onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';" onblur="this.style.borderColor='#7d7d7d'; this.style.boxShadow='none';">
                     <option value="">{{ __('All Roles') }}</option>
                     @foreach ($roles as $role)
                         <option value="{{ $role->name }}" @selected(request('role') === $role->name)>{{ $role->name }}</option>
@@ -37,11 +37,11 @@
                     type="text"
                     value="{{ request('search') }}"
                     placeholder="{{ __('Search name or email') }}"
-                    class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-[14px] text-[#111111] outline-none sm:w-[260px] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-base text-[#111111] outline-none sm:w-[260px] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';"
                     onblur="this.style.borderColor='#7d7d7d'; this.style.boxShadow='none';"
                 >
-                <button type="submit" class="h-[28px] cursor-pointer rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-4 text-[14px] font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                <button type="submit" class="h-[28px] cursor-pointer rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-4 text-base font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
                     {{ __('검색') }}
                 </button>
             </form>
@@ -56,22 +56,22 @@
 
 
             <div class="overflow-x-auto">
-                <table class="min-w-full border-collapse text-[14px] text-[#111111] dark:text-gray-100">
+                <table class="min-w-full border-collapse text-sm text-[#111111] dark:text-gray-100">
                     <thead>
                         <tr class="border-y border-[#cfcfcf] bg-[#dedede] text-[#555555] dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                            <th class="h-12 px-2 text-left font-bold">{{ __('Name') }}</th>
-                            <th class="h-12 px-2 text-left font-bold">{{ __('Email') }}</th>
-                            <th class="h-12 px-2 text-left font-bold">{{ __('Roles') }}</th>
-                            <th class="h-12 px-2 text-left font-bold">{{ __('Verified') }}</th>
-                            <th class="h-12 px-2 text-right font-bold">{{ __('Actions') }}</th>
+                            <th class="h-10 px-2 text-left font-bold">{{ __('Name') }}</th>
+                            <th class="h-10 px-2 text-left font-bold">{{ __('Email') }}</th>
+                            <th class="h-10 px-2 text-left font-bold">{{ __('Roles') }}</th>
+                            <th class="h-10 px-2 text-left font-bold">{{ __('Verified') }}</th>
+                            <th class="h-10 px-2 text-right font-bold">{{ __('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($adminUsers as $adminUser)
                             <tr class="border-b border-[#e6e6e6] bg-[#fbfbfb] transition-colors hover:bg-white dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-                                <td class="h-12 whitespace-nowrap px-4 font-bold">{{ $adminUser->name }}</td>
-                                <td class="h-12 whitespace-nowrap px-4">{{ $adminUser->email }}</td>
-                                <td class="h-12 px-4">
+                                <td class="h-10 whitespace-nowrap px-4 font-bold">{{ $adminUser->name }}</td>
+                                <td class="h-10 whitespace-nowrap px-4">{{ $adminUser->email }}</td>
+                                <td class="h-10 px-4">
                                     <div class="flex flex-wrap gap-x-2 gap-y-1">
                                         @forelse ($adminUser->getRoleNames() as $role)
                                             <span>{{ $role }}</span>
@@ -80,14 +80,14 @@
                                         @endforelse
                                     </div>
                                 </td>
-                                <td class="h-12 whitespace-nowrap px-4">
+                                <td class="h-10 whitespace-nowrap px-4">
                                     @if ($adminUser->email_verified_at)
                                         <span>{{ __('Verified') }}</span>
                                     @else
                                         <span>{{ __('Not Verified') }}</span>
                                     @endif
                                 </td>
-                                <td class="h-12 whitespace-nowrap px-4 text-right">
+                                <td class="h-10 whitespace-nowrap px-4 text-right">
                                     <a href="{{ route('admin.admin-users.show', $adminUser->getKey()) }}">{{ __('View') }}</a>
                                     <span class="mx-1 text-gray-400">|</span>
                                     <a href="{{ route('admin.admin-users.edit', $adminUser->getKey()) }}">{{ __('Edit') }}</a>
@@ -95,14 +95,14 @@
                             </tr>
                         @empty
                             <tr class="border-b border-[#e6e6e6] bg-[#fbfbfb] dark:border-gray-700 dark:bg-gray-800">
-                                <td colspan="5" class="h-12 px-4 text-center text-gray-500 dark:text-gray-400">{{ __('No admin users found.') }}</td>
+                                <td colspan="5" class="h-10 px-4 text-center text-gray-500 dark:text-gray-400">{{ __('No admin users found.') }}</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
 
-            <div class="mt-6 text-[14px]">
+            <div class="mt-6 text-sm">
                 {{ $adminUsers->withQueryString()->links() }}
             </div>
         </div>

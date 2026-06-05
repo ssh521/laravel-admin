@@ -26,7 +26,7 @@
                     @endif
                 </h1>
 
-                <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-[14px] font-semibold">
+                <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-base font-semibold">
                     @can('viewAny', Ssh521\LaravelAdmin\Models\Menu::class)
                         <a href="{{ route('admin.menus.index') }}">{{ __('목록보기') }}</a>
                         <span class="text-[#222222] dark:text-gray-400">|</span>
@@ -47,19 +47,19 @@
                     type="text"
                     name="search"
                     value="{{ request('search') }}"
-                    class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-[14px] text-[#111111] outline-none sm:w-[260px] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-base text-[#111111] outline-none sm:w-[260px] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     placeholder="{{ __('메뉴 검색') }}"
                     onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';"
                     onblur="this.style.borderColor='#7d7d7d'; this.style.boxShadow='none';"
                 >
 
                 @if(request('search'))
-                    <a href="{{ route('admin.menus.index') }}" class="inline-flex h-[28px] items-center rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-3 text-[14px] font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                    <a href="{{ route('admin.menus.index') }}" class="inline-flex h-[28px] items-center rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-3 text-base font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
                         {{ __('초기화') }}
                     </a>
                 @endif
 
-                <button type="submit" class="h-[28px] cursor-pointer rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-4 text-[14px] font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                <button type="submit" class="h-[28px] cursor-pointer rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-4 text-base font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
                     {{ __('검색') }}
                 </button>
             </form>
@@ -87,14 +87,14 @@
                             };
                         @endphp
 
-            <table class="min-w-full border-collapse text-[14px] text-[#111111] dark:text-gray-100">
+            <table class="min-w-full border-collapse text-sm text-[#111111] dark:text-gray-100">
             <thead>
                 <tr class="border-y border-[#cfcfcf] bg-[#dedede] text-[#555555] dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                     {{-- ID 컬럼 --}}
-                    <th scope="col" class="h-12 px-2 text-left font-bold whitespace-nowrap">ID</th>
+                    <th scope="col" class="h-10 px-2 text-left font-bold whitespace-nowrap">ID</th>
 
                     {{-- 메뉴명 컬럼 (정렬 가능) --}}
-                    <th scope="col" class="h-12 px-2 text-left font-bold whitespace-nowrap">
+                    <th scope="col" class="h-10 px-2 text-left font-bold whitespace-nowrap">
                         <a href="{{ route('admin.menus.index', array_merge(request()->query(), ['sort' => 'name', 'direction' => $getNextDirection('name')])) }}"
                            class="inline-flex items-center gap-1">
                             메뉴명
@@ -103,7 +103,7 @@
                     </th>
 
                     {{-- 카테고리 컬럼 (정렬 가능) --}}
-                    <th scope="col" class="h-12 px-2 text-left font-bold whitespace-nowrap">
+                    <th scope="col" class="h-10 px-2 text-left font-bold whitespace-nowrap">
                         @if(empty(request('search')))
                         <a href="{{ route('admin.menus.index', array_merge(request()->query(), ['sort' => 'category', 'direction' => $getNextDirection('category')])) }}"
                            class="inline-flex items-center gap-1">
@@ -118,13 +118,13 @@
                     </th>
 
                     {{-- 라우트/URL 컬럼 --}}
-                    <th scope="col" class="h-12 px-2 text-left font-bold whitespace-nowrap">라우트/URL</th>
+                    <th scope="col" class="h-10 px-2 text-left font-bold whitespace-nowrap">라우트/URL</th>
 
                     {{-- 상태 컬럼 --}}
-                    <th scope="col" class="h-12 px-2 text-left font-bold whitespace-nowrap">상태</th>
+                    <th scope="col" class="h-10 px-2 text-left font-bold whitespace-nowrap">상태</th>
 
                     {{-- 액션 컬럼 --}}
-                    <th scope="col" class="h-12 px-2 text-right font-bold whitespace-nowrap">
+                    <th scope="col" class="h-10 px-2 text-right font-bold whitespace-nowrap">
                         <span class="sr-only">Edit</span>
                     </th>
                 </tr>
@@ -136,12 +136,12 @@
                     class="border-b border-[#e6e6e6] bg-[#fbfbfb] transition-colors hover:bg-white dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
 
                     {{-- 메뉴 ID --}}
-                    <th scope="row" class="h-12 px-4 font-medium">
+                    <th scope="row" class="h-10 px-4 font-medium">
                         <x-laravel-admin::admin.checkbox :value="$menu->id" />
                     </th>
 
                     {{-- 메뉴명 (링크 가능) --}}
-                    <th scope="row" class="h-12 whitespace-nowrap px-4 text-left font-bold">
+                    <th scope="row" class="h-10 whitespace-nowrap px-4 text-left font-bold">
                         @can('view', $menu)
                         <a href="{{ route('admin.menus.show', $menu) }}">
                             @if($menu->icon)
@@ -155,7 +155,7 @@
                     </th>
 
                     {{-- 카테고리 (순서 변경 모달 트리거) --}}
-                    <td class="h-12 whitespace-nowrap px-4">
+                    <td class="h-10 whitespace-nowrap px-4">
                         @if($menu->category)
                             <x-laravel-admin::admin.modal-trigger
                                 text="{{ $menu->category->name }}"
@@ -172,7 +172,7 @@
                     </td>
 
                     {{-- 라우트/URL 정보 --}}
-                    <td class="h-12 whitespace-nowrap px-4">
+                    <td class="h-10 whitespace-nowrap px-4">
                         @if($menu->route_name)
                             {{-- 라우트명이 있는 경우 --}}
                             <a href="{{ $menu->url }}"
@@ -202,14 +202,14 @@
                     </td>
 
                     {{-- 활성/비활성 상태 --}}
-                    <td class="h-12 whitespace-nowrap px-4">
+                    <td class="h-10 whitespace-nowrap px-4">
                         <span class="{{ $menu->is_active ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300' }}">
                             {{ $menu->is_active ? __('활성') : __('비활성') }}
                         </span>
                     </td>
 
                     {{-- 액션 버튼 --}}
-                    <td class="h-12 whitespace-nowrap px-4 text-right">
+                    <td class="h-10 whitespace-nowrap px-4 text-right">
                         @can('update', $menu)
                         <a href="{{ route('admin.menus.edit', $menu) }}">{{ __('수정') }}</a>
                         @endcan
@@ -218,7 +218,7 @@
                 @empty
                     {{-- 메뉴가 없을 때 표시 --}}
                     <tr class="border-b border-[#e6e6e6] bg-[#fbfbfb] dark:border-gray-700 dark:bg-gray-800">
-                        <td colspan="6" class="h-12 px-4 text-center text-gray-500 dark:text-gray-400">
+                        <td colspan="6" class="h-10 px-4 text-center text-gray-500 dark:text-gray-400">
                             @if(request('search'))
                                 {{ __('":keyword"에 대한 검색 결과가 없습니다.', ['keyword' => request('search')]) }}
                             @else
@@ -231,7 +231,7 @@
         </table>
     </div>
 
-    <div class="mt-6 text-[14px]">
+    <div class="mt-6 text-sm">
         {!! $menus->appends(request()->query())->links() !!}
     </div>
         </div>

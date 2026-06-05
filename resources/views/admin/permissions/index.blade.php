@@ -20,7 +20,7 @@
             <div class="mb-2">
                 <h1 class="text-[26px] font-bold leading-none text-[#222222] dark:text-gray-100">{{ __('Permissions') }}</h1>
 
-                <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-[14px] font-semibold">
+                <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-base font-semibold">
                     @can('viewAny', Ssh521\LaravelAdmin\Models\Menu::class)
                     <a href="{{ route('admin.permissions.index') }}">{{ __('목록보기') }}</a>
                     <span class="text-[#222222] dark:text-gray-400">|</span>
@@ -48,7 +48,7 @@
                     <label for="permission-search" class="sr-only">권한 검색</label>
                     <div class="relative w-full sm:w-[260px]">
                         <input id="permission-search" type="text" name="search" value="{{ request('search') }}"
-                            class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 pr-8 text-[14px] text-[#111111] outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 pr-8 text-base text-[#111111] outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                             onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';"
                             onblur="this.style.borderColor='#7d7d7d'; this.style.boxShadow='none';"
                             placeholder="권한 이름 또는 설명 검색">
@@ -63,7 +63,7 @@
                     </div>
 
                     <button type="submit"
-                        class="h-[28px] cursor-pointer rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-4 text-[14px] font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                        class="h-[28px] cursor-pointer rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-4 text-base font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
                         {{ __('검색') }}
                     </button>
                 </form>
@@ -93,14 +93,14 @@
                             </div>
                         </div>
 
-            <table class="min-w-full border-collapse text-[14px] text-[#111111] dark:text-gray-100">
+            <table class="min-w-full border-collapse text-sm text-[#111111] dark:text-gray-100">
                 <thead
                     class="border-y border-[#cfcfcf] bg-[#dedede] text-[#555555] dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                     <tr>
-                        <th scope="col" class="h-12 px-2 text-left font-bold w-8 whitespace-nowrap">
+                        <th scope="col" class="h-10 px-2 text-left font-bold w-8 whitespace-nowrap">
                             <span x-show="sortMode === 'drag'" class="text-gray-400">⋮⋮</span>
                         </th>
-                        <th scope="col" class="h-12 px-2 text-left font-bold whitespace-nowrap">
+                        <th scope="col" class="h-10 px-2 text-left font-bold whitespace-nowrap">
                                         <button x-show="sortMode === 'click'"
                                                 @click="sortBy('name')"
                                                 class="flex items-center space-x-1 text-[#555555] hover:text-[#111111] dark:text-gray-200 dark:hover:text-white">
@@ -117,7 +117,7 @@
                                         </button>
                             <span x-show="sortMode === 'drag'" class="text-gray-700 dark:text-gray-300">{{ __('Permission Name') }}</span>
                         </th>
-                        <th scope="col" class="h-12 px-2 text-left font-bold whitespace-nowrap">
+                        <th scope="col" class="h-10 px-2 text-left font-bold whitespace-nowrap">
                                         <button x-show="sortMode === 'click'"
                                                 @click="sortBy('description')"
                                                 class="flex items-center space-x-1 text-[#555555] hover:text-[#111111] dark:text-gray-200 dark:hover:text-white">
@@ -134,7 +134,7 @@
                                         </button>
                             <span x-show="sortMode === 'drag'" class="text-gray-700 dark:text-gray-300">{{ __('Permission Description') }}</span>
                         </th>
-                        <th scope="col" class="h-12 px-2 text-right font-bold whitespace-nowrap">
+                        <th scope="col" class="h-10 px-2 text-right font-bold whitespace-nowrap">
                             <span class="sr-only">Edit</span>
                         </th>
                     </tr>
@@ -144,17 +144,17 @@
                     <tr data-id="{{ $permission->id }}"
                         class="border-b border-[#e6e6e6] bg-[#fbfbfb] transition-colors hover:bg-white dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 cursor-move"
                         :class="sortMode === 'drag' ? 'cursor-move' : 'cursor-default'">
-                                    <td class="h-12 px-2 w-8">
+                                    <td class="h-10 px-2 w-8">
                                         <span x-show="sortMode === 'drag'" class="text-gray-400 cursor-move">⋮⋮</span>
                                     </td>
                                     <th scope="row"
-                                        class="h-12 px-4 text-left font-bold whitespace-nowrap">
+                                        class="h-10 px-4 text-left font-bold whitespace-nowrap">
                                         {{ $permission->name }}
                                     </th>
-                                    <td class="h-12 px-4 text-left">
+                                    <td class="h-10 px-4 text-left">
                                         {{ $permission->description ?: '설명 없음' }}
                                     </td>
-                                    <td class="h-12 px-4 text-right">
+                                    <td class="h-10 px-4 text-right">
 
                                         @can('update', $permission)
                                         <a class="font-semibold text-[#003399] hover:underline dark:text-[#e7e7d6]"
@@ -164,7 +164,7 @@
                                 </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="h-12 px-4 text-center text-gray-500 dark:text-gray-400">
+                            <td colspan="4" class="h-10 px-4 text-center text-gray-500 dark:text-gray-400">
                                 @if(request('search'))
                                     {{ __('No search results found for') }} "{{ request('search') }}".
                                 @else
@@ -178,7 +178,7 @@
         </div>
 
         @if($data->hasPages())
-        <div class="mt-6 text-[14px]">
+        <div class="mt-6 text-sm">
             {!! $data->withQueryString()->links() !!}
         </div>
         @endif

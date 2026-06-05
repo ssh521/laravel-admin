@@ -190,7 +190,7 @@
                             @endif
                         </h1>
 
-                        <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-[14px] font-semibold">
+                        <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-base font-semibold">
                             @can('viewAny', Ssh521\LaravelAdmin\Models\MenuCategory::class)
                             <a href="{{ route('admin.menu-categories.index') }}">{{ __('목록보기') }}</a>
                             <span class="text-[#222222] dark:text-gray-400">|</span>
@@ -212,52 +212,52 @@
                             type="text"
                             name="search"
                             value="{{ request('search') }}"
-                            class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-[14px] text-[#111111] outline-none sm:w-[260px] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-base text-[#111111] outline-none sm:w-[260px] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                             placeholder="{{ __('카테고리 검색') }}"
                             onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';"
                             onblur="this.style.borderColor='#7d7d7d'; this.style.boxShadow='none';"
                         >
 
                         @if(request('search'))
-                        <a href="{{ route('admin.menu-categories.index') }}" class="inline-flex h-[28px] items-center rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-3 text-[14px] font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                        <a href="{{ route('admin.menu-categories.index') }}" class="inline-flex h-[28px] items-center rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-3 text-base font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
                             {{ __('초기화') }}
                         </a>
                         @endif
 
-                        <button type="submit" class="h-[28px] cursor-pointer rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-4 text-[14px] font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                        <button type="submit" class="h-[28px] cursor-pointer rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-4 text-base font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
                             {{ __('검색') }}
                         </button>
                     </form>
 
                     <div class="overflow-x-auto">
-                        <table class="min-w-full border-collapse text-[14px] text-[#111111] dark:text-gray-100">
+                        <table class="min-w-full border-collapse text-sm text-[#111111] dark:text-gray-100">
                             <thead>
                                 <tr class="border-y border-[#cfcfcf] bg-[#dedede] text-[#555555] dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                                    <th scope="col" class="h-12 w-8 px-2 text-left font-bold">
+                                    <th scope="col" class="h-10 w-8 px-2 text-left font-bold">
                                         <span class="sr-only">순서</span>
                                     </th>
-                                    <th scope="col" class="h-12 px-2 text-left font-bold">
+                                    <th scope="col" class="h-10 px-2 text-left font-bold">
                                         ID
                                     </th>
-                                    <th scope="col" class="h-12 px-2 text-left font-bold">
+                                    <th scope="col" class="h-10 px-2 text-left font-bold">
                                         카테고리명
                                     </th>
-                                    <th scope="col" class="h-12 px-2 text-left font-bold">
+                                    <th scope="col" class="h-10 px-2 text-left font-bold">
                                         메뉴 개수
                                     </th>
-                                    <th scope="col" class="h-12 px-2 text-left font-bold">
+                                    <th scope="col" class="h-10 px-2 text-left font-bold">
                                         정렬 순서
                                     </th>
-                                    <th scope="col" class="h-12 px-2 text-left font-bold">
+                                    <th scope="col" class="h-10 px-2 text-left font-bold">
                                         상태
                                     </th>
-                                    <th scope="col" class="h-12 px-2 text-left font-bold">
+                                    <th scope="col" class="h-10 px-2 text-left font-bold">
                                         허용 역할
                                     </th>
-                                    <th scope="col" class="h-12 px-2 text-left font-bold">
+                                    <th scope="col" class="h-10 px-2 text-left font-bold">
                                         생성일
                                     </th>
-                                    <th scope="col" class="h-12 px-2 text-right font-bold">
+                                    <th scope="col" class="h-10 px-2 text-right font-bold">
                                         <span class="sr-only">Edit</span>
                                     </th>
                                 </tr>
@@ -267,7 +267,7 @@
                                 <tr data-category-id="{{ $category->id }}"
                                     class="border-b border-[#e6e6e6] bg-[#fbfbfb] transition-colors hover:bg-white dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
 
-                                    <td class="h-12 px-4">
+                                    <td class="h-10 px-4">
                                         <div class="drag-handle flex items-center justify-center">
                                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -276,11 +276,11 @@
                                         </div>
                                     </td>
 
-                                    <td class="h-12 whitespace-nowrap px-4">
+                                    <td class="h-10 whitespace-nowrap px-4">
                                         {{ $category->id }}
                                     </td>
                                     <th scope="row"
-                                        class="h-12 whitespace-nowrap px-4 text-left font-bold">
+                                        class="h-10 whitespace-nowrap px-4 text-left font-bold">
 
                                         @can('view', $category)
                                         <a href="{{ route('admin.menu-categories.show', $category) }}">{{ $category->name
@@ -290,18 +290,18 @@
                                         @endcan
 
                                     </th>
-                                    <td class="h-12 whitespace-nowrap px-4">
+                                    <td class="h-10 whitespace-nowrap px-4">
                                         {{ $category->menus_count }}
                                     </td>
-                                    <td class="h-12 whitespace-nowrap px-4 sort-order-cell">
+                                    <td class="h-10 whitespace-nowrap px-4 sort-order-cell">
                                         {{ $category->sort_order }}
                                     </td>
-                                    <td class="h-12 whitespace-nowrap px-4">
+                                    <td class="h-10 whitespace-nowrap px-4">
                                         <span class="{{ $category->is_active ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300' }}">
                                             {{ $category->is_active ? __('활성') : __('비활성') }}
                                         </span>
                                     </td>
-                                    <td class="h-12 px-4" data-roles-cell="{{ $category->id }}">
+                                    <td class="h-10 px-4" data-roles-cell="{{ $category->id }}">
                                         @if($category->roles->count() > 0)
                                         <div class="flex flex-wrap gap-x-2 gap-y-1">
                                             @foreach($category->roles as $role)
@@ -312,10 +312,10 @@
                                         <span class="text-gray-500 dark:text-gray-400">{{ __('없음') }}</span>
                                         @endif
                                     </td>
-                                    <td class="h-12 whitespace-nowrap px-4">
+                                    <td class="h-10 whitespace-nowrap px-4">
                                         {{ $category->created_at->format('Y-m-d H:i') }}
                                     </td>
-                                    <td class="h-12 whitespace-nowrap px-4 text-right">
+                                    <td class="h-10 whitespace-nowrap px-4 text-right">
 
                                         @can('update', $category)
                                         <x-laravel-admin::admin.modal-trigger
@@ -332,7 +332,7 @@
                                 </tr>
                                 @empty
                                 <tr class="border-b border-[#e6e6e6] bg-[#fbfbfb] dark:border-gray-700 dark:bg-gray-800">
-                                    <td colspan="9" class="h-12 px-4 text-center text-gray-500 dark:text-gray-400">
+                                    <td colspan="9" class="h-10 px-4 text-center text-gray-500 dark:text-gray-400">
                                         @if(request('search'))
                                         {{ __('":keyword"에 대한 검색 결과가 없습니다.', ['keyword' => request('search')]) }}
                                         @else
@@ -345,7 +345,7 @@
                         </table>
                     </div>
 
-                    <div class="mt-6 text-[14px]">
+                    <div class="mt-6 text-sm">
                         {!! $categories->appends(request()->query())->links() !!}
                     </div>
         </div>

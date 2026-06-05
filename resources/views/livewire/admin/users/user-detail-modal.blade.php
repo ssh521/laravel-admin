@@ -25,7 +25,7 @@
 
                         @can('update', $user)
                         <button type="button" wire:click="openUserEditModal"
-                            class="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                            class="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer">
                             수정
                         </button>
                         @endcan
@@ -60,7 +60,7 @@
 
                         @can('assignRolesUpdate', $user)
                         <button type="button" wire:click="openRoleEditModal"
-                            class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                            class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer">
                             수정
                         </button>
                         @endcan
@@ -141,7 +141,7 @@
             <!-- 액션 버튼 -->
             <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-600">
                 @can('update', $user)
-                <x-laravel-admin::admin.primary-button type="button" wire:click="editUser">
+                <x-laravel-admin::admin.primary-button type="button" wire:click="editUser" >
                     수정
                 </x-laravel-admin::admin.primary-button>
                 @endcan

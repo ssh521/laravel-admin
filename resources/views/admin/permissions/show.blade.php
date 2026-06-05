@@ -12,8 +12,8 @@
         </x-laravel-admin::admin.admin-header>
     </x-slot>
 
-    <div class="w-full lg:max-w-7xl mx-auto">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl px-6 py-2">
+    <div class="w-full lg:max-w-5xl mx-auto">
+        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl px-5 py-2">
             <div class="flex justify-between items-center mb-6">
                 <div>
                     <h3 class="text-lg font-medium dark:text-white">
@@ -24,7 +24,7 @@
                     </p>
                 </div>
                 <div>
-                    <a href="{{ route('admin.permissions.index') }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                    <a href="{{ route('admin.permissions.index') }}" class="inline-flex items-center justify-center min-w-[104px] px-5 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                         ← {{ __('Back to Permissions') }}
                     </a>
                 </div>
@@ -40,13 +40,13 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <x-laravel-admin::admin.label for="permission_name" :value="__('Permission Name')" />
-                                    <p class="mt-1 text-sm text-gray-900 dark:text-white font-medium">{{ $permission->name }}</p>
+                                    <p class="mt-1 text-base text-gray-900 dark:text-white font-medium">{{ $permission->name }}</p>
                                 </div>
 
                                 @if($permission->description)
                                 <div>
                                     <x-laravel-admin::admin.label for="permission_description" :value="__('Description')" />
-                                    <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $permission->description }}</p>
+                                    <p class="mt-1 text-base text-gray-900 dark:text-white">{{ $permission->description }}</p>
                                 </div>
                                 @endif
                             </div>
@@ -54,12 +54,12 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                                 <div>
                                     <x-laravel-admin::admin.label for="created_at" :value="__('Created At')" />
-                                    <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $permission->created_at->format('Y-m-d H:i:s') }}</p>
+                                    <p class="mt-1 text-base text-gray-900 dark:text-white">{{ $permission->created_at->format('Y-m-d H:i:s') }}</p>
                                 </div>
 
                                 <div>
                                     <x-laravel-admin::admin.label for="updated_at" :value="__('Updated At')" />
-                                    <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $permission->updated_at->format('Y-m-d H:i:s') }}</p>
+                                    <p class="mt-1 text-base text-gray-900 dark:text-white">{{ $permission->updated_at->format('Y-m-d H:i:s') }}</p>
                                 </div>
                 </div>
             </div>
@@ -89,8 +89,7 @@
         <div class="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-600">
                             @can('update', $permission)
                             <a href="{{ route('admin.permissions.edit', $permission) }}"
-                               class="inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-blue-500 border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-blue-700 dark:hover:bg-blue-600 focus:bg-blue-700 dark:focus:bg-blue-600 active:bg-blue-900 dark:active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 transition ease-in-out duration-150"
-                               style="color: white !important;">
+                               class="inline-flex items-center justify-center min-w-[120px] px-5 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest !text-white dark:!text-gray-800 hover:bg-gray-700 dark:hover:bg-gray-100 focus:bg-gray-700 dark:focus:bg-gray-100 active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                                 {{ __('Edit Permission') }}
                             </a>
                             @endcan
