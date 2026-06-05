@@ -1,6 +1,7 @@
 {
     "name": "ssh521/laravel-admin",
     "description": "Reusable Laravel admin panel extracted from admin-yaver.",
+    "version": "1.0.0",
     "type": "library",
     "license": "MIT",
     "autoload": {
