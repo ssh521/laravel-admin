@@ -97,6 +97,49 @@ class AdminUserController extends Controller
         return view('admin.admin-users.edit', compact('adminUser', 'roles'));
     }
 
+    public function profile(): View
+    {
+        $adminUserId = Auth::guard(config('laravel-admin.auth.guard', 'laravel_admin'))->id();
+
+        $adminUser = $this->adminUserService->getAdminUserDetail([
+            'adminUserId' => $adminUserId,
+        ]);
+        $roles = $this->getAvailableRoles();
+        $isProfile = true;
+
+        return view('admin.admin-users.edit', compact('adminUser', 'roles', 'isProfile'));
+    }
+
+    public function profileUpdate(Request $request): RedirectResponse
+    {
+        $adminUserId = Auth::guard(config('laravel-admin.auth.guard', 'laravel_admin'))->id();
+        $adminUser = $this->adminUserService->getAdminUserDetail([
+            'adminUserId' => $adminUserId,
+        ]);
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'password' => ['nullable', 'string', 'min:8', 'same:confirm-password'],
+            'confirm-password' => ['nullable', 'string', 'min:8'],
+        ]);
+
+        $updateData = [
+            'adminUserId' => $adminUserId,
+            'name' => $validated['name'],
+            'email' => $adminUser->email,
+        ];
+
+        if (! empty($validated['password'])) {
+            $updateData['password'] = $validated['password'];
+        }
+
+        $this->adminUserService->updateAdminUser($updateData);
+
+        return redirect()
+            ->route(config('laravel-admin.route_name_prefix', 'admin.').'profile.show')
+            ->with('success', '프로필이 성공적으로 수정되었습니다.');
+    }
+
     public function update(Request $request, int $adminUser): RedirectResponse
     {
         Gate::authorize('manageUsers');

@@ -22,6 +22,13 @@ if (config('laravel-admin.auth.admin_login.enabled', false)) {
         });
 }
 
+Route::get('adminuser/profile', [AdminUserController::class, 'profile'])
+    ->name(config('laravel-admin.route_name_prefix', 'admin.').'profile.show')
+    ->middleware(config('laravel-admin.middleware', ['web', 'auth', 'verified']));
+Route::put('adminuser/profile', [AdminUserController::class, 'profileUpdate'])
+    ->name(config('laravel-admin.route_name_prefix', 'admin.').'profile.update')
+    ->middleware(config('laravel-admin.middleware', ['web', 'auth', 'verified']));
+
 // Admin Routes
 Route::prefix(config('laravel-admin.route_prefix', 'admin'))
     ->name(config('laravel-admin.route_name_prefix', 'admin.'))
