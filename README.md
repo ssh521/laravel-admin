@@ -10,7 +10,7 @@ composer require ssh521/laravel-admin:dev-main
 php artisan vendor:publish --tag=laravel-admin-config --no-interaction
 php artisan vendor:publish --tag=laravel-admin-migrations --no-interaction
 php artisan vendor:publish --tag=laravel-admin-seeders --no-interaction
-php artisan vendor:publish --tag=laravel-admin-assets --force --no-interaction
+php artisan laravel-admin:install --force --no-interaction
 npm install @fortawesome/fontawesome-free sortablejs axios
 npm run build
 php artisan migrate
@@ -32,7 +32,7 @@ LARAVEL_ADMIN_SEED_ADMIN_NAME="Super Admin"
 LARAVEL_ADMIN_SEED_ADMIN_VERIFIED=true
 ```
 
-The package admin stylesheet is written for Tailwind CSS v4 and can be included in a Laravel 13 starter kit Vite build. Add the published admin entries to `vite.config.js`:
+The package admin stylesheet is written for Tailwind CSS v4 and can be included in a Laravel 13 starter kit Vite build. The install command publishes the admin assets and adds these entries to `vite.config.js`:
 
 ```js
 laravel({
@@ -73,7 +73,7 @@ Published CSS/JS files should be overwritten after package updates so the host V
 
 ```bash
 composer update ssh521/laravel-admin
-php artisan vendor:publish --tag=laravel-admin-assets --force --no-interaction
+php artisan laravel-admin:install --force --no-interaction
 npm install @fortawesome/fontawesome-free sortablejs axios
 npm run build
 ```
