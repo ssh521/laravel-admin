@@ -1,14 +1,15 @@
 @php
     $isProfile = $isProfile ?? false;
-    $inputClass = 'admin-focus-border h-[28px] rounded-sm border border-transparent border-b-[#777777] bg-[#fafafa] px-2 text-base font-bold text-[#111111] outline-none dark:bg-gray-700 dark:text-white dark:border-b-gray-500';
+    $inputClass = 'admin-focus-border rounded-sm border border-transparent border-b-[#777777] bg-[#fafafa] px-2 py-1 text-lg font-bold text-[#111111] outline-none dark:bg-gray-700 dark:text-white dark:border-b-gray-500';
     $lockedInputClass = $inputClass.' cursor-not-allowed opacity-70';
-    $labelClass = 'w-[96px] shrink-0 pr-3 text-right text-sm font-bold leading-[28px] text-[#111111] dark:text-gray-100';
-    $rowClass = 'flex flex-col gap-1 sm:flex-row sm:items-start';
+    $labelClass = 'w-[96px] shrink-0 pr-3 text-right text-base leading-[28px] text-[#111111] dark:text-gray-100';
+    $rowClass = 'flex gap-1 flex-row sm:items-start';
     $roleIds = $adminUser?->roles->pluck('id')->all() ?? [];
 @endphp
 
 <div class="mx-auto max-w-[860px] text-[#111111] dark:text-gray-100">
-    <div class="border-t border-[#8d8d8d] pt-6">
+
+    <div class="border-t border-dashed pt-6" style="border-top-color: #aaaaaa;">
         <div class="space-y-3">
             <div class="{{ $rowClass }}">
                 <label for="name" class="{{ $labelClass }}">{{ __('이름') }} :</label>
@@ -28,7 +29,7 @@
         </div>
     </div>
 
-    <div class="mt-6 border-t border-[#8d8d8d] pt-6">
+    <div class="mt-6 border-t border-dashed pt-6" style="border-top-color: #aaaaaa;">
         <div class="space-y-3">
             <div class="{{ $rowClass }}">
                 <label for="password" class="{{ $labelClass }}">{{ __('비밀번호') }} :</label>
@@ -48,11 +49,11 @@
         </div>
     </div>
 
-    <div class="mt-6 border-t border-[#8d8d8d] pt-6">
+    <div class="mt-6 border-t border-dashed pt-6" style="border-top-color: #aaaaaa;">
         <div class="space-y-3">
             <div class="{{ $rowClass }}">
                 <span class="{{ $labelClass }}">{{ __('인증') }} :</span>
-                <label for="email_verified" class="flex min-h-[24px] items-center gap-2 text-xs font-bold @if($isProfile) cursor-not-allowed opacity-70 @endif">
+                <label for="email_verified" class="flex min-h-[24px] items-center gap-2 text-base font-bold @if($isProfile) cursor-not-allowed opacity-70 @endif">
                     <input id="email_verified" name="email_verified" type="checkbox" value="1" @checked($isProfile ? (bool) $adminUser?->email_verified_at : old('email_verified', $adminUser?->email_verified_at ? '1' : null) == '1') @disabled($isProfile) class="size-4 border-[#777777] text-[#663601] focus:ring-[#663601]">
                     <span>{{ __('Email Verified') }}</span>
                 </label>
@@ -62,7 +63,7 @@
                 <span class="{{ $labelClass }}">{{ __('역할') }} :</span>
                 <div class="grid min-h-[24px] w-full max-w-[580px] grid-cols-1 gap-x-5 gap-y-2 pt-1 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($roles as $role)
-                        <label for="role_{{ $role->id }}" class="flex items-center gap-2 text-xs font-bold @if($isProfile) cursor-not-allowed opacity-70 @endif">
+                        <label for="role_{{ $role->id }}" class="flex items-center gap-2 text-base font-bold @if($isProfile) cursor-not-allowed opacity-70 @endif">
                             <input id="role_{{ $role->id }}" name="roles[]" type="checkbox" value="{{ $role->id }}" @checked(in_array($role->id, $isProfile ? $roleIds : old('roles', $roleIds))) @disabled($isProfile) class="size-4 border-[#777777] text-[#663601] focus:ring-[#663601]">
                             <span>{{ $role->name }}</span>
                         </label>
@@ -73,7 +74,7 @@
         </div>
     </div>
 
-    <div class="mt-6 border-t border-[#8d8d8d] pt-8">
+    <div class="mt-6 border-t border-dashed pt-8" style="border-top-color: #aaaaaa;">
         <div class="flex justify-center">
             <x-laravel-admin::admin.primary-button class="min-w-[120px] justify-center px-5">
                 {{ $submitLabel }}

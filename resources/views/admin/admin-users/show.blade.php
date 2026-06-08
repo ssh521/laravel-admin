@@ -13,7 +13,7 @@
     </x-slot>
 
     <div class="mx-auto w-full max-w-5xl bg-white px-2 py-2 dark:bg-gray-900">
-        <div class="min-h-[600px] bg-white px-6 py-8 sm:px-12 lg:px-16 dark:bg-gray-800">
+        <div class="min-h-[450px] bg-white px-6 py-8 sm:px-12 lg:px-16 dark:bg-gray-800">
             <div class="mb-8">
                 <h1 class="text-[22px] font-bold leading-none text-[#222222] dark:text-gray-100">{{ __('Admin User Information') }}</h1>
             </div>
