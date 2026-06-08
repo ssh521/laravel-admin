@@ -43,7 +43,7 @@
     <!-- <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" /> -->
 
     <!-- Scripts -->
-    @vite(config('laravel-admin.vite', ['resources/vendor/laravel-admin/admin.css', 'resources/vendor/laravel-admin/admin.js']))
+    @include('laravel-admin::partials.assets')
 
     <!-- Styles -->
     @livewireStyles

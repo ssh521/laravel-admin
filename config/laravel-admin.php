@@ -12,7 +12,7 @@ return [
         'guard' => 'laravel_admin',
         'provider' => 'laravel_admin_users',
         'admin_login' => [
-            'enabled' => false,
+            'enabled' => true,
             'middleware' => ['web'],
             'redirect_to' => '/admin',
         ],

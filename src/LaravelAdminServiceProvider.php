@@ -61,6 +61,7 @@ class LaravelAdminServiceProvider extends ServiceProvider
 
         View::addLocation($publishedViewsPath);
         View::addLocation($packageViewsPath);
+        View::addNamespace('laravel-admin', [$publishedViewsPath, $packageViewsPath]);
 
         Blade::anonymousComponentPath($publishedViewsPath.'/components', 'laravel-admin');
         Blade::anonymousComponentPath($packageViewsPath.'/components', 'laravel-admin');

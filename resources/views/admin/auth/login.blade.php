@@ -19,7 +19,7 @@
         })();
     </script>
 
-    @vite(config('laravel-admin.vite', ['resources/vendor/laravel-admin/admin.css', 'resources/vendor/laravel-admin/admin.js']))
+    @include('laravel-admin::partials.assets')
 </head>
 <body class="min-h-screen bg-[#E7E7D6] font-sans antialiased text-[#222222] dark:bg-gray-900 dark:text-gray-100">
     @php
