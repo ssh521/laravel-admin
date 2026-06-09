@@ -12,9 +12,9 @@
     </x-slot>
 
     @php
-        $inputClass = 'admin-focus-border h-[28px] rounded-sm border border-transparent border-b-[#777777] bg-[#fafafa] px-2 text-base font-bold text-[#111111] outline-none dark:bg-gray-700 dark:text-white dark:border-b-gray-500';
-        $labelClass = 'w-[96px] shrink-0 pr-3 text-right text-sm font-bold leading-[28px] text-[#111111] dark:text-gray-100';
-        $rowClass = 'flex flex-col gap-1 sm:flex-row sm:items-start';
+        $inputClass = 'admin-focus-border rounded-sm border border-transparent border-b-[#777777] bg-[#fafafa] px-2 py-1 text-lg font-bold text-[#111111] outline-none dark:bg-gray-700 dark:text-white dark:border-b-gray-500';
+        $labelClass = 'w-[96px] shrink-0 pr-3 text-right text-base leading-[28px] text-[#111111] dark:text-gray-100';
+        $rowClass = 'flex gap-1 flex-row sm:items-start';
         $focusIn = "this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';";
         $focusOut = "this.style.borderColor='transparent'; this.style.borderBottomColor='#777777'; this.style.boxShadow='none';";
     @endphp
@@ -29,7 +29,7 @@
                 @csrf
 
                 <div class="mx-auto max-w-[860px] text-[#111111] dark:text-gray-100">
-                    <div class="border-t border-[#8d8d8d] pt-6">
+                    <div class="border-t border-dashed pt-6" style="border-top-color: #aaaaaa;">
                         <div class="space-y-3">
                             <div class="{{ $rowClass }}">
                                 <label for="name" class="{{ $labelClass }}">{{ __('Permission Name') }} :</label>
@@ -51,9 +51,9 @@
                         </div>
                     </div>
 
-                    <div class="mt-6 border-t border-[#8d8d8d] pt-8">
+                    <div class="mt-6 border-t border-dashed pt-8" style="border-top-color: #aaaaaa;">
                         <div class="flex justify-center gap-2">
-                            <a href="{{ route('admin.permissions.index') }}" class="inline-flex h-[30px] min-w-[104px] items-center justify-center border border-[#777777] bg-[#eeeeee] px-5 text-sm font-bold text-[#111111] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+                            <a href="{{ route('admin.permissions.index') }}" class="inline-flex h-[30px] min-w-[104px] items-center justify-center border border-[#777777] bg-[#eeeeee] px-5 text-base font-bold text-[#111111] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
                                 {{ __('목록보기') }}
                             </a>
                             <x-laravel-admin::admin.primary-button class="min-w-[120px] justify-center px-5">

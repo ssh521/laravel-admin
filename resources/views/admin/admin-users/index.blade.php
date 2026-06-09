@@ -56,7 +56,7 @@
 
 
             <div class="overflow-x-auto">
-                <table class="min-w-full border-collapse text-sm text-[#111111] dark:text-gray-100">
+                <table class="min-w-full border-collapse text-base text-[#111111] dark:text-gray-100">
                     <thead>
                         <tr class="border-y border-[#cfcfcf] bg-[#dedede] text-[#555555] dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                             <th class="h-10 px-2 text-left font-bold">{{ __('Name') }}</th>
