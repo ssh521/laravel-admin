@@ -18,7 +18,7 @@ class InstallCommand extends Command
         {--skip-seed : Do not seed Laravel Admin roles, menus, or admin user}
         {--skip-admin-user : Do not seed the default admin user}
         {--skip-vite : Do not update vite.config.js}
-        {--with=* : Run feature package installers after admin install (bbs, blog)}
+        {--with=* : Run feature package installers after admin install (bbs, blog, file)}
         {--with-test-data : Pass sample data option to feature package installers}';
 
     protected $description = 'Publish, migrate, seed, and configure Laravel Admin resources.';
@@ -110,13 +110,14 @@ class InstallCommand extends Command
         $installers = [
             'bbs' => 'laravel-bbs:install',
             'blog' => 'laravel-blog:install',
+            'file' => 'laravel-file:install',
         ];
 
         foreach ($this->requestedFeaturePackages() as $package) {
             $command = $installers[$package] ?? null;
 
             if (! $command) {
-                $this->warn("Unknown Laravel Admin feature package [{$package}]. Supported values: bbs, blog.");
+                $this->warn("Unknown Laravel Admin feature package [{$package}]. Supported values: bbs, blog, file.");
 
                 continue;
             }
