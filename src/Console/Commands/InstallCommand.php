@@ -4,14 +4,24 @@ namespace Ssh521\LaravelAdmin\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schema;
+use RuntimeException;
+use Ssh521\LaravelAdmin\Database\Seeders\AdminUserSeeder;
+use Ssh521\LaravelAdmin\Database\Seeders\MenuSeeder;
+use Ssh521\LaravelAdmin\Database\Seeders\RolePermissionSeeder;
 
 class InstallCommand extends Command
 {
     protected $signature = 'laravel-admin:install
-        {--force : Overwrite published Laravel Admin assets}
-        {--skip-vite : Do not update vite.config.js}';
+        {--force : Overwrite published files and force database commands in production}
+        {--skip-migrate : Publish migrations without running them}
+        {--skip-seed : Do not seed Laravel Admin roles, menus, or admin user}
+        {--skip-admin-user : Do not seed the default admin user}
+        {--skip-vite : Do not update vite.config.js}
+        {--with=* : Run feature package installers after admin install (bbs, blog)}
+        {--with-test-data : Pass sample data option to feature package installers}';
 
-    protected $description = 'Publish Laravel Admin assets and register the Vite input entries.';
+    protected $description = 'Publish, migrate, seed, and configure Laravel Admin resources.';
 
     private const VITE_INPUTS = [
         'resources/vendor/laravel-admin/admin.css',
@@ -20,11 +30,30 @@ class InstallCommand extends Command
 
     public function handle(): int
     {
-        $this->publishAssets();
+        $this->info('Installing Laravel Admin...');
+
+        $this->publishResources();
+
+        if (! $this->option('skip-migrate')) {
+            $this->runArtisan('migrate', [
+                '--force' => (bool) $this->option('force'),
+            ]);
+        }
+
+        if (! $this->option('skip-seed') && $this->canSeedAdminCore()) {
+            $this->seed(RolePermissionSeeder::class);
+            $this->seed(MenuSeeder::class);
+
+            if (! $this->option('skip-admin-user')) {
+                $this->seed(AdminUserSeeder::class);
+            }
+        }
 
         if (! $this->option('skip-vite')) {
             $this->updateViteConfig();
         }
+
+        $this->installFeaturePackages();
 
         $this->newLine();
         $this->info('Laravel Admin install complete.');
@@ -33,20 +62,94 @@ class InstallCommand extends Command
         return self::SUCCESS;
     }
 
-    private function publishAssets(): void
+    private function publishResources(): void
     {
-        $this->line('Publishing Laravel Admin assets...');
+        foreach ([
+            'laravel-admin-config',
+            'laravel-admin-migrations',
+            'laravel-admin-seeders',
+            'laravel-admin-views',
+            'laravel-admin-components',
+            'laravel-admin-assets',
+        ] as $tag) {
+            $this->runArtisan('vendor:publish', [
+                '--tag' => $tag,
+                '--force' => (bool) $this->option('force'),
+            ]);
+        }
+    }
 
-        Artisan::call('vendor:publish', [
-            '--tag' => 'laravel-admin-assets',
+    private function seed(string $class): void
+    {
+        $this->runArtisan('db:seed', [
+            '--class' => $class,
             '--force' => (bool) $this->option('force'),
         ]);
+    }
 
-        $output = trim(Artisan::output());
+    private function canSeedAdminCore(): bool
+    {
+        $hasAdminTables = Schema::hasTable('permissions')
+            && Schema::hasTable('roles')
+            && Schema::hasTable('menu_categories')
+            && Schema::hasTable('menus');
 
-        if ($output !== '') {
-            $this->line($output);
+        if (! $this->option('skip-admin-user')) {
+            $hasAdminTables = $hasAdminTables && Schema::hasTable('admin_users');
         }
+
+        if (! $hasAdminTables) {
+            $this->warn('Laravel Admin tables are missing. Run migrations before seeding admin core data.');
+        }
+
+        return $hasAdminTables;
+    }
+
+    private function installFeaturePackages(): void
+    {
+        $installers = [
+            'bbs' => 'laravel-bbs:install',
+            'blog' => 'laravel-blog:install',
+        ];
+
+        foreach ($this->requestedFeaturePackages() as $package) {
+            $command = $installers[$package] ?? null;
+
+            if (! $command) {
+                $this->warn("Unknown Laravel Admin feature package [{$package}]. Supported values: bbs, blog.");
+
+                continue;
+            }
+
+            if (! array_key_exists($command, Artisan::all())) {
+                $this->warn("Feature installer [{$command}] is not available.");
+
+                continue;
+            }
+
+            $parameters = [
+                '--force' => (bool) $this->option('force'),
+                '--skip-migrate' => (bool) $this->option('skip-migrate'),
+                '--skip-seed' => (bool) $this->option('skip-seed'),
+                '--with-test-data' => (bool) $this->option('with-test-data'),
+            ];
+
+            $this->runArtisan($command, $parameters);
+        }
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function requestedFeaturePackages(): array
+    {
+        return collect((array) $this->option('with'))
+            ->flatMap(fn (string $value): array => explode(',', $value))
+            ->map(fn (string $value): string => trim($value))
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
     }
 
     private function updateViteConfig(): void
@@ -140,6 +243,26 @@ class InstallCommand extends Command
     {
         foreach ($inputs ?? self::VITE_INPUTS as $input) {
             $this->line("  '{$input}',");
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    private function runArtisan(string $command, array $parameters = []): void
+    {
+        $this->line("Running [php artisan {$command}]...");
+
+        $exitCode = Artisan::call($command, $parameters);
+
+        $output = trim(Artisan::output());
+
+        if ($output !== '') {
+            $this->line($output);
+        }
+
+        if ($exitCode !== self::SUCCESS) {
+            throw new RuntimeException("Artisan command [{$command}] failed with exit code {$exitCode}.");
         }
     }
 }
