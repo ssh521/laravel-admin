@@ -3,12 +3,10 @@
 namespace Ssh521\LaravelAdmin\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Schema;
-use RuntimeException;
 use Ssh521\LaravelAdmin\Database\Seeders\AdminUserSeeder;
 use Ssh521\LaravelAdmin\Database\Seeders\MenuSeeder;
 use Ssh521\LaravelAdmin\Database\Seeders\RolePermissionSeeder;
+use Ssh521\LaravelAdmin\Support\PackageInstaller;
 
 class InstallCommand extends Command
 {
@@ -35,9 +33,7 @@ class InstallCommand extends Command
         $this->publishResources();
 
         if (! $this->option('skip-migrate')) {
-            $this->runArtisan('migrate', [
-                '--force' => (bool) $this->option('force'),
-            ]);
+            $this->installer()->migrate($this, (bool) $this->option('force'));
         }
 
         if (! $this->option('skip-seed') && $this->canSeedAdminCore()) {
@@ -64,45 +60,41 @@ class InstallCommand extends Command
 
     private function publishResources(): void
     {
-        foreach ([
+        $this->installer()->publishTags($this, [
             'laravel-admin-config',
             'laravel-admin-migrations',
             'laravel-admin-seeders',
             'laravel-admin-views',
             'laravel-admin-components',
             'laravel-admin-assets',
-        ] as $tag) {
-            $this->runArtisan('vendor:publish', [
-                '--tag' => $tag,
-                '--force' => (bool) $this->option('force'),
-            ]);
-        }
+        ], (bool) $this->option('force'));
     }
 
     private function seed(string $class): void
     {
-        $this->runArtisan('db:seed', [
-            '--class' => $class,
-            '--force' => (bool) $this->option('force'),
-        ]);
+        $this->installer()->seed($this, $class, (bool) $this->option('force'));
     }
 
     private function canSeedAdminCore(): bool
     {
-        $hasAdminTables = Schema::hasTable('permissions')
-            && Schema::hasTable('roles')
-            && Schema::hasTable('menu_categories')
-            && Schema::hasTable('menus');
+        $tables = [
+            'permissions',
+            'roles',
+            'menu_categories',
+            'menus',
+        ];
 
         if (! $this->option('skip-admin-user')) {
-            $hasAdminTables = $hasAdminTables && Schema::hasTable('admin_users');
+            $tables[] = 'admin_users';
         }
 
-        if (! $hasAdminTables) {
+        if (! $this->installer()->hasTables($tables)) {
             $this->warn('Laravel Admin tables are missing. Run migrations before seeding admin core data.');
+
+            return false;
         }
 
-        return $hasAdminTables;
+        return true;
     }
 
     private function installFeaturePackages(): void
@@ -113,30 +105,12 @@ class InstallCommand extends Command
             'file' => 'laravel-file:install',
         ];
 
-        foreach ($this->requestedFeaturePackages() as $package) {
-            $command = $installers[$package] ?? null;
-
-            if (! $command) {
-                $this->warn("Unknown Laravel Admin feature package [{$package}]. Supported values: bbs, blog, file.");
-
-                continue;
-            }
-
-            if (! array_key_exists($command, Artisan::all())) {
-                $this->warn("Feature installer [{$command}] is not available.");
-
-                continue;
-            }
-
-            $parameters = [
-                '--force' => (bool) $this->option('force'),
-                '--skip-migrate' => (bool) $this->option('skip-migrate'),
-                '--skip-seed' => (bool) $this->option('skip-seed'),
-                '--with-test-data' => (bool) $this->option('with-test-data'),
-            ];
-
-            $this->runArtisan($command, $parameters);
-        }
+        $this->installer()->installFeaturePackages($this, $this->requestedFeaturePackages(), $installers, [
+            '--force' => (bool) $this->option('force'),
+            '--skip-migrate' => (bool) $this->option('skip-migrate'),
+            '--skip-seed' => (bool) $this->option('skip-seed'),
+            '--with-test-data' => (bool) $this->option('with-test-data'),
+        ]);
     }
 
     /**
@@ -144,13 +118,7 @@ class InstallCommand extends Command
      */
     private function requestedFeaturePackages(): array
     {
-        return collect((array) $this->option('with'))
-            ->flatMap(fn (string $value): array => explode(',', $value))
-            ->map(fn (string $value): string => trim($value))
-            ->filter()
-            ->unique()
-            ->values()
-            ->all();
+        return $this->installer()->parsePackageList($this->option('with'));
     }
 
     private function updateViteConfig(): void
@@ -247,23 +215,8 @@ class InstallCommand extends Command
         }
     }
 
-    /**
-     * @param  array<string, mixed>  $parameters
-     */
-    private function runArtisan(string $command, array $parameters = []): void
+    private function installer(): PackageInstaller
     {
-        $this->line("Running [php artisan {$command}]...");
-
-        $exitCode = Artisan::call($command, $parameters);
-
-        $output = trim(Artisan::output());
-
-        if ($output !== '') {
-            $this->line($output);
-        }
-
-        if ($exitCode !== self::SUCCESS) {
-            throw new RuntimeException("Artisan command [{$command}] failed with exit code {$exitCode}.");
-        }
+        return app(PackageInstaller::class);
     }
 }

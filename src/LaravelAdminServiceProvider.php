@@ -38,6 +38,7 @@ use Ssh521\LaravelAdmin\Policies\UserPolicy;
 use Ssh521\LaravelAdmin\Support\AdminMenuRegistrar;
 use Ssh521\LaravelAdmin\Support\AdminPackageRegistrar;
 use Ssh521\LaravelAdmin\Support\AdminPermissionRegistrar;
+use Ssh521\LaravelAdmin\Support\PackageInstaller;
 
 class LaravelAdminServiceProvider extends ServiceProvider
 {
@@ -102,6 +103,7 @@ class LaravelAdminServiceProvider extends ServiceProvider
         $this->app->singleton(AdminMenuRegistrar::class);
         $this->app->singleton(AdminPermissionRegistrar::class);
         $this->app->singleton(AdminPackageRegistrar::class);
+        $this->app->singleton(PackageInstaller::class);
     }
 
     private function registerLivewireComponents(): void
