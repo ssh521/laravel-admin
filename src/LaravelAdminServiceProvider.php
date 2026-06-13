@@ -35,6 +35,9 @@ use Ssh521\LaravelAdmin\Policies\MenuPolicy;
 use Ssh521\LaravelAdmin\Policies\PermissionPolicy;
 use Ssh521\LaravelAdmin\Policies\RolePolicy;
 use Ssh521\LaravelAdmin\Policies\UserPolicy;
+use Ssh521\LaravelAdmin\Support\AdminMenuRegistrar;
+use Ssh521\LaravelAdmin\Support\AdminPackageRegistrar;
+use Ssh521\LaravelAdmin\Support\AdminPermissionRegistrar;
 
 class LaravelAdminServiceProvider extends ServiceProvider
 {
@@ -42,6 +45,7 @@ class LaravelAdminServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/laravel-admin.php', 'laravel-admin');
         $this->registerAuthConfiguration();
+        $this->registerAdminPackageServices();
     }
 
     public function boot(): void
@@ -91,6 +95,13 @@ class LaravelAdminServiceProvider extends ServiceProvider
             'driver' => 'session',
             'provider' => $provider,
         ]);
+    }
+
+    private function registerAdminPackageServices(): void
+    {
+        $this->app->singleton(AdminMenuRegistrar::class);
+        $this->app->singleton(AdminPermissionRegistrar::class);
+        $this->app->singleton(AdminPackageRegistrar::class);
     }
 
     private function registerLivewireComponents(): void

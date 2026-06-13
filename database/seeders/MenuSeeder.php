@@ -3,34 +3,16 @@
 namespace Ssh521\LaravelAdmin\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Models\Role;
 use Ssh521\LaravelAdmin\Models\Menu;
 use Ssh521\LaravelAdmin\Models\MenuCategory;
+use Ssh521\LaravelAdmin\Support\AdminMenuRegistrar;
 
 class MenuSeeder extends Seeder
 {
-    // 실행방법
-    // php artisan db:seed --class=MenuSeeder
-
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // 기존 데이터 삭제 (truncate 순서와 무관하게 하려면 FK 제약 일시 비활성화 — 드라이버별 처리는 Schema가 담당)
-        Schema::disableForeignKeyConstraints();
-
-        try {
-            DB::table('menu_category_role')->truncate();
-            Menu::truncate();
-            MenuCategory::truncate();
-        } finally {
-            Schema::enableForeignKeyConstraints();
-        }
-
-        // 메뉴 카테고리 생성
+        $registrar = app(AdminMenuRegistrar::class);
         $categories = [
             'general' => [
                 'name' => '일반',
@@ -56,13 +38,11 @@ class MenuSeeder extends Seeder
 
         $categoryMap = [];
         foreach ($categories as $key => $categoryData) {
-            $category = MenuCategory::create($categoryData);
+            $category = $registrar->registerCategory($categoryData);
             $categoryMap[$key] = $category->id;
         }
 
-        // 메뉴 생성
         $menus = [
-            // 일반 카테고리
             [
                 'name' => '홈',
                 'route_name' => 'home',
@@ -181,7 +161,13 @@ class MenuSeeder extends Seeder
         ];
 
         foreach ($menus as $menuData) {
-            Menu::create($menuData);
+            $category = MenuCategory::query()->find($menuData['category_id']);
+
+            if (! $category) {
+                continue;
+            }
+
+            $registrar->registerMenu($category, $menuData);
         }
 
         foreach ($categoryMap as $categoryId) {
@@ -192,7 +178,7 @@ class MenuSeeder extends Seeder
 
         $this->seedMenuCategoryRoles($categoryMap);
 
-        $this->command->info('메뉴 데이터가 성공적으로 생성되었습니다.');
+        $this->command?->info('메뉴 데이터가 성공적으로 생성되었습니다.');
     }
 
     /**
