@@ -38,7 +38,6 @@ use Ssh521\LaravelAdmin\Support\AdminMenuRegistrar;
 use Ssh521\LaravelAdmin\Support\AdminPackageRegistrar;
 use Ssh521\LaravelAdmin\Support\AdminPermissionRegistrar;
 use Ssh521\LaravelAdmin\Support\PackageInstaller;
-use Ssh521\LaravelAdminUi\LaravelAdminUiServiceProvider;
 
 class LaravelAdminServiceProvider extends ServiceProvider
 {
@@ -47,7 +46,7 @@ class LaravelAdminServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/laravel-admin.php', 'laravel-admin');
         $this->registerAuthConfiguration();
         $this->registerAdminPackageServices();
-        $this->app->register(LaravelAdminUiServiceProvider::class);
+        $this->registerAdminUiProvider();
     }
 
     public function boot(): void
@@ -91,6 +90,15 @@ class LaravelAdminServiceProvider extends ServiceProvider
         $this->app->singleton(AdminPermissionRegistrar::class);
         $this->app->singleton(AdminPackageRegistrar::class);
         $this->app->singleton(PackageInstaller::class);
+    }
+
+    private function registerAdminUiProvider(): void
+    {
+        $provider = 'Ssh521\\LaravelAdminUi\\LaravelAdminUiServiceProvider';
+
+        if (class_exists($provider)) {
+            $this->app->register($provider);
+        }
     }
 
     private function registerLivewireComponents(): void
