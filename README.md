@@ -104,6 +104,12 @@ php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\MenuSeeder
 
 By default, `MenuSeeder` creates a `관리자 전용` menu folder for administrator account management. This folder is assigned to the `Super Admin` role only; the regular `Admin` role receives the general, member management, and menu management folders, but not the administrator-only folder.
 
+## Feature Package Template
+
+Use [새 기능 패키지 만드는 법](docs/feature-package-template.md) when creating packages such as `laravel-bbs`, `laravel-blog`, or `laravel-file`.
+
+The template covers package naming, ServiceProvider structure, install commands, publish policy, `AdminPackageRegistrar` menu/permission registration, route-level `can:*` middleware, `laravel-admin:install --with=...` integration, and Testbench tests.
+
 ## Blade Component Rules
 
 Package-owned admin components live in `resources/views/components/admin` and are registered with the `laravel-admin` namespace. Use them as `<x-laravel-admin::admin.primary-button>`, `<x-laravel-admin::admin.layouts.admin>`, and `<x-laravel-admin::admin.input>` inside package views.
