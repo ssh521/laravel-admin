@@ -2,8 +2,10 @@
 
 namespace Ssh521\LaravelAdmin;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -47,6 +49,7 @@ class LaravelAdminServiceProvider extends ServiceProvider
         $this->registerAuthConfiguration();
         $this->registerAdminPackageServices();
         $this->registerAdminUiProvider();
+        $this->registerAdminUiViewFallbacks();
     }
 
     public function boot(): void
@@ -98,6 +101,35 @@ class LaravelAdminServiceProvider extends ServiceProvider
 
         if (class_exists($provider)) {
             $this->app->register($provider);
+        }
+    }
+
+    private function registerAdminUiViewFallbacks(): void
+    {
+        $publishedViewsPath = resource_path('views/vendor/laravel-admin');
+        $packageViewsPath = dirname(__DIR__, 2).'/laravel-admin-ui/resources/views';
+
+        $viewPaths = array_values(array_filter([
+            $publishedViewsPath,
+            $packageViewsPath,
+        ], fn (string $path): bool => is_dir($path)));
+
+        if ($viewPaths === []) {
+            return;
+        }
+
+        foreach ($viewPaths as $viewPath) {
+            View::addLocation($viewPath);
+        }
+
+        View::addNamespace('laravel-admin', $viewPaths);
+
+        foreach ($viewPaths as $viewPath) {
+            $componentPath = $viewPath.'/components';
+
+            if (is_dir($componentPath)) {
+                Blade::anonymousComponentPath($componentPath, 'laravel-admin');
+            }
         }
     }
 
