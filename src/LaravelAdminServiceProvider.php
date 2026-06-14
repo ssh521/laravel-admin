@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
@@ -55,6 +56,7 @@ class LaravelAdminServiceProvider extends ServiceProvider
 
         $this->registerRoutes();
         $this->registerLivewireComponents();
+        $this->registerLivewirePersistentMiddleware();
         $this->registerPolicies();
         $this->registerCommands();
         $this->registerPublishes();
@@ -120,6 +122,30 @@ class LaravelAdminServiceProvider extends ServiceProvider
         Livewire::component('admin.users.user-form', UserForm::class);
         Livewire::component('admin.users.user-search-modal', UserSearchModal::class);
         Livewire::component('admin.users.user-table', UserTable::class);
+    }
+
+    private function registerLivewirePersistentMiddleware(): void
+    {
+        if (! is_callable([Livewire::getFacadeRoot(), 'addPersistentMiddleware'])) {
+            return;
+        }
+
+        $middleware = config('laravel-admin.middleware', []);
+        $middleware = is_array($middleware) ? $middleware : [$middleware];
+        $aliases = app('router')->getMiddleware();
+
+        $persistentMiddleware = collect($middleware)
+            ->flatten()
+            ->filter(fn ($middleware) => is_string($middleware))
+            ->map(fn (string $middleware) => Str::before($middleware, ':'))
+            ->map(fn (string $middleware) => $aliases[$middleware] ?? $middleware)
+            ->filter(fn (string $middleware) => class_exists($middleware))
+            ->values()
+            ->all();
+
+        if ($persistentMiddleware !== []) {
+            Livewire::addPersistentMiddleware($persistentMiddleware);
+        }
     }
 
     private function registerPolicies(): void
