@@ -91,63 +91,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="{{ $rowClass }}">
-                                <span class="{{ $labelClass }}">{{ __('역할') }} :</span>
-                                <div class="min-h-[24px] w-full max-w-[580px] pt-1">
-                                    @can('assignRoles', $user)
-                                        <div class="grid grid-cols-1 gap-x-5 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
-                                            @foreach ($roles as $role)
-                                                <label for="role_{{ $role->id }}" class="flex items-center gap-2 text-base font-bold">
-                                                    <input id="role_{{ $role->id }}" name="roles[]" type="checkbox" value="{{ $role->id }}" @checked($user->roles->contains($role->id)) class="size-4 border-[#777777] text-[#663601] focus:ring-[#663601]">
-                                                    <span>{{ $role->name }}</span>
-                                                </label>
-                                            @endforeach
-                                        </div>
-                                        <x-laravel-admin::admin.input-error-message class="mt-2 text-[13px]" :messages="$errors->get('roles')" />
-                                    @else
-                                        <div class="text-base font-bold">
-                                            @forelse ($user->roles as $role)
-                                                <span>{{ $role->name }}</span>@if (! $loop->last)<span>, </span>@endif
-                                            @empty
-                                                <span class="text-gray-500 dark:text-gray-400">역할이 할당되지 않음</span>
-                                            @endforelse
-                                        </div>
-                                    @endcan
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 border-t border-dashed pt-6" style="border-top-color: #aaaaaa;">
-                        <div class="space-y-3">
-                            <div class="{{ $rowClass }}">
-                                <span class="{{ $labelClass }}">{{ __('권한') }} :</span>
-                                <div class="min-h-[24px] w-full max-w-[720px] pt-1">
-                                    @can('assignPermissions', $user)
-                                        <label for="select-all-permissions" class="mb-4 flex items-center gap-2 text-base font-bold">
-                                            <input id="select-all-permissions" type="checkbox" class="size-4 border-[#777777] text-[#663601] focus:ring-[#663601]" onchange="toggleAllPermissions(this)">
-                                            <span>전체 선택/해제</span>
-                                        </label>
-                                        <div class="grid grid-cols-1 gap-x-5 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
-                                            @foreach ($permissions as $permission)
-                                                <label for="permission_{{ $permission->id }}" class="flex items-center gap-2 text-base font-bold">
-                                                    <input id="permission_{{ $permission->id }}" name="permissions[]" type="checkbox" value="{{ $permission->id }}" @checked($user->permissions->contains($permission->id)) class="size-4 border-[#777777] text-[#663601] focus:ring-[#663601]">
-                                                    <span>{{ $permission->name }}</span>
-                                                </label>
-                                            @endforeach
-                                        </div>
-                                    @else
-                                        <div class="text-base font-bold">
-                                            @forelse ($user->permissions as $permission)
-                                                <span>{{ $permission->name }}</span>@if (! $loop->last)<span>, </span>@endif
-                                            @empty
-                                                <span class="text-gray-500 dark:text-gray-400">권한이 할당되지 않음</span>
-                                            @endforelse
-                                        </div>
-                                    @endcan
-                                </div>
-                            </div>
                         </div>
                     </div>
 
@@ -175,53 +118,4 @@
         @endcan
     @endif
 
-    <script>
-        function toggleAllPermissions(selectAllCheckbox) {
-            const permissionCheckboxes = document.querySelectorAll('input[name="permissions[]"]');
-            const isChecked = selectAllCheckbox.checked;
-
-            permissionCheckboxes.forEach(checkbox => {
-                checkbox.checked = isChecked;
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const permissionCheckboxes = document.querySelectorAll('input[name="permissions[]"]');
-            const selectAllCheckbox = document.getElementById('select-all-permissions');
-
-            if (selectAllCheckbox) {
-                permissionCheckboxes.forEach(checkbox => {
-                    checkbox.addEventListener('change', function() {
-                        const checkedCount = document.querySelectorAll('input[name="permissions[]"]:checked').length;
-                        const totalCount = permissionCheckboxes.length;
-
-                        if (checkedCount === 0) {
-                            selectAllCheckbox.checked = false;
-                            selectAllCheckbox.indeterminate = false;
-                        } else if (checkedCount === totalCount) {
-                            selectAllCheckbox.checked = true;
-                            selectAllCheckbox.indeterminate = false;
-                        } else {
-                            selectAllCheckbox.checked = false;
-                            selectAllCheckbox.indeterminate = true;
-                        }
-                    });
-                });
-
-                const checkedCount = document.querySelectorAll('input[name="permissions[]"]:checked').length;
-                const totalCount = permissionCheckboxes.length;
-
-                if (checkedCount === 0) {
-                    selectAllCheckbox.checked = false;
-                    selectAllCheckbox.indeterminate = false;
-                } else if (checkedCount === totalCount) {
-                    selectAllCheckbox.checked = true;
-                    selectAllCheckbox.indeterminate = false;
-                } else {
-                    selectAllCheckbox.checked = false;
-                    selectAllCheckbox.indeterminate = true;
-                }
-            }
-        });
-    </script>
 </x-laravel-admin::admin.layouts.admin>

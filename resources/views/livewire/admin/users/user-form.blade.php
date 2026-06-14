@@ -43,22 +43,6 @@
                         </div>
                     </div>
 
-                <!-- 권한 정보 -->
-                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <h3 class="text-md font-medium text-gray-900 dark:text-white mb-3">직접 권한</h3>
-                    @if($user->permissions->count() > 0)
-                    <div class="flex flex-wrap gap-2">
-                        @foreach($user->permissions as $permission)
-                        <span class="px-3 py-1 text-sm bg-green-100 text-green-800 rounded-full">
-                            {{ $permission->name }}
-                        </span>
-                        @endforeach
-                    </div>
-                    @else
-                    <p class="text-sm">직접 할당된 권한이 없습니다.</p>
-                    @endif
-                </div>
-
                     <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                         <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="flex flex-col gap-1">

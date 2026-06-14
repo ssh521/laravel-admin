@@ -3,15 +3,9 @@
         <div class="mb-2">
             <h1 class="text-[26px] font-bold leading-none text-[#222222] dark:text-gray-100">
                 {{ __('회원 리스트') }}
-                @if($search || $role)
+                @if($search)
                     <span class="text-[16px] font-normal text-gray-600 dark:text-gray-400">
-                        @if($search && $role)
-                            - "{{ $search }}" 검색 결과 ({{ $role }} Role)
-                        @elseif($search)
-                            - "{{ $search }}" 검색 결과
-                        @elseif($role)
-                            - {{ $role }} Role 필터
-                        @endif
+                        - "{{ $search }}" 검색 결과
                     </span>
                 @endif
             </h1>
@@ -31,20 +25,6 @@
         <x-laravel-admin::admin.session-messages />
 
         <form class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end" x-data x-init="$nextTick(() => $refs.searchInput?.focus())">
-            <label for="user-role-filter" class="sr-only">Role</label>
-            <select
-                id="user-role-filter"
-                wire:model.live="role"
-                class="admin-focus-border h-[28px] w-full rounded-sm border border-[#7d7d7d] bg-white px-2 text-base text-[#111111] outline-none sm:w-[150px] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                onfocus="this.style.borderColor='#005fcc'; this.style.boxShadow='0 0 0 1px #005fcc';"
-                onblur="this.style.borderColor='#7d7d7d'; this.style.boxShadow='none';"
-            >
-                <option value="">전체 Role</option>
-                @foreach($roles as $roleOption)
-                    <option value="{{ $roleOption->name }}">{{ $roleOption->name }}</option>
-                @endforeach
-            </select>
-
             <label for="user-search" class="sr-only">Search</label>
             <input
                 id="user-search"
@@ -57,8 +37,8 @@
                 onblur="this.style.borderColor='#7d7d7d'; this.style.boxShadow='none';"
             >
 
-            @if($search || $role)
-                <button wire:click="$set('search', ''); $set('role', '')" type="button" class="h-[28px] cursor-pointer rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-3 text-base font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
+            @if($search)
+                <button wire:click="$set('search', '')" type="button" class="h-[28px] cursor-pointer rounded-sm border border-[#7d7d7d] bg-[#eeeeee] px-3 text-base font-semibold text-[#222222] hover:bg-[#e3e3e3] dark:bg-gray-700 dark:text-gray-100">
                     {{ __('초기화') }}
                 </button>
             @endif
@@ -75,8 +55,6 @@
                         <th scope="col" class="h-10 px-2 text-left font-bold whitespace-nowrap">Name</th>
                         <th scope="col" class="h-10 px-2 text-left font-bold whitespace-nowrap">E-mail</th>
                         <th scope="col" class="h-10 px-2 text-left font-bold whitespace-nowrap hidden sm:table-cell">이메일 인증</th>
-                        <th scope="col" class="h-10 px-2 text-left font-bold whitespace-nowrap">Role</th>
-                        <th scope="col" class="h-10 px-2 text-left font-bold whitespace-nowrap hidden sm:table-cell">Permission (Direct)</th>
                         <th scope="col" class="h-10 px-2 text-left font-bold whitespace-nowrap hidden sm:table-cell">가입일</th>
                         <th scope="col" class="h-10 px-2 text-right font-bold whitespace-nowrap">
                             <span class="sr-only">Edit</span>
@@ -113,24 +91,6 @@
                                     <span>{{ __('미인증') }}</span>
                                 @endif
                             </td>
-                            <td class="h-10 px-4">
-                                <div class="flex flex-wrap gap-x-2 gap-y-1">
-                                    @forelse($user->getRoleNames() as $v)
-                                        <span>{{ $v }}</span>
-                                    @empty
-                                        <span class="text-gray-500 dark:text-gray-400">{{ __('No roles') }}</span>
-                                    @endforelse
-                                </div>
-                            </td>
-                            <td class="h-10 px-4 hidden sm:table-cell">
-                                <div class="flex flex-wrap gap-x-2 gap-y-1">
-                                    @forelse($user->getDirectPermissions() as $permission)
-                                        <span>{{ $permission->name }}</span>
-                                    @empty
-                                        <span class="text-gray-500 dark:text-gray-400">직접 권한 없음</span>
-                                    @endforelse
-                                </div>
-                            </td>
                             <td class="h-10 whitespace-nowrap px-4 hidden sm:table-cell">
                                 {{ $user->created_at->format('Y-m-d H:i') }}
                             </td>
@@ -142,13 +102,9 @@
                         </tr>
                     @empty
                         <tr class="border-b border-[#e6e6e6] bg-[#fbfbfb] dark:border-gray-700 dark:bg-gray-800">
-                            <td colspan="7" class="h-10 px-4 text-center text-gray-500 dark:text-gray-400">
-                                @if($search && $role)
-                                    {{ __('":keyword" 검색 결과 중 :role Role 사용자가 없습니다.', ['keyword' => $search, 'role' => $role]) }}
-                                @elseif($search)
+                            <td colspan="5" class="h-10 px-4 text-center text-gray-500 dark:text-gray-400">
+                                @if($search)
                                     {{ __('":keyword"에 대한 검색 결과가 없습니다.', ['keyword' => $search]) }}
-                                @elseif($role)
-                                    {{ __(':role Role 사용자가 없습니다.', ['role' => $role]) }}
                                 @else
                                     {{ __('등록된 사용자가 없습니다.') }}
                                 @endif

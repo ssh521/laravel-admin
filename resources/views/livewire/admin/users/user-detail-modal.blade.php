@@ -43,58 +43,6 @@
                     </div>
                 </div>
 
-                <!-- 역할 정보 -->
-                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <div class="flex items-center justify-between mb-3">
-
-                        @can('assignRolesView', $user)
-                        <button type="button" wire:click="openRoleViewModal"
-                            class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
-                            역할 정보
-                        </button>
-                        @else
-                        <span class="px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-full">
-                            역할 정보
-                        </span>
-                        @endcan
-
-                        @can('assignRolesUpdate', $user)
-                        <button type="button" wire:click="openRoleEditModal"
-                            class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer">
-                            수정
-                        </button>
-                        @endcan
-                    </div>
-                    @if($user->roles->count() > 0)
-                    <div class="flex flex-wrap gap-2">
-                        @foreach($user->roles as $role)
-                        <span
-                            class="px-3 py-1 text-sm {{ $role->name === 'Super Admin' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' }} rounded-full">
-                            {{ $role->name }}
-                        </span>
-                        @endforeach
-                    </div>
-                    @else
-                    <p class="text-sm">할당된 역할이 없습니다.</p>
-                    @endif
-                </div>
-
-                <!-- 권한 정보 -->
-                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <h3 class="text-md font-medium text-gray-900 dark:text-white mb-3">직접 권한</h3>
-                    @if($user->permissions->count() > 0)
-                    <div class="flex flex-wrap gap-2">
-                        @foreach($user->permissions as $permission)
-                        <span class="px-3 py-1 text-sm bg-green-100 text-green-800 rounded-full">
-                            {{ $permission->name }}
-                        </span>
-                        @endforeach
-                    </div>
-                    @else
-                    <p class="text-sm">직접 할당된 권한이 없습니다.</p>
-                    @endif
-                </div>
-
                 <!-- 계정 상태 -->
                 <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                     <h3 class="text-md font-medium text-gray-900 dark:text-white mb-3">계정 상태</h3>
@@ -158,14 +106,6 @@
         :close-on-escape="true" :close-on-backdrop-click="false" :width="500" :height="400">
         <div class="px-2 py-2">
             <livewire:admin.users.user-form />
-        </div>
-    </x-laravel-admin::admin.draggable-modal>
-
-    <!-- 자식 모달: 사용자 역할 수정 폼 -->
-    <x-laravel-admin::admin.draggable-modal id="user-role-edit-modal" title="사용자 역할 수정" :show-close-button="true" :show-resize-handle="true"
-        :close-on-escape="true" :close-on-backdrop-click="true" :width="300" :height="520">
-        <div class="px-2 py-2">
-            <livewire:admin.users.user-role-form />
         </div>
     </x-laravel-admin::admin.draggable-modal>
 </div>

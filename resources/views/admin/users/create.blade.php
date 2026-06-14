@@ -83,35 +83,6 @@
                                     <span>{{ __('Email Verified') }}</span>
                                 </label>
                             </div>
-
-                            <div class="{{ $rowClass }}">
-                                <span class="{{ $labelClass }}">{{ __('역할') }} :</span>
-                                <div class="grid min-h-[24px] w-full max-w-[580px] grid-cols-1 gap-x-5 gap-y-2 pt-1 sm:grid-cols-2 lg:grid-cols-3">
-                                    @foreach ($roles as $role)
-                                        <label for="role_{{ $role->id }}" class="flex items-center gap-2 text-base font-bold">
-                                            <input id="role_{{ $role->id }}" name="roles[]" type="checkbox" value="{{ $role->id }}" @checked(in_array($role->id, old('roles', []))) class="size-4 border-[#777777] text-[#663601] focus:ring-[#663601]">
-                                            <span>{{ $role->name }}</span>
-                                        </label>
-                                    @endforeach
-                                    <x-laravel-admin::admin.input-error-message class="col-span-full mt-1 text-[13px]" :messages="$errors->get('roles')" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 border-t border-dashed pt-6" style="border-top-color: #aaaaaa;">
-                        <div class="space-y-3">
-                            <div class="{{ $rowClass }}">
-                                <span class="{{ $labelClass }}">{{ __('권한') }} :</span>
-                                <div class="grid min-h-[24px] w-full max-w-[720px] grid-cols-1 gap-x-5 gap-y-2 pt-1 sm:grid-cols-2 lg:grid-cols-3">
-                                    @foreach ($permissions as $permission)
-                                        <label for="permission_{{ $permission->id }}" class="flex items-center gap-2 text-base font-bold">
-                                            <input id="permission_{{ $permission->id }}" name="permissions[]" type="checkbox" value="{{ $permission->id }}" @checked(in_array($permission->id, old('permissions', []))) class="size-4 border-[#777777] text-[#663601] focus:ring-[#663601]">
-                                            <span>{{ $permission->name }}</span>
-                                        </label>
-                                    @endforeach
-                                </div>
-                            </div>
                         </div>
                     </div>
 

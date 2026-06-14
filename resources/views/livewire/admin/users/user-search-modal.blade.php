@@ -47,13 +47,6 @@
                         </div>
                         @endif
 
-                        @if($canAssignRoles($user))
-                        <div class="text-xs cursor-pointer hover:text-blue-600"
-                        wire:click="openUserRoleViewModal({{ $user->id }})">
-                            권한보기
-                        </div>
-                        @endif
-
                     </div>
                 </div>
             </div>
@@ -76,6 +69,5 @@
     </div>
 
     <livewire:admin.users.user-form />
-    <livewire:admin.users.user-role-form />
 
 </div>

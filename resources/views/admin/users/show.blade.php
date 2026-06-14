@@ -43,29 +43,7 @@
                         </div>
                     </div>
 
-                    <div class="my-6 border-t border-[#8d8d8d]"></div>
-
                     <div class="space-y-3">
-                        <div class="flex min-h-[24px] flex-col sm:flex-row">
-                            <div class="w-[120px] shrink-0 text-right sm:pr-3">{{ __('역할') }} :</div>
-                            <div>
-                                @forelse ($user->getRoleNames() as $role)
-                                    <span>{{ $role }}</span>@if (! $loop->last)<span>, </span>@endif
-                                @empty
-                                    {{ __('No roles assigned') }}
-                                @endforelse
-                            </div>
-                        </div>
-                        <div class="flex min-h-[24px] flex-col sm:flex-row">
-                            <div class="w-[120px] shrink-0 text-right sm:pr-3">{{ __('권한') }} :</div>
-                            <div>
-                                @forelse ($user->getPermissionNames() as $permission)
-                                    <span>{{ $permission }}</span>@if (! $loop->last)<span>, </span>@endif
-                                @empty
-                                    {{ __('No permissions assigned') }}
-                                @endforelse
-                            </div>
-                        </div>
                         <div class="flex min-h-[24px] flex-col sm:flex-row">
                             <div class="w-[120px] shrink-0 text-right sm:pr-3">{{ __('등록일') }} :</div>
                             <div>{{ $user->created_at?->format('Y-m-d H:i:s') }}</div>
