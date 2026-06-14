@@ -4,6 +4,7 @@ namespace Ssh521\LaravelAdmin\Support;
 
 use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar as SpatiePermissionRegistrar;
 use Ssh521\LaravelAdmin\Models\Permission;
 
 class AdminPermissionRegistrar
@@ -39,11 +40,13 @@ class AdminPermissionRegistrar
             ->whereIn('name', $roleNames)
             ->get(['id', 'name']);
 
-        $permissionNames = $permissions->pluck('name')->all();
+        $permissionIds = $permissions->pluck('id')->all();
 
         foreach ($roles as $role) {
-            $role->givePermissionTo($permissionNames);
+            $role->permissions()->syncWithoutDetaching($permissionIds);
         }
+
+        app(SpatiePermissionRegistrar::class)->forgetCachedPermissions();
 
         return $roleNames
             ->diff($roles->pluck('name'))
