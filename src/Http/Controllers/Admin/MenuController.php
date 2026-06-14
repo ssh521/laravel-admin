@@ -48,7 +48,7 @@ class MenuController extends Controller
         // 카테고리 목록도 함께 전달
         $categories = MenuCategory::active()->ordered()->get();
 
-        return view('admin.menus.index', compact('menus', 'categories', 'sort', 'direction'));
+        return view('laravel-admin::admin.menus.index', compact('menus', 'categories', 'sort', 'direction'));
     }
 
     /**
@@ -59,7 +59,7 @@ class MenuController extends Controller
         $categories = MenuCategory::active()->ordered()->get();
         $parentMenus = Menu::topLevel()->active()->ordered()->get();
 
-        return view('admin.menus.create', compact('categories', 'parentMenus'));
+        return view('laravel-admin::admin.menus.create', compact('categories', 'parentMenus'));
     }
 
     /**
@@ -107,7 +107,7 @@ class MenuController extends Controller
     {
         $menu->load(['category', 'parent', 'children']);
 
-        return view('admin.menus.show', compact('menu'));
+        return view('laravel-admin::admin.menus.show', compact('menu'));
     }
 
     /**
@@ -118,7 +118,7 @@ class MenuController extends Controller
         $categories = MenuCategory::active()->ordered()->get();
         $parentMenus = Menu::topLevel()->active()->ordered()->get();
 
-        return view('admin.menus.edit', compact('menu', 'categories', 'parentMenus'));
+        return view('laravel-admin::admin.menus.edit', compact('menu', 'categories', 'parentMenus'));
     }
 
     /**

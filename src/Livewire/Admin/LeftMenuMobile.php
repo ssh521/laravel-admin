@@ -16,6 +16,6 @@ class LeftMenuMobile extends Component
 
     public function render()
     {
-        return view('livewire.admin.left-menu-mobile');
+        return view('laravel-admin::livewire.admin.left-menu-mobile');
     }
 }

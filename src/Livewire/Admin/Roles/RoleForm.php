@@ -161,7 +161,7 @@ class RoleForm extends Component
 
     public function render()
     {
-        return view('livewire.admin.roles.role-form');
+        return view('laravel-admin::livewire.admin.roles.role-form');
     }
 
     private function useAdminGuard(): void

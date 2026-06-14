@@ -8,6 +8,6 @@ class NavigationMenu extends Component
 {
     public function render()
     {
-        return view('livewire.admin.navigation-menu');
+        return view('laravel-admin::livewire.admin.navigation-menu');
     }
 }

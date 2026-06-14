@@ -138,7 +138,7 @@ class UserSearchModal extends Component
             })
             ->paginate($this->perPage);
 
-        return view('livewire.admin.users.user-search-modal', [
+        return view('laravel-admin::livewire.admin.users.user-search-modal', [
             'users' => $users,
             'canCreate' => Gate::allows('create', User::class),
             'canView' => function ($user) {

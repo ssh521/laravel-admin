@@ -18,7 +18,7 @@ class UserController extends Controller
 
     public function selectUser()
     {
-        return view('admin.users.select-user');
+        return view('laravel-admin::admin.users.select-user');
     }
 
     public function index(Request $request)
@@ -32,14 +32,14 @@ class UserController extends Controller
             'perPage' => 15,
         ]);
 
-        return view('admin.users.index', compact('data'));
+        return view('laravel-admin::admin.users.index', compact('data'));
     }
 
     public function list()
     {
         $this->authorize('viewAny', User::class);
 
-        return view('admin.users.list');
+        return redirect()->route('admin.users.index');
     }
 
     /**
@@ -49,7 +49,7 @@ class UserController extends Controller
     {
         $this->authorize('create', User::class);
 
-        return view('admin.users.create');
+        return view('laravel-admin::admin.users.create');
     }
 
     /**
@@ -91,7 +91,7 @@ class UserController extends Controller
             'userId' => $user->id,
         ]);
 
-        return view('admin.users.show', compact('user'));
+        return view('laravel-admin::admin.users.show', compact('user'));
     }
 
     /**
@@ -101,7 +101,7 @@ class UserController extends Controller
     {
         $this->authorize('update', $user);
 
-        return view('admin.users.edit', compact('user'));
+        return view('laravel-admin::admin.users.edit', compact('user'));
     }
 
     /**

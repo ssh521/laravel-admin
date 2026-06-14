@@ -70,7 +70,7 @@ class LeftMenu extends Component
 
     public function render()
     {
-        return view('livewire.admin.left-menu');
+        return view('laravel-admin::livewire.admin.left-menu');
     }
 
     public function refresh()

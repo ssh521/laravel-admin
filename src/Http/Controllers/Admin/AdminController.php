@@ -30,6 +30,6 @@ class AdminController extends Controller
             'total_menu_categories' => MenuCategory::query()->count(),
         ];
 
-        return view('admin.index', compact('stats'));
+        return view('laravel-admin::admin.index', compact('stats'));
     }
 }

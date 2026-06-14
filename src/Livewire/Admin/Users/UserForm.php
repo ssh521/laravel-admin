@@ -148,7 +148,7 @@ class UserForm extends Component
     {
         $this->useAdminGuard();
 
-        return view('livewire.admin.users.user-form');
+        return view('laravel-admin::livewire.admin.users.user-form');
     }
 
     private UserService $userService;

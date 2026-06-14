@@ -199,6 +199,6 @@ class MenuOrderModal extends Component
 
     public function render()
     {
-        return view('livewire.admin.menus.menu-order-modal');
+        return view('laravel-admin::livewire.admin.menus.menu-order-modal');
     }
 }

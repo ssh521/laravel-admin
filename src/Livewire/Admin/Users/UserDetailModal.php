@@ -162,6 +162,6 @@ class UserDetailModal extends Component
 
     public function render()
     {
-        return view('livewire.admin.users.user-detail-modal');
+        return view('laravel-admin::livewire.admin.users.user-detail-modal');
     }
 }

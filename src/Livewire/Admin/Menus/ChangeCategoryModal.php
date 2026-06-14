@@ -77,6 +77,6 @@ class ChangeCategoryModal extends Component
 
     public function render()
     {
-        return view('livewire.admin.menus.change-category-modal');
+        return view('laravel-admin::livewire.admin.menus.change-category-modal');
     }
 }

@@ -47,14 +47,14 @@ class PermissionController extends Controller
             ->orderBy('sort_order', 'asc') // sort_order를 보조 정렬로 추가
             ->paginate(15);
 
-        return view('admin.permissions.index', compact('data'));
+        return view('laravel-admin::admin.permissions.index', compact('data'));
     }
 
     public function create()
     {
         $this->authorize('create', Permission::class);
 
-        return view('admin.permissions.create');
+        return view('laravel-admin::admin.permissions.create');
     }
 
     public function store(Request $request)
@@ -78,14 +78,14 @@ class PermissionController extends Controller
     {
         $this->authorize('view', $permission);
 
-        return view('admin.permissions.show', compact('permission'));
+        return view('laravel-admin::admin.permissions.show', compact('permission'));
     }
 
     public function edit(Permission $permission)
     {
         $this->authorize('update', $permission);
 
-        return view('admin.permissions.edit', compact('permission'));
+        return view('laravel-admin::admin.permissions.edit', compact('permission'));
     }
 
     public function update(Request $request, Permission $permission)

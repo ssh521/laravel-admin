@@ -149,6 +149,6 @@ class RoleModal extends Component
 
     public function render()
     {
-        return view('livewire.admin.roles.role-modal');
+        return view('laravel-admin::livewire.admin.roles.role-modal');
     }
 }

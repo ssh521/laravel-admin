@@ -17,7 +17,7 @@ class AdminLoginController extends Controller
             return redirect()->intended($this->redirectPath());
         }
 
-        return view('admin.auth.login', [
+        return view('laravel-admin::admin.auth.login', [
             'loginRoute' => $this->routeName('login'),
             'showRegisterLink' => false,
             'showPasswordResetLink' => false,

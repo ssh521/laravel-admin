@@ -117,7 +117,7 @@ class UserTable extends Component
             'perPage' => 15,
         ]);
 
-        return view('livewire.admin.users.user-table', [
+        return view('laravel-admin::livewire.admin.users.user-table', [
             'users' => $users,
             'canCreate' => Gate::allows('create', User::class),
             'canEdit' => function ($user) {

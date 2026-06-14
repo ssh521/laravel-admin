@@ -29,6 +29,28 @@ class UiResourceOwnershipTest extends TestCase
     public function test_core_provider_loads_admin_ui_views_through_ui_package_dependency(): void
     {
         $this->assertTrue(View::exists('admin.index'));
+        $this->assertTrue(View::exists('laravel-admin::admin.index'));
         $this->assertTrue(View::exists('laravel-admin::partials.assets'));
+    }
+
+    public function test_packaged_admin_controller_views_use_the_admin_ui_namespace(): void
+    {
+        $views = [
+            'laravel-admin::admin.index',
+            'laravel-admin::admin.auth.login',
+            'laravel-admin::admin.admin-users.index',
+            'laravel-admin::admin.menu-categories.index',
+            'laravel-admin::admin.menus.index',
+            'laravel-admin::admin.permissions.index',
+            'laravel-admin::admin.roles.index',
+            'laravel-admin::admin.users.index',
+            'laravel-admin::livewire.admin.header-nav',
+            'laravel-admin::livewire.admin.left-menu',
+            'laravel-admin::livewire.admin.users.user-table',
+        ];
+
+        foreach ($views as $view) {
+            $this->assertTrue(View::exists($view), "Expected view [{$view}] to exist.");
+        }
     }
 }

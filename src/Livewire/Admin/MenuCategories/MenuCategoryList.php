@@ -41,7 +41,7 @@ class MenuCategoryList extends Component
             ->orderBy('id')
             ->paginate($this->perPage);
 
-        return view('livewire.admin.menu-categories.menu-category-list', [
+        return view('laravel-admin::livewire.admin.menu-categories.menu-category-list', [
             'categories' => $categories,
             'canCreate' => Gate::allows('create', MenuCategory::class),
             'canView' => function ($category) {

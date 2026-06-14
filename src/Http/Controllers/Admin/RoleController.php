@@ -30,7 +30,7 @@ class RoleController extends Controller
                 }
             )->latest()->paginate(15);
 
-        return view('admin.roles.index', compact('data'));
+        return view('laravel-admin::admin.roles.index', compact('data'));
     }
 
     public function create()
@@ -39,7 +39,7 @@ class RoleController extends Controller
 
         $permissions = Permission::all(); // Get all permissions
 
-        return view('admin.roles.create', compact('permissions'));
+        return view('laravel-admin::admin.roles.create', compact('permissions'));
     }
 
     public function store(Request $request)
@@ -72,7 +72,7 @@ class RoleController extends Controller
 
         $role->load('permissions');
 
-        return view('admin.roles.show', compact('role'));
+        return view('laravel-admin::admin.roles.show', compact('role'));
     }
 
     public function edit(Role $role)
@@ -82,7 +82,7 @@ class RoleController extends Controller
         $permissions = Permission::all();
         $rolePermissions = $role->permissions->pluck('id')->toArray();
 
-        return view('admin.roles.edit', compact('role', 'permissions', 'rolePermissions'));
+        return view('laravel-admin::admin.roles.edit', compact('role', 'permissions', 'rolePermissions'));
     }
 
     public function update(Request $request, Role $role)

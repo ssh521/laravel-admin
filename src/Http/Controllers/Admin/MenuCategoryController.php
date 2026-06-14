@@ -35,7 +35,7 @@ class MenuCategoryController extends Controller
             ->ordered()
             ->paginate(perPage: 100);
 
-        return view('admin.menu-categories.index', compact('categories'));
+        return view('laravel-admin::admin.menu-categories.index', compact('categories'));
     }
 
     /**
@@ -45,7 +45,7 @@ class MenuCategoryController extends Controller
     {
         $this->authorize('create', MenuCategory::class);
 
-        return view('admin.menu-categories.create');
+        return view('laravel-admin::admin.menu-categories.create');
     }
 
     /**
@@ -82,7 +82,7 @@ class MenuCategoryController extends Controller
             $query->ordered();
         }, 'roles']);
 
-        return view('admin.menu-categories.show', compact('menuCategory'));
+        return view('laravel-admin::admin.menu-categories.show', compact('menuCategory'));
     }
 
     /**
@@ -92,7 +92,7 @@ class MenuCategoryController extends Controller
     {
         $this->authorize('update', $menuCategory);
 
-        return view('admin.menu-categories.edit', compact('menuCategory'));
+        return view('laravel-admin::admin.menu-categories.edit', compact('menuCategory'));
     }
 
     /**
@@ -244,7 +244,7 @@ class MenuCategoryController extends Controller
         $roles = $this->getAvailableRoles();
         $allowedRoleIds = $menuCategory->roles->pluck('id')->toArray();
 
-        return view('admin.menu-categories.roles', compact('menuCategory', 'roles', 'allowedRoleIds'));
+        return view('laravel-admin::admin.menu-categories.roles', compact('menuCategory', 'roles', 'allowedRoleIds'));
     }
 
     /**

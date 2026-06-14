@@ -31,7 +31,7 @@ class AdminUserController extends Controller
 
         $roles = $this->getAvailableRoles();
 
-        return view('admin.admin-users.index', compact('adminUsers', 'roles'));
+        return view('laravel-admin::admin.admin-users.index', compact('adminUsers', 'roles'));
     }
 
     public function create(): View
@@ -40,7 +40,7 @@ class AdminUserController extends Controller
 
         $roles = $this->getAvailableRoles();
 
-        return view('admin.admin-users.create', compact('roles'));
+        return view('laravel-admin::admin.admin-users.create', compact('roles'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -82,7 +82,7 @@ class AdminUserController extends Controller
             'adminUserId' => $adminUser,
         ]);
 
-        return view('admin.admin-users.show', compact('adminUser'));
+        return view('laravel-admin::admin.admin-users.show', compact('adminUser'));
     }
 
     public function edit(int $adminUser): View
@@ -94,7 +94,7 @@ class AdminUserController extends Controller
         ]);
         $roles = $this->getAvailableRoles();
 
-        return view('admin.admin-users.edit', compact('adminUser', 'roles'));
+        return view('laravel-admin::admin.admin-users.edit', compact('adminUser', 'roles'));
     }
 
     public function profile(): View
@@ -107,7 +107,7 @@ class AdminUserController extends Controller
         $roles = $this->getAvailableRoles();
         $isProfile = true;
 
-        return view('admin.admin-users.edit', compact('adminUser', 'roles', 'isProfile'));
+        return view('laravel-admin::admin.admin-users.edit', compact('adminUser', 'roles', 'isProfile'));
     }
 
     public function profileUpdate(Request $request): RedirectResponse
