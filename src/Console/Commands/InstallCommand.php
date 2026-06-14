@@ -11,11 +11,17 @@ use Ssh521\LaravelAdmin\Support\PackageInstaller;
 class InstallCommand extends Command
 {
     protected $signature = 'laravel-admin:install
-        {--force : Overwrite published files and force database commands in production}
+        {--force : Force database commands and overwrite required published files}
         {--skip-migrate : Publish migrations without running them}
         {--skip-seed : Do not seed Laravel Admin roles, menus, or admin user}
         {--skip-admin-user : Do not seed the default admin user}
         {--skip-vite : Do not update vite.config.js}
+        {--publish-config : Publish Laravel Admin config}
+        {--publish-views : Publish Laravel Admin views and components}
+        {--publish-seeders : Publish Laravel Admin seeders}
+        {--force-config : Overwrite published Laravel Admin config}
+        {--force-views : Overwrite published Laravel Admin views and components}
+        {--force-seeders : Overwrite published Laravel Admin seeders}
         {--with=* : Run feature package installers after admin install (bbs, blog, file)}
         {--with-test-data : Pass sample data option to feature package installers}';
 
@@ -26,6 +32,14 @@ class InstallCommand extends Command
         'resources/vendor/laravel-admin/admin.js',
     ];
 
+    private const MIGRATION_SUFFIXES = [
+        'create_permission_tables',
+        'create_menu_system_tables',
+        'add_sort_order_to_permissions_table',
+        'add_description_to_permissions_table',
+        'create_admin_users_table',
+    ];
+
     public function handle(): int
     {
         $this->info('Installing Laravel Admin...');
@@ -33,7 +47,7 @@ class InstallCommand extends Command
         $this->publishResources();
 
         if (! $this->option('skip-migrate')) {
-            $this->installer()->migrate($this, (bool) $this->option('force'));
+            $this->migrateOrAdoptExistingSchema();
         }
 
         if (! $this->option('skip-seed') && $this->canSeedAdminCore()) {
@@ -61,13 +75,24 @@ class InstallCommand extends Command
     private function publishResources(): void
     {
         $this->installer()->publishTags($this, [
-            'laravel-admin-config',
             'laravel-admin-migrations',
-            'laravel-admin-seeders',
-            'laravel-admin-views',
-            'laravel-admin-components',
             'laravel-admin-assets',
         ], (bool) $this->option('force'));
+
+        if ($this->option('publish-config') || $this->option('force-config')) {
+            $this->installer()->publishTags($this, ['laravel-admin-config'], (bool) $this->option('force-config'));
+        }
+
+        if ($this->option('publish-views') || $this->option('force-views')) {
+            $this->installer()->publishTags($this, [
+                'laravel-admin-views',
+                'laravel-admin-components',
+            ], (bool) $this->option('force-views'));
+        }
+
+        if ($this->option('publish-seeders') || $this->option('force-seeders')) {
+            $this->installer()->publishTags($this, ['laravel-admin-seeders'], (bool) $this->option('force-seeders'));
+        }
     }
 
     private function seed(string $class): void
@@ -75,26 +100,55 @@ class InstallCommand extends Command
         $this->installer()->seed($this, $class, (bool) $this->option('force'));
     }
 
-    private function canSeedAdminCore(): bool
+    private function migrateOrAdoptExistingSchema(): void
     {
-        $tables = [
-            'permissions',
-            'roles',
-            'menu_categories',
-            'menus',
-        ];
+        if ($this->adminSchemaIsInstalled()) {
+            $this->line('Laravel Admin schema already exists. Marking published admin migrations as ran.');
+            $this->installer()->markMigrationFilesAsRanBySuffixes($this, self::MIGRATION_SUFFIXES);
 
-        if (! $this->option('skip-admin-user')) {
-            $tables[] = 'admin_users';
+            return;
         }
 
-        if (! $this->installer()->hasTables($tables)) {
+        $this->installer()->migrate($this, (bool) $this->option('force'));
+    }
+
+    private function canSeedAdminCore(): bool
+    {
+        if (! $this->adminSchemaIsInstalled()) {
             $this->warn('Laravel Admin tables are missing. Run migrations before seeding admin core data.');
 
             return false;
         }
 
         return true;
+    }
+
+    private function adminSchemaIsInstalled(): bool
+    {
+        $hasTables = $this->installer()->hasTables([
+            'permissions',
+            'roles',
+            'model_has_permissions',
+            'model_has_roles',
+            'role_has_permissions',
+            'menu_categories',
+            'menus',
+            'menu_category_role',
+        ]);
+
+        if (! $hasTables) {
+            return false;
+        }
+
+        if (! $this->installer()->hasColumns('permissions', ['sort_order', 'description'])) {
+            return false;
+        }
+
+        if ($this->option('skip-admin-user')) {
+            return true;
+        }
+
+        return $this->installer()->hasTables(['admin_users']);
     }
 
     private function installFeaturePackages(): void
@@ -109,6 +163,12 @@ class InstallCommand extends Command
             '--force' => (bool) $this->option('force'),
             '--skip-migrate' => (bool) $this->option('skip-migrate'),
             '--skip-seed' => (bool) $this->option('skip-seed'),
+            '--publish-config' => (bool) $this->option('publish-config'),
+            '--publish-views' => (bool) $this->option('publish-views'),
+            '--publish-seeders' => (bool) $this->option('publish-seeders'),
+            '--force-config' => (bool) $this->option('force-config'),
+            '--force-views' => (bool) $this->option('force-views'),
+            '--force-seeders' => (bool) $this->option('force-seeders'),
             '--with-test-data' => (bool) $this->option('with-test-data'),
         ]);
     }

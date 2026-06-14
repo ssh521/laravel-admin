@@ -11,6 +11,7 @@ use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 use Ssh521\LaravelAdmin\Console\Commands\InstallCommand;
 use Ssh521\LaravelAdmin\Console\Commands\MakeSuperAdminCommand;
+use Ssh521\LaravelAdmin\Console\Commands\UpdateCommand;
 use Ssh521\LaravelAdmin\Livewire\Admin\HeaderNav;
 use Ssh521\LaravelAdmin\Livewire\Admin\LeftMenu;
 use Ssh521\LaravelAdmin\Livewire\Admin\LeftMenuMobile;
@@ -157,6 +158,7 @@ class LaravelAdminServiceProvider extends ServiceProvider
         $this->commands([
             InstallCommand::class,
             MakeSuperAdminCommand::class,
+            UpdateCommand::class,
         ]);
     }
 

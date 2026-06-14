@@ -4,6 +4,7 @@ namespace Ssh521\LaravelAdmin\Support;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use RuntimeException;
 
@@ -49,6 +50,50 @@ class PackageInstaller
         }
 
         return true;
+    }
+
+    /**
+     * @param  iterable<int, string>  $columns
+     */
+    public function hasColumns(string $table, iterable $columns): bool
+    {
+        if (! Schema::hasTable($table)) {
+            return false;
+        }
+
+        foreach ($columns as $column) {
+            if (! Schema::hasColumn($table, $column)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param  iterable<int, string>  $suffixes
+     */
+    public function markMigrationFilesAsRanBySuffixes(Command $command, iterable $suffixes): void
+    {
+        if (! Schema::hasTable('migrations')) {
+            return;
+        }
+
+        $batch = ((int) DB::table('migrations')->max('batch')) ?: 1;
+        $recordedMigrations = DB::table('migrations')->pluck('migration')->all();
+
+        foreach ($this->migrationNamesBySuffixes($suffixes) as $migration) {
+            if (in_array($migration, $recordedMigrations, true)) {
+                continue;
+            }
+
+            DB::table('migrations')->insert([
+                'migration' => $migration,
+                'batch' => $batch,
+            ]);
+
+            $command->line("Marked existing migration [{$migration}] as ran.");
+        }
     }
 
     public function canSeedAdminMenus(Command $command, string $packageName): bool
@@ -109,6 +154,23 @@ class PackageInstaller
             ->map(fn (string $value): string => trim($value))
             ->filter()
             ->unique()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @param  iterable<int, string>  $suffixes
+     * @return array<int, string>
+     */
+    private function migrationNamesBySuffixes(iterable $suffixes): array
+    {
+        return collect($suffixes)
+            ->flatMap(function (string $suffix): array {
+                return glob(database_path("migrations/*_{$suffix}.php")) ?: [];
+            })
+            ->map(fn (string $path): string => pathinfo($path, PATHINFO_FILENAME))
+            ->unique()
+            ->sort()
             ->values()
             ->all();
     }
