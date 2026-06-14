@@ -2,10 +2,8 @@
 
 namespace Ssh521\LaravelAdmin;
 
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -52,27 +50,12 @@ class LaravelAdminServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->registerViewLocations();
-
         $this->registerRoutes();
         $this->registerLivewireComponents();
         $this->registerLivewirePersistentMiddleware();
         $this->registerPolicies();
         $this->registerCommands();
         $this->registerPublishes();
-    }
-
-    private function registerViewLocations(): void
-    {
-        $publishedViewsPath = resource_path('views/vendor/laravel-admin');
-        $packageViewsPath = __DIR__.'/../resources/views';
-
-        View::addLocation($publishedViewsPath);
-        View::addLocation($packageViewsPath);
-        View::addNamespace('laravel-admin', [$publishedViewsPath, $packageViewsPath]);
-
-        Blade::anonymousComponentPath($publishedViewsPath.'/components', 'laravel-admin');
-        Blade::anonymousComponentPath($packageViewsPath.'/components', 'laravel-admin');
     }
 
     private function registerRoutes(): void
@@ -208,19 +191,6 @@ class LaravelAdminServiceProvider extends ServiceProvider
             __DIR__.'/../database/seeders' => database_path('seeders/vendor/laravel-admin'),
         ], 'laravel-admin-seeders');
 
-        $this->publishes([
-            __DIR__.'/../resources/views' => resource_path('views/vendor/laravel-admin'),
-        ], 'laravel-admin-views');
-
-        $this->publishes([
-            __DIR__.'/../resources/views/components' => resource_path('views/vendor/laravel-admin/components'),
-        ], 'laravel-admin-components');
-
-        $this->publishes([
-            __DIR__.'/../resources/css/admin.css' => resource_path('vendor/laravel-admin/admin.css'),
-            __DIR__.'/../resources/js' => resource_path('vendor/laravel-admin'),
-            __DIR__.'/../public/images/dtree' => public_path('images/dtree'),
-        ], 'laravel-admin-assets');
     }
 
     private function migrationPath(string $migrationFile): string
