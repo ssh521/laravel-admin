@@ -3,14 +3,12 @@
 namespace Ssh521\LaravelAdmin\Services;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Ssh521\LaravelAdmin\Actions\User\AssignRolesToUserAction;
 use Ssh521\LaravelAdmin\Actions\User\CreateUserAction;
 use Ssh521\LaravelAdmin\Actions\User\DeleteUserAction;
 use Ssh521\LaravelAdmin\Actions\User\GetUserDetailAction;
 use Ssh521\LaravelAdmin\Actions\User\GetUserListAction;
 use Ssh521\LaravelAdmin\Actions\User\SetUserEmailVerificationAction;
 use Ssh521\LaravelAdmin\Actions\User\UpdateUserAction;
-use Ssh521\LaravelAdmin\DTOs\User\AssignRolesToUserDTO;
 use Ssh521\LaravelAdmin\DTOs\User\CreateUserDTO;
 use Ssh521\LaravelAdmin\DTOs\User\DeleteUserDTO;
 use Ssh521\LaravelAdmin\DTOs\User\GetUserDetailDTO;
@@ -18,7 +16,6 @@ use Ssh521\LaravelAdmin\DTOs\User\GetUserListDTO;
 use Ssh521\LaravelAdmin\DTOs\User\SetUserEmailVerificationDTO;
 use Ssh521\LaravelAdmin\DTOs\User\UpdateUserDTO;
 use Ssh521\LaravelAdmin\Models\User;
-use Ssh521\LaravelAdmin\Validators\User\AssignRolesToUserValidator;
 use Ssh521\LaravelAdmin\Validators\User\CreateUserValidator;
 use Ssh521\LaravelAdmin\Validators\User\DeleteUserValidator;
 use Ssh521\LaravelAdmin\Validators\User\GetUserDetailValidator;
@@ -32,7 +29,6 @@ final class UserService
         private readonly CreateUserAction $createUserAction,
         private readonly UpdateUserAction $updateUserAction,
         private readonly DeleteUserAction $deleteUserAction,
-        private readonly AssignRolesToUserAction $assignRolesToUserAction,
         private readonly GetUserListAction $getUserListAction,
         private readonly GetUserDetailAction $getUserDetailAction,
         private readonly SetUserEmailVerificationAction $setUserEmailVerificationAction,
@@ -69,17 +65,6 @@ final class UserService
         $dto = DeleteUserDTO::make($validated);
 
         return $this->deleteUserAction->execute($dto);
-    }
-
-    /**
-     * @param  array<string, mixed>  $data
-     */
-    public function assignRolesToUser(array $data): User
-    {
-        $validated = AssignRolesToUserValidator::validate($data);
-        $dto = AssignRolesToUserDTO::make($validated);
-
-        return $this->assignRolesToUserAction->execute($dto);
     }
 
     /**

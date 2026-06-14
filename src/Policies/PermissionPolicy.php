@@ -162,29 +162,4 @@ class PermissionPolicy
         return false;
     }
 
-    /**
-     * Determine whether the user can assign permissions to users.
-     */
-    public function assignToUsers($user, Permission $permission): bool
-    {
-        // Admin은 Super Admin 관련 권한을 제외한 권한만 사용자에 할당할 수 있음
-        if ($user->hasRole('Admin') && ! str_contains($permission->name, 'super-admin')) {
-            return $user->hasPermissionTo('permission-assign-to-users');
-        }
-
-        return false;
-    }
-
-    /**
-     * Determine whether the user can view permission assignments.
-     */
-    public function viewAssignments($user, Permission $permission): bool
-    {
-        // Admin은 Super Admin 관련 권한을 제외한 권한의 할당 현황을 볼 수 있음
-        if ($user->hasRole('Admin') && ! str_contains($permission->name, 'super-admin')) {
-            return $user->hasPermissionTo('permission-view-assignments');
-        }
-
-        return false;
-    }
 }

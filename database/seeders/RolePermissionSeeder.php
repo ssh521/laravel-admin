@@ -41,8 +41,6 @@ class RolePermissionSeeder extends Seeder
         'permission-edit',
         'permission-delete',
         'permission-assign-to-roles',
-        'permission-assign-to-users',
-        'permission-view-assignments',
 
         // User 관련 권한
         'user-list',
@@ -50,8 +48,6 @@ class RolePermissionSeeder extends Seeder
         'user-create',
         'user-edit',
         'user-delete',
-        'user-assign-roles',
-        'user-assign-permissions',
         'user-view-auth-list',
 
         // Menu 관련 권한
@@ -69,9 +65,21 @@ class RolePermissionSeeder extends Seeder
         'menu-category-delete',
     ];
 
+    private $obsoletePermissions = [
+        'permission-assign-to-users',
+        'permission-view-assignments',
+        'user-assign-roles',
+        'user-assign-permissions',
+    ];
+
     public function run(): void
     {
         $guardName = config('laravel-admin.auth.guard', 'laravel_admin');
+
+        Permission::query()
+            ->where('guard_name', $guardName)
+            ->whereIn('name', $this->obsoletePermissions)
+            ->delete();
 
         foreach ($this->permissions as $permission) {
             Permission::firstOrCreate([

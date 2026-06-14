@@ -141,42 +141,6 @@ class UserPolicy
     }
 
     /**
-     * Determine whether the user can assign roles to the model.
-     */
-    public function assignRoles($user, $model): bool
-    {
-        // 사용자는 자신에게 역할을 할당할 수 없음
-        if ($this->isSameAccount($user, $model)) {
-            return false;
-        }
-
-        return $user->hasPermissionTo('user-assign-roles');
-    }
-
-    public function assignRolesView($user, $model): bool
-    {
-        return $this->view($user, $model);
-    }
-
-    public function assignRolesUpdate($user, $model): bool
-    {
-        return $this->assignRoles($user, $model);
-    }
-
-    /**
-     * Determine whether the user can assign permissions to the model.
-     */
-    public function assignPermissions($user, $model): bool
-    {
-        // 사용자는 자신에게 권한을 할당할 수 없음
-        if ($this->isSameAccount($user, $model)) {
-            return false;
-        }
-
-        return $user->hasPermissionTo('user-assign-permissions');
-    }
-
-    /**
      * Determine whether the user can view user authentication list.
      */
     public function viewAuthList($user): bool

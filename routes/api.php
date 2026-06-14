@@ -16,6 +16,4 @@ Route::get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
     Route::apiResource('users', UserController::class);
-    Route::post('users/{id}/roles', [UserController::class, 'assignRoles'])->name('users.assign-roles');
-    Route::get('users/{id}/roles', [UserController::class, 'getRoles'])->name('users.get-roles');
 });

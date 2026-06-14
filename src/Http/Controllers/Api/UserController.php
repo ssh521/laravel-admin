@@ -28,7 +28,6 @@ class UserController extends Controller
 
         $users = $this->userService->getUserList([
             'search' => $request->input('search'),
-            'role' => $request->input('role'),
             'sortField' => $request->input('sortField', 'name'),
             'sortDirection' => $request->input('sortDirection', 'asc'),
             'perPage' => $request->input('perPage', 15),
@@ -63,7 +62,7 @@ class UserController extends Controller
         $user = $this->userService->getUserDetail(['userId' => $id]);
         $this->authorize('view', $user);
 
-        return new UserResource($user->load(['roles', 'permissions']));
+        return new UserResource($user);
     }
 
     /**
@@ -86,7 +85,7 @@ class UserController extends Controller
 
         $user = $this->userService->updateUser($updateData);
 
-        return new UserResource($user->load(['roles', 'permissions']));
+        return new UserResource($user);
     }
 
     /**
@@ -104,37 +103,4 @@ class UserController extends Controller
         ], 200);
     }
 
-    /**
-     * Assign roles to the specified user.
-     */
-    public function assignRoles(Request $request, int $id): UserResource
-    {
-        $user = $this->userService->getUserDetail(['userId' => $id]);
-        $this->authorize('assignRoles', $user);
-
-        $user = $this->userService->assignRolesToUser([
-            'userId' => $id,
-            'roleIds' => $request->input('roleIds', []),
-        ]);
-
-        return new UserResource($user->load(['roles', 'permissions']));
-    }
-
-    /**
-     * Get roles of the specified user.
-     */
-    public function getRoles(int $id): JsonResponse
-    {
-        $user = $this->userService->getUserDetail(['userId' => $id]);
-        $this->authorize('view', $user);
-
-        return response()->json([
-            'data' => $user->roles->map(function ($role) {
-                return [
-                    'id' => $role->id,
-                    'name' => $role->name,
-                ];
-            }),
-        ]);
-    }
 }

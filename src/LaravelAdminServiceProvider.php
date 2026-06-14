@@ -22,7 +22,6 @@ use Ssh521\LaravelAdmin\Livewire\Admin\Roles\RoleDetailModal;
 use Ssh521\LaravelAdmin\Livewire\Admin\Roles\RoleForm;
 use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserDetailModal;
 use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserForm;
-use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserRoleForm;
 use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserSearchModal;
 use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserTable;
 use Ssh521\LaravelAdmin\Models\AdminUser;
@@ -119,7 +118,6 @@ class LaravelAdminServiceProvider extends ServiceProvider
         Livewire::component('admin.roles.role-form', RoleForm::class);
         Livewire::component('admin.users.user-detail-modal', UserDetailModal::class);
         Livewire::component('admin.users.user-form', UserForm::class);
-        Livewire::component('admin.users.user-role-form', UserRoleForm::class);
         Livewire::component('admin.users.user-search-modal', UserSearchModal::class);
         Livewire::component('admin.users.user-table', UserTable::class);
     }

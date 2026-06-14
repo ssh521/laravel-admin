@@ -127,50 +127,6 @@ class UserDetailModal extends Component
         ");
     }
 
-    public function openRoleViewModal(): void
-    {
-        if (! $this->user) {
-            return;
-        }
-
-        // UserRoleForm을 자식 모달로 열기
-        $this->dispatch('admin-users:user-role-form:open', [
-            'mode' => 'view',
-            'id' => $this->user->id,
-            'parentModalId' => 'user-role-edit-modal',
-        ]);
-
-        // draggable-modal 열기
-        $this->js("
-            window.dispatchEvent(new CustomEvent('open-modal', { 
-                detail: { modalId: 'user-role-edit-modal' } 
-            }));
-        ");
-    }
-
-    public function openRoleEditModal(): void
-    {
-        if (! $this->user) {
-            return;
-        }
-
-        $this->authorize('assignRoles', $this->user);
-
-        // UserRoleForm을 자식 모달로 열기
-        $this->dispatch('admin-users:user-role-form:open', [
-            'mode' => 'edit',
-            'id' => $this->user->id,
-            'parentModalId' => 'user-role-edit-modal',
-        ]);
-
-        // draggable-modal 열기
-        $this->js("
-            window.dispatchEvent(new CustomEvent('open-modal', { 
-                detail: { modalId: 'user-role-edit-modal' } 
-            }));
-        ");
-    }
-
     public function setEmailVerified(int $userId, bool|int|string $isVerified): void
     {
         $user = $this->userService->getUserDetail(['userId' => $userId]);
@@ -194,15 +150,6 @@ class UserDetailModal extends Component
     public function handleUserSaved(): void
     {
         // 사용자가 저장된 후 사용자 정보 다시 로드
-        if ($this->user) {
-            $this->user = $this->userService->getUserDetail(['userId' => $this->user->id]);
-        }
-    }
-
-    #[On('admin-users:user-roles:updated')]
-    public function handleUserRolesUpdated(): void
-    {
-        // 역할이 업데이트된 후 사용자 정보 다시 로드
         if ($this->user) {
             $this->user = $this->userService->getUserDetail(['userId' => $this->user->id]);
         }

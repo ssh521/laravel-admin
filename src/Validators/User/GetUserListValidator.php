@@ -17,7 +17,6 @@ final class GetUserListValidator
     {
         $validator = Validator::make($data, [
             'search' => ['nullable', 'string'],
-            'role' => ['nullable', 'string'],
             'sortField' => ['nullable', 'string', 'in:name,email,created_at'],
             'sortDirection' => ['nullable', 'string', 'in:asc,desc'],
             'perPage' => ['nullable', 'integer', 'min:1', 'max:100'],

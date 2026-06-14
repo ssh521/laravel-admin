@@ -85,14 +85,6 @@ class UserSearchModal extends Component
         ]);
     }
 
-    public function openUserRoleViewModal(string $userId): void
-    {
-        $this->dispatch('admin-users:user-role-form:open', [
-            'mode' => 'view',
-            'id' => $userId,
-        ]);
-    }
-
     private function resetSearchState(): void
     {
         $this->search = '';
@@ -157,9 +149,6 @@ class UserSearchModal extends Component
             },
             'canDelete' => function ($user) {
                 return Gate::allows('delete', $user);
-            },
-            'canAssignRoles' => function ($user) {
-                return Gate::allows('assignRoles', $user);
             },
         ]);
 

@@ -9,6 +9,6 @@ final class GetUserDetailAction
 {
     public function execute(GetUserDetailDTO $dto): User
     {
-        return User::with(['roles', 'permissions'])->findOrFail($dto->userId);
+        return User::findOrFail($dto->userId);
     }
 }

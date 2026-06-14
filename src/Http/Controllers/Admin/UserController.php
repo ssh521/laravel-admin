@@ -4,9 +4,6 @@ namespace Ssh521\LaravelAdmin\Http\Controllers\Admin;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 use Ssh521\LaravelAdmin\Http\Controllers\Controller;
 use Ssh521\LaravelAdmin\Models\User;
 use Ssh521\LaravelAdmin\Services\UserService;
@@ -30,15 +27,12 @@ class UserController extends Controller
 
         $data = $this->userService->getUserList([
             'search' => $request->search,
-            'role' => $request->role,
             'sortField' => 'created_at',
             'sortDirection' => 'desc',
             'perPage' => 15,
         ]);
 
-        $roles = $this->getAvailableRoles();
-
-        return view('admin.users.index', compact('data', 'roles'));
+        return view('admin.users.index', compact('data'));
     }
 
     public function list()
@@ -55,10 +49,7 @@ class UserController extends Controller
     {
         $this->authorize('create', User::class);
 
-        $roles = $this->getAvailableRoles();
-        $permissions = Permission::all();
-
-        return view('admin.users.create', compact('roles', 'permissions'));
+        return view('admin.users.create');
     }
 
     /**
@@ -73,7 +64,6 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|same:confirm-password',
             'confirm-password' => 'required|string|min:8',
-            'roles' => 'required|array|min:1',
         ]);
 
         $user = $this->userService->createUser([
@@ -85,17 +75,6 @@ class UserController extends Controller
         // 이메일 인증 상태 처리
         $user->email_verified_at = $request->has('email_verified') ? now() : null;
         $user->save();
-
-        // 역할 할당
-        if ($request->roles) {
-            $this->userService->assignRolesToUser([
-                'userId' => $user->id,
-                'roleIds' => $request->roles,
-            ]);
-        }
-
-        // 권한 할당
-        $this->syncUserPermissions($user, $request->permissions);
 
         return redirect()->route('admin.users.index')
             ->with('success', 'User created successfully');
@@ -122,10 +101,7 @@ class UserController extends Controller
     {
         $this->authorize('update', $user);
 
-        $roles = $this->getAvailableRoles();
-        $permissions = Permission::orderBy('name', 'asc')->get();
-
-        return view('admin.users.edit', compact('user', 'roles', 'permissions'));
+        return view('admin.users.edit', compact('user'));
     }
 
     /**
@@ -157,19 +133,6 @@ class UserController extends Controller
         $user->email_verified_at = $request->has('email_verified') ? now() : null;
         $user->save();
 
-        // 역할 할당
-        if (isset($request->roles)) {
-            $this->userService->assignRolesToUser([
-                'userId' => $user->id,
-                'roleIds' => $request->roles,
-            ]);
-        } else {
-            $user->roles()->detach();
-        }
-
-        // 권한 할당
-        $this->syncUserPermissions($user, $request->permissions);
-
         return redirect()->route('admin.users.index')
             ->with('success', $user->name.' 정보가 수정되었습니다.');
     }
@@ -189,28 +152,4 @@ class UserController extends Controller
             ->with('success', 'User deleted successfully');
     }
 
-    /**
-     * Get available roles based on current user's permissions
-     */
-    private function getAvailableRoles()
-    {
-        $currentUser = Auth::user();
-        if ($currentUser->roles->contains('name', 'Super Admin')) {
-            return Role::all();
-        } else {
-            return Role::where('name', '!=', 'Super Admin')->get();
-        }
-    }
-
-    /**
-     * Sync user permissions
-     */
-    private function syncUserPermissions(User $user, $permissions)
-    {
-        if (isset($permissions)) {
-            $user->permissions()->sync($permissions);
-        } else {
-            $user->permissions()->detach();
-        }
-    }
 }

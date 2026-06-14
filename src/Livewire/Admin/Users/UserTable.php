@@ -10,7 +10,6 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Spatie\Permission\Models\Role;
 use Ssh521\LaravelAdmin\Models\User;
 use Ssh521\LaravelAdmin\Services\UserService;
 
@@ -32,19 +31,11 @@ class UserTable extends Component
 
     public $search = '';
 
-    public $role = '';
-
     protected $queryString = [
         'search' => ['except' => ''],
-        'role' => ['except' => ''],
     ];
 
     public function updatingSearch()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingRole()
     {
         $this->resetPage();
     }
@@ -112,27 +103,6 @@ class UserTable extends Component
         // Livewire가 자동으로 컴포넌트를 다시 렌더링
     }
 
-    #[On('admin-users:user-roles:updated')]
-    public function handleUserRolesUpdated()
-    {
-        // 사용자 역할이 업데이트된 후 목록 새로고침
-        // Livewire가 자동으로 컴포넌트를 다시 렌더링하여 최신 데이터를 표시
-    }
-
-    public function manageRoles($id)
-    {
-        $user = $this->userService->getUserDetail(['userId' => $id]);
-        $this->authorize('assignRoles', $user);
-        $this->dispatch('admin-users:user-role-form:open', ['id' => $user->id, 'mode' => 'edit']);
-    }
-
-    public function viewRoles($id)
-    {
-        $user = $this->userService->getUserDetail(['userId' => $id]);
-        $this->authorize('assignRoles', $user);
-        $this->dispatch('admin-users:user-role-form:open', ['id' => $user->id, 'mode' => 'view']);
-    }
-
     public function render()
     {
         $this->useAdminGuard();
@@ -142,17 +112,13 @@ class UserTable extends Component
 
         $users = $this->userService->getUserList([
             'search' => $this->search,
-            'role' => $this->role,
             'sortField' => 'created_at',
             'sortDirection' => 'desc',
             'perPage' => 15,
         ]);
 
-        $roles = $this->getAvailableRoles();
-
         return view('livewire.admin.users.user-table', [
             'users' => $users,
-            'roles' => $roles,
             'canCreate' => Gate::allows('create', User::class),
             'canEdit' => function ($user) {
                 return Gate::allows('update', $user);
@@ -160,25 +126,7 @@ class UserTable extends Component
             'canDelete' => function ($user) {
                 return Gate::allows('delete', $user);
             },
-            'canAssignRoles' => function ($user) {
-                return Gate::allows('assignRoles', $user);
-            },
         ]);
-    }
-
-    /**
-     * Get available roles based on current user's permissions
-     */
-    private function getAvailableRoles()
-    {
-        $this->useAdminGuard();
-
-        $currentUser = Auth::user();
-        if ($currentUser->roles->contains('name', 'Super Admin')) {
-            return Role::all();
-        } else {
-            return Role::where('name', '!=', 'Super Admin')->get();
-        }
     }
 
     private function useAdminGuard(): void
