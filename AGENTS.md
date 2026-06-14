@@ -12,8 +12,8 @@ Use the current `Admin Users` screens as the default UI reference for new admin 
 
 ## Reference Files
 
-- `resources/views/admin/admin-users/index.blade.php`
-- `resources/views/admin/admin-users/create.blade.php`
-- `resources/views/admin/admin-users/edit.blade.php`
-- `resources/views/admin/admin-users/show.blade.php`
-- `resources/views/admin/admin-users/partials/form.blade.php`
+- `../laravel-admin-ui/resources/views/admin/admin-users/index.blade.php`
+- `../laravel-admin-ui/resources/views/admin/admin-users/create.blade.php`
+- `../laravel-admin-ui/resources/views/admin/admin-users/edit.blade.php`
+- `../laravel-admin-ui/resources/views/admin/admin-users/show.blade.php`
+- `../laravel-admin-ui/resources/views/admin/admin-users/partials/form.blade.php`

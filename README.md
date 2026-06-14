@@ -69,10 +69,10 @@ Admin routes use the package `AuthenticateAdmin` middleware by default. When adm
 
 ## Updating Assets
 
-Published CSS/JS files should be overwritten after package updates so the host Vite build uses the latest package assets:
+Published CSS/JS files are provided by `ssh521/laravel-admin-ui` and should be overwritten after package updates so the host Vite build uses the latest package assets:
 
 ```bash
-composer update ssh521/laravel-admin
+composer update ssh521/laravel-admin ssh521/laravel-admin-ui
 php artisan laravel-admin:install --force --no-interaction
 npm install @fortawesome/fontawesome-free sortablejs axios
 npm run build
@@ -112,7 +112,7 @@ The template covers package naming, ServiceProvider structure, install commands,
 
 ## Blade Component Rules
 
-Package-owned admin components live in `resources/views/components/admin` and are registered with the `laravel-admin` namespace. Use them as `<x-laravel-admin::admin.primary-button>`, `<x-laravel-admin::admin.layouts.admin>`, and `<x-laravel-admin::admin.input>` inside package views.
+Package-owned admin components live in `ssh521/laravel-admin-ui` under `resources/views/components/admin` and are registered with the `laravel-admin` namespace. Use them as `<x-laravel-admin::admin.primary-button>`, `<x-laravel-admin::admin.layouts.admin>`, and `<x-laravel-admin::admin.input>` inside package views.
 
 Do not add or use unprefixed package components such as `<x-button>`, `<x-input>`, or `<x-layouts.admin>`. Those names belong to the host Laravel application and may already be provided by Breeze, Jetstream, Flux, or custom app components.
 
@@ -149,11 +149,12 @@ If the admin user exists, the command assigns the `Super Admin` role. If the adm
 
 ## What Is Included
 
-- Admin layout, left menu, header, dark mode, and modal UI from admin-yaver
+- Admin layout, left menu, header, dark mode, and modal UI from admin-yaver through `ssh521/laravel-admin-ui`
 - User, role, permission, menu category, menu, and API management screens
 - Role-based menu folder access through `MenuCategory` and `menu_category_role`
 - Livewire modal components following the existing `admin-users:user-form:open` style events
-- Publishable config, migrations, seeders, views, and Vite assets
+- Publishable config, migrations, and seeders from this package
+- Publishable views and Vite assets from `ssh521/laravel-admin-ui`
 
 ## Additional Development Notes
 
