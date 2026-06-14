@@ -3,8 +3,8 @@
 use Composer\Autoload\ClassLoader;
 
 $autoloaders = [
-    __DIR__.'/../vendor/autoload.php',
     __DIR__.'/../../../../adminTest/vendor/autoload.php',
+    __DIR__.'/../vendor/autoload.php',
 ];
 
 foreach ($autoloaders as $autoload) {
