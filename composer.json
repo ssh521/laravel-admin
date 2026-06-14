@@ -34,6 +34,9 @@
         "pestphp/pest": "^4.0",
         "pestphp/pest-plugin-laravel": "^4.0"
     },
+    "scripts": {
+        "test": "vendor/bin/phpunit --configuration phpunit.xml.dist"
+    },
     "extra": {
         "laravel": {
             "providers": [
