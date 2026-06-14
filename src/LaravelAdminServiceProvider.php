@@ -38,6 +38,7 @@ use Ssh521\LaravelAdmin\Support\AdminMenuRegistrar;
 use Ssh521\LaravelAdmin\Support\AdminPackageRegistrar;
 use Ssh521\LaravelAdmin\Support\AdminPermissionRegistrar;
 use Ssh521\LaravelAdmin\Support\PackageInstaller;
+use Ssh521\LaravelAdminUi\LaravelAdminUiServiceProvider;
 
 class LaravelAdminServiceProvider extends ServiceProvider
 {
@@ -46,6 +47,7 @@ class LaravelAdminServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/laravel-admin.php', 'laravel-admin');
         $this->registerAuthConfiguration();
         $this->registerAdminPackageServices();
+        $this->app->register(LaravelAdminUiServiceProvider::class);
     }
 
     public function boot(): void
