@@ -2,13 +2,13 @@
 
 ## UI Baseline
 
-Use the current `Admin Users` screens as the default UI reference for new admin models and package screens.
+Treat `../laravel-admin-ui` as the source of truth for admin presentation patterns.
+Before creating or changing admin UI screens, read and follow:
 
-- List pages should use a wide white content area, thin understated borders, compact table spacing, small search controls, slight control radius, and row hover feedback where hovered data rows turn white then return to their original subtle gray background.
-- Create and edit forms should use the same wide white layout, section divider lines, left label column, underline-style inputs, compact field height, and blue focus border/ring for active inputs.
-- Detail/view pages should place record details inside a dashed box with a very light gray background; action buttons should stay outside the dashed detail box.
-- Delete actions should live on edit pages, outside the main form box at the lower-left, styled as a small text link instead of a large button.
-- Avoid heavy card styling, shadows, large rounded corners, decorative UI, or oversized typography. Keep the admin interface quiet, dense, and work-focused.
+- `../laravel-admin-ui/docs/admin-design-rules.md`
+- `../laravel-admin-ui/docs/admin-ui-design-contract.md`
+
+Use the current `Admin Users` screens as implementation references for applying that contract.
 
 ## Reference Files
 

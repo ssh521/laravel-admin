@@ -102,7 +102,7 @@ php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\AdminUserS
 php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\MenuSeeder"
 ```
 
-By default, `MenuSeeder` creates a `관리자 전용` menu folder for administrator account management. This folder is assigned to the `Super Admin` role only; the regular `Admin` role receives the general, member management, and menu management folders, but not the administrator-only folder.
+By default, `MenuSeeder` creates a `관리자 전용` menu folder for administrator account, role, and permission management. This folder is assigned to the `Super Admin` role only; the regular `Admin` role receives the general, member management, and menu management folders, but not the administrator-only folder.
 
 ## Feature Package Template
 
