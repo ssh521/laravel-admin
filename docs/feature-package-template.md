@@ -115,9 +115,7 @@ namespace Ssh521\Laravel{Feature};
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Livewire\Livewire;
 use Ssh521\Laravel{Feature}\Console\Commands\InstallCommand;
-use Ssh521\Laravel{Feature}\Http\Livewire\Admin\Dashboard;
 
 class Laravel{Feature}ServiceProvider extends ServiceProvider
 {
@@ -132,7 +130,6 @@ class Laravel{Feature}ServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'laravel-{feature}');
 
         $this->registerRoutes();
-        $this->registerLivewireComponents();
         $this->registerCommands();
         $this->registerPublishables();
     }
@@ -143,11 +140,6 @@ class Laravel{Feature}ServiceProvider extends ServiceProvider
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
             $this->loadRoutesFrom(__DIR__.'/../routes/admin.php');
         });
-    }
-
-    private function registerLivewireComponents(): void
-    {
-        Livewire::component('laravel-{feature}.admin.dashboard', Dashboard::class);
     }
 
     private function registerCommands(): void
@@ -208,19 +200,44 @@ return [
 
 ## 6. 관리자 라우트 템플릿
 
+기본 권장 방식은 `laravel-admin` 본체와 같은 controller + Blade resource route다. Livewire는 정렬, 모달, 실시간 검색처럼 화면 안 상호작용이 많은 일부 UI에 선택적으로 사용한다.
+
 ```php
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Ssh521\Laravel{Feature}\Http\Livewire\Admin\Dashboard;
+use Ssh521\Laravel{Feature}\Http\Controllers\Admin\DashboardController;
+use Ssh521\Laravel{Feature}\Http\Controllers\Admin\{Resource}Controller;
 
 $prefix = trim(config('laravel-admin.route_prefix', 'admin'), '/').'/'.trim(config('laravel-{feature}.prefix.admin', '{feature}'), '/');
 $middleware = config('laravel-{feature}.admin.middleware') ?: config('laravel-admin.middleware', ['web', 'auth', 'verified']);
 
 Route::prefix($prefix)->name('{feature}.admin.')->middleware($middleware)->group(function () {
-    Route::get('/', Dashboard::class)
+    Route::get('/', [DashboardController::class, 'index'])
         ->middleware('can:{feature}-dashboard-access')
         ->name('dashboard');
+
+    Route::get('/{resources}', [{Resource}Controller::class, 'index'])
+        ->middleware('can:{feature}-{resources}-view')
+        ->name('{resources}.index');
+    Route::get('/{resources}/create', [{Resource}Controller::class, 'create'])
+        ->middleware('can:{feature}-{resources}-create')
+        ->name('{resources}.create');
+    Route::post('/{resources}', [{Resource}Controller::class, 'store'])
+        ->middleware('can:{feature}-{resources}-create')
+        ->name('{resources}.store');
+    Route::get('/{resources}/{{resource}}', [{Resource}Controller::class, 'show'])
+        ->middleware('can:{feature}-{resources}-view')
+        ->name('{resources}.show');
+    Route::get('/{resources}/{{resource}}/edit', [{Resource}Controller::class, 'edit'])
+        ->middleware('can:{feature}-{resources}-update')
+        ->name('{resources}.edit');
+    Route::put('/{resources}/{{resource}}', [{Resource}Controller::class, 'update'])
+        ->middleware('can:{feature}-{resources}-update')
+        ->name('{resources}.update');
+    Route::delete('/{resources}/{{resource}}', [{Resource}Controller::class, 'destroy'])
+        ->middleware('can:{feature}-{resources}-delete')
+        ->name('{resources}.destroy');
 });
 ```
 
@@ -229,8 +246,146 @@ Route::prefix($prefix)->name('{feature}.admin.')->middleware($middleware)->group
 - 메뉴에 노출되는 관리자 라우트는 반드시 permission을 하나 이상 가진다.
 - 라우트 권한은 Spatie permission name과 동일하게 둔다.
 - 권한 이름은 기능 단위로 읽히게 만든다. 예: `{feature}-manage-orders`, `{feature}-manage-settings`.
+- CRUD 권한 이름은 기본적으로 `{feature}-{resources}-view`, `{feature}-{resources}-create`, `{feature}-{resources}-update`, `{feature}-{resources}-delete` 형식을 사용한다.
 
-## 7. 관리자 메뉴/권한 seeder 템플릿
+## 7. Controller + Blade CRUD 계약
+
+기능 패키지의 관리자 CRUD는 아래 계약을 기본으로 한다. 패키지 특성상 Livewire 중심 구현이 더 적합한 경우에도 route name, permission, view publish 정책은 이 계약과 최대한 맞춘다.
+
+### 7.1 디렉터리
+
+```text
+laravel-{feature}/
+├── routes/
+│   └── admin.php
+├── src/
+│   └── Http/
+│       ├── Controllers/
+│       │   └── Admin/
+│       │       ├── DashboardController.php
+│       │       └── {Resource}Controller.php
+│       └── Requests/
+│           └── Admin/
+│               ├── Store{Resource}Request.php
+│               └── Update{Resource}Request.php
+└── resources/
+    └── views/
+        └── admin/
+            ├── dashboard.blade.php
+            └── {resources}/
+                ├── index.blade.php
+                ├── create.blade.php
+                ├── edit.blade.php
+                ├── show.blade.php
+                └── partials/
+                    └── form.blade.php
+```
+
+### 7.2 Route Names
+
+기본 route name은 `{feature}.admin.` prefix를 사용한다.
+
+```text
+{feature}.admin.dashboard
+{feature}.admin.{resources}.index
+{feature}.admin.{resources}.create
+{feature}.admin.{resources}.store
+{feature}.admin.{resources}.show
+{feature}.admin.{resources}.edit
+{feature}.admin.{resources}.update
+{feature}.admin.{resources}.destroy
+```
+
+route parameter는 단수 camel case를 사용한다.
+
+```php
+Route::resource('pages', PageController::class)
+    ->parameters(['pages' => 'page']);
+```
+
+### 7.3 Controllers
+
+Controller는 `Ssh521\Laravel{Feature}\Http\Controllers\Admin` namespace 하위에 둔다.
+
+기본 action:
+
+```text
+index(Request $request)
+create()
+store(Store{Resource}Request $request)
+show({Resource} ${resource})
+edit({Resource} ${resource})
+update(Update{Resource}Request $request, {Resource} ${resource})
+destroy({Resource} ${resource})
+```
+
+원칙:
+
+- list query, sorting, filtering은 `index`에서 명시적으로 처리한다.
+- 저장 validation은 FormRequest로 분리한다.
+- 생성/수정 성공 후 index 또는 show로 redirect하고 session flash message를 남긴다.
+- 삭제는 가능하면 soft delete를 우선 고려한다.
+- 복잡한 도메인 작업은 Controller 안에 두지 말고 Action 또는 Service로 분리한다.
+
+### 7.4 Views
+
+package view namespace는 `laravel-{feature}`로 고정한다.
+
+```php
+return view('laravel-{feature}::admin.{resources}.index', compact('{resources}'));
+```
+
+관리자 view는 `resources/views/admin` 하위에 둔다.
+
+화면별 계약:
+
+- `index`: 검색/필터 bar, table 또는 card grid, pagination, row actions를 제공한다.
+- `create`: sectioned form과 저장/취소 action을 제공한다.
+- `edit`: sectioned form, 좌측 destructive action, 우측 저장/취소 action을 제공한다.
+- `show`: semantic `dl`, `dt`, `dd` 기반 detail view와 action footer를 제공한다.
+- `partials/form`: create/edit에서 공유하며 field name을 route/action 변경 없이 유지한다.
+
+UI는 `ssh521/laravel-admin-ui/docs/admin-ui-design-contract.md`를 따른다.
+
+### 7.5 Permissions
+
+CRUD 권한은 route middleware와 seeder permission name이 일치해야 한다.
+
+```text
+{feature}-{resources}-view
+{feature}-{resources}-create
+{feature}-{resources}-update
+{feature}-{resources}-delete
+```
+
+추가 상태 전환이나 publish 기능은 명시적 권한을 둔다.
+
+```text
+{feature}-{resources}-publish
+{feature}-{resources}-restore
+{feature}-{resources}-force-delete
+```
+
+### 7.6 Livewire 사용 기준
+
+Livewire는 기본 CRUD 구현 방식이 아니라 보조 UI로 사용한다.
+
+적합한 경우:
+
+- drag/drop 정렬
+- 검색 모달
+- 파일 선택 모달
+- 짧은 quick edit modal
+- 상태 토글
+- 실시간 미리보기
+
+피해야 하는 경우:
+
+- 단순 index/create/edit/show CRUD 전체를 Livewire로만 구현하는 것
+- route, field name, validation behavior를 Livewire 내부 상태에만 숨기는 것
+- view publish 후 커스터마이징하기 어려운 대형 component로 화면 전체를 묶는 것
+
+## 8. 관리자 메뉴/권한 seeder 템플릿
 
 ```php
 <?php
@@ -291,7 +446,7 @@ class Laravel{Feature}AdminMenuSeeder extends Seeder
 'permission_roles' => ['Super Admin', 'Admin'],
 ```
 
-## 8. install command 템플릿
+## 9. install command 템플릿
 
 ```php
 <?php
@@ -375,7 +530,7 @@ class InstallCommand extends Command
 }
 ```
 
-## 9. publish 정책
+## 10. publish 정책
 
 install 기본 동작:
 
@@ -396,7 +551,7 @@ php artisan laravel-{feature}:install --force-views
 
 반복 업데이트에서 config/views/seeders를 무조건 덮어쓰지 않는다. 패키지 기본 asset처럼 항상 최신이 필요한 파일만 update-safe 대상으로 둔다.
 
-## 10. laravel-admin install 연동
+## 11. laravel-admin install 연동
 
 `laravel-admin:install --with={feature}`로 함께 설치하려면 `laravel-admin`의 install command installer map에 추가한다.
 
@@ -421,7 +576,7 @@ $this->installer()->installFeaturePackages(
 
 기능 패키지 install command는 admin installer와 옵션 이름을 맞추면 조합 설치가 단순해진다.
 
-## 11. Testbench 테스트 템플릿
+## 12. Testbench 테스트 템플릿
 
 테스트는 최소 세 가지를 확인한다.
 
@@ -504,13 +659,13 @@ private function assertRouteHasMiddleware(string $routeName, string $middleware)
 }
 ```
 
-## 12. 개발 순서 체크리스트
+## 13. 개발 순서 체크리스트
 
 1. composer package skeleton 생성
 2. config 기본값 작성
 3. ServiceProvider 작성
 4. routes/admin.php 작성
-5. 관리자 Livewire 화면 최소 1개 작성
+5. 관리자 Controller + Blade CRUD 화면 작성
 6. admin menu/permission seeder 작성
 7. install command 작성
 8. `laravel-admin:install --with={feature}` 연동
@@ -519,7 +674,7 @@ private function assertRouteHasMiddleware(string $routeName, string $middleware)
 11. test app에서 path repository로 install 검증
 12. publish 정책 문서화
 
-## 13. 검증 명령
+## 14. 검증 명령
 
 패키지 단독:
 
@@ -539,7 +694,7 @@ php artisan laravel-admin:install --with={feature}
 php artisan route:list --path=admin/{feature} -v
 ```
 
-## 14. 완료 기준
+## 15. 완료 기준
 
 새 기능 패키지는 아래 조건을 만족해야 한다.
 
@@ -550,3 +705,26 @@ php artisan route:list --path=admin/{feature} -v
 - config/views/seeders publish가 명시 옵션으로 분리되어 있다.
 - Testbench 테스트가 통과한다.
 - host app의 auth, view, component 이름을 침범하지 않는다.
+
+## 16. 기존 기능 패키지 정비 과제
+
+이 문서의 Controller + Blade CRUD 계약은 신규 패키지부터 우선 적용한다. 이미 운영 중인 기능 패키지는 호환성을 유지하면서 점진적으로 맞춘다.
+
+대상 패키지:
+
+- `ssh521/laravel-bbs`
+- `ssh521/laravel-blog`
+
+정비 방향:
+
+- 단순 설정/마스터 데이터 CRUD는 Controller + Blade resource 구조로 전환한다.
+- 상호작용이 많은 목록, 정렬, 모달, 빠른 상태 변경은 Livewire 보조 UI로 유지할 수 있다.
+- 기존 route name, permission name, view publish path는 바로 깨지지 않게 alias 또는 migration guide를 제공한다.
+- 관리자 화면은 `laravel-admin-ui/docs/admin-ui-design-contract.md`의 `index`, `create`, `edit`, `show`, `modal` resource pattern을 따른다.
+- route-level `can:*` 미들웨어와 admin menu/permission seeder를 공통 계약 이름 체계에 맞춘다.
+- 전환 작업은 기능 변경과 UI/구조 변경을 분리해서 진행한다.
+
+패키지별 우선 후보:
+
+- `laravel-bbs`: board/group 설정 CRUD, admin dashboard, 권한/스킨 설정 화면
+- `laravel-blog`: category/tag/settings CRUD, admin dashboard, 글 상태/분류 관리 화면
