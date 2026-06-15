@@ -28,7 +28,7 @@ class UiResourceOwnershipTest extends TestCase
 
     public function test_core_provider_loads_admin_ui_views_through_ui_package_dependency(): void
     {
-        $this->assertTrue(View::exists('admin.index'));
+        $this->assertFalse(View::exists('admin.index'));
         $this->assertTrue(View::exists('laravel-admin::admin.index'));
         $this->assertTrue(View::exists('laravel-admin::partials.assets'));
     }

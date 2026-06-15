@@ -52,7 +52,7 @@ class UpdateCommand extends Command
     {
         $this->installer()->publishTags($this, [
             'laravel-admin-migrations',
-            'laravel-admin-assets',
+            'laravel-admin-ui-assets',
         ], true);
 
         if ($this->option('publish-config') || $this->option('force-config')) {
@@ -61,8 +61,8 @@ class UpdateCommand extends Command
 
         if ($this->option('publish-views') || $this->option('force-views')) {
             $this->installer()->publishTags($this, [
-                'laravel-admin-views',
-                'laravel-admin-components',
+                'laravel-admin-ui-views',
+                'laravel-admin-ui-components',
             ], (bool) $this->option('force-views'));
         }
 

@@ -119,7 +119,7 @@ Do not add or use unprefixed package components such as `<x-button>`, `<x-input>
 Published package views are kept under `resources/views/vendor/laravel-admin`, with components isolated in `resources/views/vendor/laravel-admin/components`. Publish only the components when that is enough:
 
 ```bash
-php artisan vendor:publish --tag=laravel-admin-components --no-interaction
+php artisan vendor:publish --tag=laravel-admin-ui-components --no-interaction
 ```
 
 If a host app publishes package views for customization, keep the `x-laravel-admin::` prefix for package components. Only switch to unprefixed `<x-...>` tags when the view intentionally wants to call a host-app component.

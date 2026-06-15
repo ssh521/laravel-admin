@@ -118,10 +118,6 @@ class LaravelAdminServiceProvider extends ServiceProvider
             return;
         }
 
-        foreach ($viewPaths as $viewPath) {
-            View::addLocation($viewPath);
-        }
-
         View::addNamespace('laravel-admin', $viewPaths);
 
         foreach ($viewPaths as $viewPath) {
