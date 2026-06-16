@@ -1,6 +1,6 @@
 # ssh521/laravel-admin
 
-admin-yaver에서 분리한 Laravel 13용 재사용 관리자 패널 패키지다.
+Laravel 13용 재사용 관리자 패널 패키지다.
 
 ## 로컬 설치
 
