@@ -37,7 +37,7 @@ class RoleController extends Controller
     {
         $this->authorize('create', Role::class);
 
-        $permissions = Permission::all(); // Get all permissions
+        $permissions = $this->getOrderedPermissions();
 
         return view('laravel-admin::admin.roles.create', compact('permissions'));
     }
@@ -79,7 +79,7 @@ class RoleController extends Controller
     {
         $this->authorize('update', $role);
 
-        $permissions = Permission::all();
+        $permissions = $this->getOrderedPermissions();
         $rolePermissions = $role->permissions->pluck('id')->toArray();
 
         return view('laravel-admin::admin.roles.edit', compact('role', 'permissions', 'rolePermissions'));
@@ -116,5 +116,13 @@ class RoleController extends Controller
         $role->delete();
 
         return redirect()->route('admin.roles.index')->with('success', 'Role deleted successfully');
+    }
+
+    private function getOrderedPermissions()
+    {
+        return Permission::query()
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get();
     }
 }

@@ -151,12 +151,17 @@ class RoleForm extends Component
 
     protected function loadAvailablePermissions(): void
     {
-        $this->availablePermissions = Permission::all()->map(function ($permission) {
-            return [
-                'id' => $permission->id,
-                'name' => $permission->name,
-            ];
-        })->toArray();
+        $this->availablePermissions = Permission::query()
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get()
+            ->map(function ($permission) {
+                return [
+                    'id' => $permission->id,
+                    'name' => $permission->name,
+                    'group' => $this->resolvePermissionGroup($permission->name),
+                ];
+            })->toArray();
     }
 
     public function render()
@@ -170,5 +175,26 @@ class RoleForm extends Component
 
         Auth::shouldUse($guard);
         request()->setUserResolver(fn () => Auth::guard($guard)->user());
+    }
+
+    private function resolvePermissionGroup(string $permissionName): string
+    {
+        if (str_starts_with($permissionName, 'menu-category-')) {
+            return 'Menu Category';
+        }
+
+        if (str_starts_with($permissionName, 'super-admin-')) {
+            return 'Super Admin';
+        }
+
+        $prefix = explode('-', $permissionName, 2)[0] ?? $permissionName;
+
+        return [
+            'admin' => 'Admin Dashboard',
+            'role' => 'Role',
+            'permission' => 'Permission',
+            'user' => 'User',
+            'menu' => 'Menu',
+        ][$prefix] ?? '기타';
     }
 }
