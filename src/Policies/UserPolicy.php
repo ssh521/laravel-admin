@@ -13,12 +13,8 @@ class UserPolicy
      */
     public function viewAny($user): bool
     {
-        // API 요청인 경우 토큰의 'read' ability 확인
-        $request = request();
-        if ($request->user()?->currentAccessToken()) {
-            if (! $request->user()->tokenCan('read')) {
-                return false;
-            }
+        if (! $this->isAdminActor($user)) {
+            return false;
         }
 
         return $user->hasPermissionTo('user-list');
@@ -29,17 +25,8 @@ class UserPolicy
      */
     public function view($user, $model): bool
     {
-        // 사용자는 자신의 프로필을 볼 수 있음
-        if ($this->isSameAccount($user, $model)) {
-            return true;
-        }
-
-        // API 요청인 경우 토큰의 'read' ability 확인
-        $request = request();
-        if ($request->user()?->currentAccessToken()) {
-            if (! $request->user()->tokenCan('read')) {
-                return false;
-            }
+        if (! $this->isAdminActor($user)) {
+            return false;
         }
 
         return $user->hasPermissionTo('user-view');
@@ -50,12 +37,8 @@ class UserPolicy
      */
     public function create($user): bool
     {
-        // API 요청인 경우 토큰의 'create' ability 확인
-        $request = request();
-        if ($request->user()?->currentAccessToken()) {
-            if (! $request->user()->tokenCan('create')) {
-                return false;
-            }
+        if (! $this->isAdminActor($user)) {
+            return false;
         }
 
         return $user->hasPermissionTo('user-create');
@@ -66,17 +49,8 @@ class UserPolicy
      */
     public function update($user, $model): bool
     {
-        // 사용자는 자신의 프로필을 수정할 수 있음
-        if ($this->isSameAccount($user, $model)) {
-            return true;
-        }
-
-        // API 요청인 경우 토큰의 'update' ability 확인
-        $request = request();
-        if ($request->user()?->currentAccessToken()) {
-            if (! $request->user()->tokenCan('update')) {
-                return false;
-            }
+        if (! $this->isAdminActor($user)) {
+            return false;
         }
 
         return $user->hasPermissionTo('user-edit');
@@ -87,17 +61,8 @@ class UserPolicy
      */
     public function delete($user, $model): bool
     {
-        // 사용자는 자신을 삭제할 수 없음
-        if ($this->isSameAccount($user, $model)) {
+        if (! $this->isAdminActor($user)) {
             return false;
-        }
-
-        // API 요청인 경우 토큰의 'delete' ability 확인
-        $request = request();
-        if ($request->user()?->currentAccessToken()) {
-            if (! $request->user()->tokenCan('delete')) {
-                return false;
-            }
         }
 
         return $user->hasPermissionTo('user-delete');
@@ -108,12 +73,8 @@ class UserPolicy
      */
     public function restore($user, $model): bool
     {
-        // API 요청인 경우 토큰의 'update' ability 확인
-        $request = request();
-        if ($request->user()?->currentAccessToken()) {
-            if (! $request->user()->tokenCan('update')) {
-                return false;
-            }
+        if (! $this->isAdminActor($user)) {
+            return false;
         }
 
         return $user->hasPermissionTo('user-edit');
@@ -124,17 +85,8 @@ class UserPolicy
      */
     public function forceDelete($user, $model): bool
     {
-        // 사용자는 자신을 영구 삭제할 수 없음
-        if ($this->isSameAccount($user, $model)) {
+        if (! $this->isAdminActor($user)) {
             return false;
-        }
-
-        // API 요청인 경우 토큰의 'delete' ability 확인
-        $request = request();
-        if ($request->user()?->currentAccessToken()) {
-            if (! $request->user()->tokenCan('delete')) {
-                return false;
-            }
         }
 
         return $user->hasPermissionTo('user-delete');
@@ -145,16 +97,19 @@ class UserPolicy
      */
     public function viewAuthList($user): bool
     {
+        if (! $this->isAdminActor($user)) {
+            return false;
+        }
+
         return $user->hasPermissionTo('user-view-auth-list');
     }
 
-    private function isSameAccount($user, $model): bool
+    private function isAdminActor($user): bool
     {
-        if (! method_exists($user, 'getTable') || ! method_exists($model, 'getTable')) {
-            return $user->id === $model->id;
-        }
+        $adminUserModel = config('laravel-admin.admin_user_model');
 
-        return $user->getTable() === $model->getTable()
-            && $user->getKey() === $model->getKey();
+        return is_string($adminUserModel)
+            && $user instanceof $adminUserModel
+            && method_exists($user, 'hasPermissionTo');
     }
 }
