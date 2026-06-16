@@ -5,9 +5,9 @@ namespace Ssh521\LaravelAdmin\Http\Controllers\Admin;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Ssh521\LaravelAdmin\Http\Controllers\Controller;
+use Ssh521\LaravelAdmin\Models\Permission;
 
 class RoleController extends Controller
 {
@@ -121,8 +121,7 @@ class RoleController extends Controller
     private function getOrderedPermissions()
     {
         return Permission::query()
-            ->orderBy('sort_order')
-            ->orderBy('name')
+            ->ordered()
             ->get();
     }
 }

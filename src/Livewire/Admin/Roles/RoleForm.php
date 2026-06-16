@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
 use Livewire\Component;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Ssh521\LaravelAdmin\Models\Permission;
 use Ssh521\LaravelAdmin\Services\RoleService;
 
 class RoleForm extends Component
@@ -152,8 +152,7 @@ class RoleForm extends Component
     protected function loadAvailablePermissions(): void
     {
         $this->availablePermissions = Permission::query()
-            ->orderBy('sort_order')
-            ->orderBy('name')
+            ->ordered()
             ->get()
             ->map(function ($permission) {
                 return [
@@ -179,22 +178,23 @@ class RoleForm extends Component
 
     private function resolvePermissionGroup(string $permissionName): string
     {
-        if (str_starts_with($permissionName, 'menu-category-')) {
-            return 'Menu Category';
+        $groups = [
+            'menu-category-' => 'Menu Category',
+            'menu-item-' => 'Menu Item',
+            'super-admin-' => 'Super Admin',
+            'admin-' => 'Admin Dashboard',
+            'role-' => 'Role',
+            'permission-' => 'Permission',
+            'user-' => 'User',
+            'menu-' => 'Menu',
+        ];
+
+        foreach ($groups as $prefix => $group) {
+            if (str_starts_with($permissionName, $prefix)) {
+                return $group;
+            }
         }
 
-        if (str_starts_with($permissionName, 'super-admin-')) {
-            return 'Super Admin';
-        }
-
-        $prefix = explode('-', $permissionName, 2)[0] ?? $permissionName;
-
-        return [
-            'admin' => 'Admin Dashboard',
-            'role' => 'Role',
-            'permission' => 'Permission',
-            'user' => 'User',
-            'menu' => 'Menu',
-        ][$prefix] ?? '기타';
+        return '기타';
     }
 }

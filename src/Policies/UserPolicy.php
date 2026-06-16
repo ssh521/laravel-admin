@@ -13,6 +13,10 @@ class UserPolicy
      */
     public function viewAny($user): bool
     {
+        if (! $this->tokenAllows($user, 'read')) {
+            return false;
+        }
+
         if (! $this->isAdminActor($user)) {
             return false;
         }
@@ -25,6 +29,14 @@ class UserPolicy
      */
     public function view($user, $model): bool
     {
+        if (! $this->tokenAllows($user, 'read')) {
+            return false;
+        }
+
+        if ($this->isSameAccount($user, $model)) {
+            return true;
+        }
+
         if (! $this->isAdminActor($user)) {
             return false;
         }
@@ -37,6 +49,10 @@ class UserPolicy
      */
     public function create($user): bool
     {
+        if (! $this->tokenAllows($user, 'create')) {
+            return false;
+        }
+
         if (! $this->isAdminActor($user)) {
             return false;
         }
@@ -49,6 +65,14 @@ class UserPolicy
      */
     public function update($user, $model): bool
     {
+        if (! $this->tokenAllows($user, 'update')) {
+            return false;
+        }
+
+        if ($this->isSameAccount($user, $model)) {
+            return true;
+        }
+
         if (! $this->isAdminActor($user)) {
             return false;
         }
@@ -61,6 +85,14 @@ class UserPolicy
      */
     public function delete($user, $model): bool
     {
+        if (! $this->tokenAllows($user, 'delete')) {
+            return false;
+        }
+
+        if ($this->isSameAccount($user, $model)) {
+            return false;
+        }
+
         if (! $this->isAdminActor($user)) {
             return false;
         }
@@ -73,6 +105,10 @@ class UserPolicy
      */
     public function restore($user, $model): bool
     {
+        if (! $this->tokenAllows($user, 'update')) {
+            return false;
+        }
+
         if (! $this->isAdminActor($user)) {
             return false;
         }
@@ -85,6 +121,14 @@ class UserPolicy
      */
     public function forceDelete($user, $model): bool
     {
+        if (! $this->tokenAllows($user, 'delete')) {
+            return false;
+        }
+
+        if ($this->isSameAccount($user, $model)) {
+            return false;
+        }
+
         if (! $this->isAdminActor($user)) {
             return false;
         }
@@ -97,6 +141,10 @@ class UserPolicy
      */
     public function viewAuthList($user): bool
     {
+        if (! $this->tokenAllows($user, 'read')) {
+            return false;
+        }
+
         if (! $this->isAdminActor($user)) {
             return false;
         }
@@ -106,10 +154,36 @@ class UserPolicy
 
     private function isAdminActor($user): bool
     {
+        if (! method_exists($user, 'hasPermissionTo')) {
+            return false;
+        }
+
         $adminUserModel = config('laravel-admin.admin_user_model');
 
-        return is_string($adminUserModel)
-            && $user instanceof $adminUserModel
-            && method_exists($user, 'hasPermissionTo');
+        if (is_string($adminUserModel) && $user instanceof $adminUserModel) {
+            return true;
+        }
+
+        return method_exists($user, 'currentAccessToken')
+            && $user->currentAccessToken() !== null;
+    }
+
+    private function tokenAllows($user, string $ability): bool
+    {
+        if (! method_exists($user, 'currentAccessToken') || $user->currentAccessToken() === null) {
+            return true;
+        }
+
+        return method_exists($user, 'tokenCan') && $user->tokenCan($ability);
+    }
+
+    private function isSameAccount($user, $model): bool
+    {
+        if (! method_exists($user, 'getTable') || ! method_exists($model, 'getTable')) {
+            return isset($user->id, $model->id) && $user->id === $model->id;
+        }
+
+        return $user->getTable() === $model->getTable()
+            && $user->getKey() === $model->getKey();
     }
 }
