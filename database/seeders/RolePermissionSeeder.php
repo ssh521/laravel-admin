@@ -104,6 +104,9 @@ class RolePermissionSeeder extends Seeder
             'name' => 'Admin',
             'guard_name' => $guardName,
         ]);
+        // Admin 역할도 기본 설치 시 모든 권한을 가진다.
+        $adminRole->syncPermissions($permissions);
+
         // 사용자 역할
         $userRole = Role::firstOrCreate([
             'name' => 'User',
@@ -118,6 +121,6 @@ class RolePermissionSeeder extends Seeder
         // 실행시키기
         // php artisan db:seed RolePermissionSeeder
 
-        $this->command?->info('Super Admin role is ready. Seed an admin user with: php artisan db:seed --class="Ssh521\\\\LaravelAdmin\\\\Database\\\\Seeders\\\\AdminUserSeeder"');
+        $this->command?->info('Super Admin and Admin roles are ready. Seed an admin user with: php artisan db:seed --class="Ssh521\\\\LaravelAdmin\\\\Database\\\\Seeders\\\\AdminUserSeeder"');
     }
 }

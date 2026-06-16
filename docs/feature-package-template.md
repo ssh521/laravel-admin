@@ -439,7 +439,7 @@ class Laravel{Feature}AdminMenuSeeder extends Seeder
 }
 ```
 
-`AdminPackageRegistrar` 기본 역할은 `Super Admin`, `Admin`이다. 패키지별로 다르게 주고 싶으면 definition에 `roles`, `permission_roles`를 넘긴다.
+`AdminPackageRegistrar` 기본 역할은 `Super Admin`, `Admin`이다. `roles`는 메뉴 폴더 노출 역할이고, `permission_roles`는 세부 권한을 받을 역할이다. 패키지별로 다르게 주고 싶으면 definition에 `roles`, `permission_roles`를 넘긴다.
 
 ```php
 'roles' => ['Super Admin'],

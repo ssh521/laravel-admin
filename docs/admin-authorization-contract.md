@@ -1,0 +1,56 @@
+# 관리자 권한 계약
+
+`ssh521/laravel-admin`은 관리자 권한을 두 계층으로 나누어 다룬다.
+
+## 메뉴 폴더 노출
+
+메뉴 폴더 노출은 역할 기반이다.
+
+- `menu_categories`와 `menu_category_role`은 특정 역할이 어떤 메뉴 폴더를 볼 수 있는지 결정한다.
+- 관리자 계정에 역할을 부여하는 것은 기본적으로 좌측 메뉴 폴더 노출을 결정하는 일이다.
+- `MenuSeeder`는 `Super Admin` 역할에 기본 메뉴 폴더 전체를 연결한다.
+- `MenuSeeder`는 `Admin` 역할에 기본 일반, 회원 관리, 메뉴 관리 폴더를 연결하지만 `관리자 전용` 폴더는 연결하지 않는다.
+- 기능 패키지는 `AdminPackageRegistrar`를 통해 자기 메뉴 카테고리를 `Super Admin`, `Admin`, 또는 패키지 전용 역할에 연결할 수 있다.
+
+## 세부 권한
+
+세부 기능 접근은 permission 기반이다.
+
+- 라우트 미들웨어, Policy, action 단위 권한 검사는 Spatie permission name을 사용한다.
+- `RolePermissionSeeder`는 laravel-admin의 기본 permission을 생성한다.
+- 기본 설치 기준으로 `Super Admin`과 `Admin`은 설정된 admin guard의 모든 permission을 받는다.
+- 기능 패키지의 관리자 seeder는 `AdminPackageRegistrar`로 permission을 등록한다. 기본값은 패키지 permission을 `Super Admin`, `Admin` 양쪽에 연결한다.
+- 기능 패키지가 더 좁은 기본 권한을 원하면 `permission_roles`를 명시한다.
+
+## 패키지 Seeder 계약
+
+기능 패키지의 관리자 seeder는 아래 형태를 따른다.
+
+```php
+app(AdminPackageRegistrar::class)->register('laravel-example', [
+    'category' => [
+        'name' => 'Example 관리',
+        'sort_order' => 700,
+    ],
+    'menus' => [
+        [
+            'name' => 'Example',
+            'route_name' => 'example.admin.dashboard',
+            'url' => '/admin/example',
+        ],
+    ],
+    'permissions' => [
+        ['name' => 'example-dashboard-access'],
+        ['name' => 'example-manage-settings'],
+    ],
+]);
+```
+
+`roles`는 메뉴 폴더 노출 대상을 제어하고, `permission_roles`는 permission을 받을 역할을 제어한다.
+
+```php
+'roles' => ['Super Admin'],
+'permission_roles' => ['Super Admin', 'Admin'],
+```
+
+이 계약을 따르면 기본 `Admin` 역할은 설치된 관리자 기능을 바로 사용할 수 있고, 패키지별로 필요할 때는 메뉴 폴더를 숨기거나 권한 연결 대상을 명시적으로 좁힐 수 있다.
