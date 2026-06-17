@@ -21,21 +21,15 @@ use Ssh521\LaravelAdmin\Livewire\Admin\Menus\ChangeCategoryModal;
 use Ssh521\LaravelAdmin\Livewire\Admin\Menus\MenuOrderModal;
 use Ssh521\LaravelAdmin\Livewire\Admin\Roles\RoleDetailModal;
 use Ssh521\LaravelAdmin\Livewire\Admin\Roles\RoleForm;
-use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserDetailModal;
-use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserForm;
-use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserSearchModal;
-use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserTable;
 use Ssh521\LaravelAdmin\Models\AdminUser;
 use Ssh521\LaravelAdmin\Models\Menu;
 use Ssh521\LaravelAdmin\Models\MenuCategory;
 use Ssh521\LaravelAdmin\Models\Permission;
-use Ssh521\LaravelAdmin\Models\User;
 use Ssh521\LaravelAdmin\Policies\AdminPolicy;
 use Ssh521\LaravelAdmin\Policies\MenuCategoryPolicy;
 use Ssh521\LaravelAdmin\Policies\MenuPolicy;
 use Ssh521\LaravelAdmin\Policies\PermissionPolicy;
 use Ssh521\LaravelAdmin\Policies\RolePolicy;
-use Ssh521\LaravelAdmin\Policies\UserPolicy;
 use Ssh521\LaravelAdmin\Support\AdminMenuRegistrar;
 use Ssh521\LaravelAdmin\Support\AdminPackageRegistrar;
 use Ssh521\LaravelAdmin\Support\AdminPermissionRegistrar;
@@ -139,10 +133,6 @@ class LaravelAdminServiceProvider extends ServiceProvider
         Livewire::component('admin.menus.change-category-modal', ChangeCategoryModal::class);
         Livewire::component('admin.roles.role-detail-modal', RoleDetailModal::class);
         Livewire::component('admin.roles.role-form', RoleForm::class);
-        Livewire::component('admin.users.user-detail-modal', UserDetailModal::class);
-        Livewire::component('admin.users.user-form', UserForm::class);
-        Livewire::component('admin.users.user-search-modal', UserSearchModal::class);
-        Livewire::component('admin.users.user-table', UserTable::class);
     }
 
     private function registerLivewirePersistentMiddleware(): void
@@ -179,7 +169,6 @@ class LaravelAdminServiceProvider extends ServiceProvider
             return null;
         });
 
-        Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Role::class, RolePolicy::class);
         Gate::policy(Permission::class, PermissionPolicy::class);
         Gate::policy(MenuCategory::class, MenuCategoryPolicy::class);

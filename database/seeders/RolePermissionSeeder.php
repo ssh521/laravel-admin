@@ -14,14 +14,12 @@ class RolePermissionSeeder extends Seeder
         // Super Admin 권한
         'super-admin-manage', // 관리자 관리
         'super-admin-settings', // 설정 관리
-        'super-admin-users', // 사용자 관리
 
         // Admin Dashboard 권한
         'admin-view-logs', // 로그 관리
         'admin-manage-menus', // 메뉴 관리
         'admin-manage-permissions', // 권한 관리
         'admin-manage-roles', // 역할 관리
-        'admin-manage-users', // 사용자 관리
         'admin-view-statistics', // 통계 관리
         'admin-dashboard-access',
 
@@ -42,14 +40,6 @@ class RolePermissionSeeder extends Seeder
         'permission-delete',
         'permission-assign-to-roles',
 
-        // User 관련 권한
-        'user-list',
-        'user-view',
-        'user-create',
-        'user-edit',
-        'user-delete',
-        'user-view-auth-list',
-
         // Menu 관련 권한
         'menu-list',
         'menu-view',
@@ -68,6 +58,14 @@ class RolePermissionSeeder extends Seeder
     private $obsoletePermissions = [
         'permission-assign-to-users',
         'permission-view-assignments',
+        'super-admin-users',
+        'admin-manage-users',
+        'user-list',
+        'user-view',
+        'user-create',
+        'user-edit',
+        'user-delete',
+        'user-view-auth-list',
         'user-assign-roles',
         'user-assign-permissions',
     ];
@@ -106,17 +104,6 @@ class RolePermissionSeeder extends Seeder
         ]);
         // Admin 역할도 기본 설치 시 모든 권한을 가진다.
         $adminRole->syncPermissions($permissions);
-
-        // 사용자 역할
-        $userRole = Role::firstOrCreate([
-            'name' => 'User',
-            'guard_name' => $guardName,
-        ]);
-        // 게스트 역할
-        $guestRole = Role::firstOrCreate([
-            'name' => 'Guest',
-            'guard_name' => $guardName,
-        ]);
 
         // 실행시키기
         // php artisan db:seed RolePermissionSeeder

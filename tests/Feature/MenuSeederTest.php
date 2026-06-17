@@ -13,23 +13,22 @@ class MenuSeederTest extends TestCase
     {
         $this->seed(MenuSeeder::class);
 
-        $memberCategory = MenuCategory::query()->where('name', '회원 관리')->firstOrFail();
+        $menuCategory = MenuCategory::query()->where('name', '메뉴 관리')->firstOrFail();
         $adminOnlyCategory = MenuCategory::query()->where('name', '관리자 전용')->firstOrFail();
 
         Menu::query()
             ->whereIn('name', ['역할', '권한'])
-            ->update(['category_id' => $memberCategory->id]);
+            ->update(['category_id' => $menuCategory->id]);
 
         $this->seed(MenuSeeder::class);
 
-        $memberCategory = $memberCategory->fresh();
+        $menuCategory = $menuCategory->fresh();
         $adminOnlyCategory = $adminOnlyCategory->fresh();
 
-        $this->assertSame($memberCategory->id, Menu::query()->where('name', '회원')->value('category_id'));
         $this->assertSame($adminOnlyCategory->id, Menu::query()->where('name', '관리자 계정')->value('category_id'));
         $this->assertSame($adminOnlyCategory->id, Menu::query()->where('name', '역할')->value('category_id'));
         $this->assertSame($adminOnlyCategory->id, Menu::query()->where('name', '권한')->value('category_id'));
-        $this->assertSame(1, $memberCategory->fresh()->menu_count);
+        $this->assertSame(2, $menuCategory->fresh()->menu_count);
         $this->assertSame(3, $adminOnlyCategory->fresh()->menu_count);
     }
 }

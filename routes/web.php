@@ -7,9 +7,7 @@ use Ssh521\LaravelAdmin\Http\Controllers\Admin\MenuCategoryController;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\MenuController;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\PermissionController;
 use Ssh521\LaravelAdmin\Http\Controllers\Admin\RoleController;
-use Ssh521\LaravelAdmin\Http\Controllers\Admin\UserController;
 use Ssh521\LaravelAdmin\Http\Controllers\Auth\AdminLoginController;
-use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserTable;
 
 if (config('laravel-admin.auth.admin_login.enabled', false)) {
     Route::prefix(config('laravel-admin.route_prefix', 'admin'))
@@ -63,24 +61,6 @@ Route::prefix(config('laravel-admin.route_prefix', 'admin'))
             Route::get('/{permission}/edit', [PermissionController::class, 'edit'])->name('edit');
             Route::put('/{permission}', [PermissionController::class, 'update'])->name('update');
             Route::delete('/{permission}', [PermissionController::class, 'destroy'])->name('destroy');
-        });
-
-        // Users Routes
-        Route::prefix('users')->name('users.')->group(function () {
-
-            Route::get('/', [UserController::class, 'index'])->name('index');
-            // Livewire Table 사용
-            Route::get('/table', UserTable::class)->name('table');
-
-            Route::get('/create', [UserController::class, 'create'])->name('create');
-            Route::get('/select-user', [UserController::class, 'selectUser'])->name('select-user');
-            Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
-            Route::get('/{user}/detail', [UserController::class, 'detail'])->name('detail');
-            Route::get('/{user}', [UserController::class, 'show'])->name('show');
-            Route::post('/', [UserController::class, 'store'])->name('store');
-            Route::put('/{user}', [UserController::class, 'update'])->name('update');
-            Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
-
         });
 
         // Menu Categories Routes

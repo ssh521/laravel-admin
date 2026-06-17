@@ -2,6 +2,26 @@
 
 Laravel 13용 재사용 관리자 패널 패키지다.
 
+## 프로젝트 방향
+
+`ssh521/laravel-admin`은 Laravel starter kit 설치 후 관리자 기반을 빠르게 붙이고, 필요한 사이트 기능을 패키지 단위로 조립하기 위한 admin foundation이다.
+
+이 패키지는 Filament, Nova, Backpack 같은 범용 CRUD 빌더를 그대로 대체하는 것이 아니라 다음 책임에 집중한다.
+
+- 관리자 전용 guard, provider, login/logout
+- 패키지 소유 `admin_users` 관리자 계정
+- 관리자 role/permission 관리
+- menu/menu category 기반 관리자 메뉴 시스템
+- `AdminPackageRegistrar` 기반 기능 패키지 메뉴와 권한 등록 계약
+- install/update/make-super-admin command
+- `ssh521/laravel-admin-ui` 관리자 layout, component, asset 연결
+
+일반 회원 관리처럼 사이트 도메인에 가까운 기능은 core에 직접 포함하지 않고 `ssh521/laravel-admin-users`, `ssh521/laravel-file`, `ssh521/laravel-bbs`, `ssh521/laravel-blog` 같은 기능 패키지로 분리한다.
+
+현재는 개발 초기이고 사용자가 패키지 작성자 1명이므로 이전 설치본 호환성보다 구조 정리와 책임 분리를 우선한다. 공개 사용자나 외부 프로젝트 사용자가 생기면 별도의 하위 호환성 정책을 적용한다.
+
+자세한 방향과 로드맵은 [프로젝트 방향과 개발 로드맵](docs/project-direction-roadmap.md)을 참고한다.
+
 ## 로컬 설치
 
 ```bash
@@ -19,9 +39,9 @@ php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\AdminUserS
 php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\MenuSeeder"
 ```
 
-관리자 인증은 설정 가능한 `laravel_admin` guard와 패키지 소유 `admin_users` 테이블을 사용한다. 회원 관리 화면은 여전히 호스트 앱의 `App\Models\User`를 대상으로 한다. 해당 화면에서 호스트 사용자에게 역할을 부여하려면 호스트 `User` 모델이 `Spatie\Permission\Traits\HasRoles`를 사용해야 한다.
+관리자 인증은 설정 가능한 `laravel_admin` guard와 패키지 소유 `admin_users` 테이블을 사용한다.
 
-`AdminUser`는 `Ssh521\LaravelAdmin\Services\AdminUserService` 아래 별도 서비스 계층을 가진다. 관련 DTO, action, validator도 `AdminUser` 네임스페이스 아래에 있다. 패키지 소유 관리자 계정은 이 계층을 사용하고, 회원 관리 화면에 표시되는 호스트 앱 사용자는 `UserService`를 사용한다.
+`AdminUser`는 `Ssh521\LaravelAdmin\Services\AdminUserService` 아래 별도 서비스 계층을 가진다. 관련 DTO, action, validator도 `AdminUser` 네임스페이스 아래에 있다. 패키지 소유 관리자 계정은 core 책임으로 유지하고, 호스트 앱의 일반 `User` 관리는 별도 기능 패키지로 분리한다.
 
 패키지의 `AdminUserSeeder`는 초기 관리자 계정을 생성하거나 갱신하고 설정된 관리자 역할을 부여한다. seeding 전에 호스트 앱 `.env`에서 아래 값을 바꿀 수 있다.
 
@@ -102,7 +122,7 @@ php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\AdminUserS
 php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\MenuSeeder"
 ```
 
-기본적으로 `MenuSeeder`는 관리자 계정, 역할, 권한 관리를 위한 `관리자 전용` 메뉴 폴더를 만든다. 이 폴더는 `Super Admin` 역할에만 연결된다. 일반 `Admin` 역할은 일반, 회원 관리, 메뉴 관리 폴더를 받지만 `관리자 전용` 폴더는 받지 않는다.
+기본적으로 `MenuSeeder`는 관리자 계정, 역할, 권한 관리를 위한 `관리자 전용` 메뉴 폴더를 만든다. 이 폴더는 `Super Admin` 역할에만 연결된다. 일반 `Admin` 역할은 일반 관리와 메뉴 관리 폴더를 받지만 `관리자 전용` 폴더는 받지 않는다. 회원 관리는 별도 기능 패키지로 분리한다.
 
 역할 부여는 관리자 메뉴 폴더 노출을 제어하고, Spatie permission은 세부 기능 권한을 제어한다. 기본 설치 기준으로 `RolePermissionSeeder`는 `Super Admin`과 `Admin` 모두에게 설정된 admin guard의 모든 permission을 부여한다. 기능 패키지는 `AdminPackageRegistrar`로 메뉴와 permission을 등록해야 한다. 자세한 기준은 [관리자 권한 계약](docs/admin-authorization-contract.md)을 참고한다.
 
@@ -111,6 +131,8 @@ php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\MenuSeeder
 `laravel-bbs`, `laravel-blog`, `laravel-file` 같은 패키지를 만들 때는 [새 기능 패키지 만드는 법](docs/feature-package-template.md)을 기준으로 삼는다.
 
 이 템플릿은 패키지 네이밍, ServiceProvider 구조, 설치 커맨드, 퍼블리시 정책, `AdminPackageRegistrar` 메뉴/권한 등록, route-level `can:*` 미들웨어, `laravel-admin:install --with=...` 연동, Testbench 테스트 기준을 다룬다.
+
+일반 회원 관리는 `ssh521/laravel-admin-users` 기능 패키지로 분리한다. 이 패키지는 `laravel-admin`의 첫 번째 표준 기능 패키지이자 `AdminPackageRegistrar` 계약을 검증하는 기준 패키지로 사용한다.
 
 ## Blade 컴포넌트 규칙
 
@@ -125,13 +147,6 @@ php artisan vendor:publish --tag=laravel-admin-ui-components --no-interaction
 ```
 
 호스트 앱이 커스터마이징을 위해 패키지 view를 퍼블리시하더라도 패키지 컴포넌트에는 `x-laravel-admin::` prefix를 유지한다. View가 의도적으로 호스트 앱 컴포넌트를 호출하려는 경우에만 prefix 없는 `<x-...>` 태그로 바꾼다.
-
-분리된 `admin_users` 테이블이 생기기 전 설치본을 업데이트한다면 새 migration만 퍼블리시할 수 있다.
-
-```bash
-php artisan vendor:publish --tag=laravel-admin-admin-users-migration --no-interaction
-php artisan migrate
-```
 
 ## 초기 Super Admin 설정
 
@@ -152,9 +167,8 @@ php artisan laravel-admin:make-super-admin admin@example.com --verified
 ## 포함 기능
 
 - `ssh521/laravel-admin-ui`를 통해 admin-yaver에서 가져온 관리자 layout, 좌측 메뉴, header, dark mode, modal UI
-- 회원, 역할, 권한, 메뉴 카테고리, 메뉴, API 관리 화면
+- 관리자 계정, 역할, 권한, 메뉴 카테고리, 메뉴 관리 화면
 - `MenuCategory`와 `menu_category_role` 기반 역할별 메뉴 폴더 접근 제어
-- 기존 `admin-users:user-form:open` 스타일 이벤트를 따르는 Livewire modal 컴포넌트
 - 이 패키지에서 제공하는 퍼블리시 가능 config, migration, seeder
 - `ssh521/laravel-admin-ui`에서 제공하는 퍼블리시 가능 view와 Vite 에셋
 
@@ -172,33 +186,33 @@ php artisan laravel-admin:make-super-admin admin@example.com --verified
 
 ### 인증과 권한
 
-- 관리자 인증은 호스트 `users` 테이블과 분리하되, 회원 관리 화면의 호스트 `User` 모델은 설정 가능하게 유지한다.
+- 관리자 인증은 호스트 `users` 테이블과 분리한다.
 - 온보딩 중 `php artisan laravel-admin:make-super-admin`을 통해 Super Admin 설정을 명시적으로 안내한다.
 - 모든 Policy가 Super Admin bypass와 역할/메뉴 permission 검사를 일관되게 유지하는지 확인한다.
 - 역할 기반 좌측 메뉴 폴더 노출 테스트를 추가한다. 특히 `MenuCategory` 접근이 역할에 따라 달라지는지 확인한다.
-- API 접근 제어를 Sanctum token ability, Spatie permission, 또는 둘 모두로 처리할지 결정한다.
+- API 접근 제어는 기능 패키지별로 Sanctum token ability, Spatie permission, 또는 둘 모두를 선택하도록 기준을 정한다.
 
 ### UI와 에셋
 
 - 현재 관리자 UI 형태인 좌측 메뉴 폴더, header, dark mode, modal 기반 CRUD, Livewire 이벤트 네이밍을 유지한다.
-- 회원 관리를 향후 CRUD 화면의 기준 패턴으로 삼는다.
+- 관리자 계정 관리를 향후 CRUD 화면의 기준 패턴으로 삼는다.
 - 새 관리자 모듈을 추가한 뒤 modal 크기, 모바일 동작, dark mode를 확인한다.
 - 퍼블리시된 관리자 CSS가 Laravel 13 Tailwind CSS v4 Vite 플러그인과 호환되는지 유지한다.
 - 퍼블리시된 에셋을 호스트 `resources/vendor/laravel-admin`에 복사할지, production에서 패키지 리소스로 제공할지 검토한다.
 
-### API 관리
+### 기능 패키지 API
 
-- API 관리 화면을 token 표시 수준에서 token 생성, 폐기, ability 부여, 사용 안내까지 확장한다.
-- 새 패키지 API에는 API Resource를 추가하고, API surface가 커지면 route versioning을 유지한다.
-- 호스트 프로젝트를 위한 Sanctum 설정 권장안을 문서화한다.
-- API endpoint에 대해 미인증, ability 없는 인증 사용자, Super Admin 케이스를 포함한 authorization 테스트를 추가한다.
+- core는 기본 API surface를 비워두고, 기능 패키지가 필요한 API route를 직접 등록한다.
+- 새 기능 패키지 API에는 API Resource를 추가하고, API surface가 커지면 route versioning을 유지한다.
+- API가 필요한 기능 패키지는 호스트 프로젝트를 위한 Sanctum 설정 권장안을 문서화한다.
+- 기능 패키지 API endpoint에 대해 미인증, ability 없는 인증 사용자, Super Admin 케이스를 포함한 authorization 테스트를 추가한다.
 
 ### 테스트 앱
 
 - `testapp`은 Composer path repository 기반 로컬 설치 검증 프로젝트로 유지한다.
 - 패키지 코드를 변경하기 전 `testapp`에서 설치 시점 문제를 재현한다.
 - `composer install`, `npm run build`, `php artisan migrate --seed`, Super Admin 생성, register/login view, 기본 관리자 페이지 렌더링을 계속 확인한다.
-- `/register`, `/login`, `/admin`, 메뉴 화면, 회원 화면, API token 화면에 대한 작은 smoke test suite를 `testapp`에 추가한다.
+- `/register`, `/login`, `/admin`, 관리자 계정, 메뉴 화면, API token 화면에 대한 작은 smoke test suite를 `testapp`에 추가한다.
 
 ### 릴리스 체크리스트
 

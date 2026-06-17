@@ -58,7 +58,6 @@ class PermissionPolicy
     {
         // 시스템 기본 권한은 수정 불가
         if (in_array($permission->name, [
-            'user-list', 'user-view', 'user-create', 'user-edit', 'user-delete',
             'role-list', 'role-view', 'role-create', 'role-edit', 'role-delete',
             'permission-list', 'permission-view', 'permission-create', 'permission-edit', 'permission-delete',
         ])) {
@@ -80,7 +79,6 @@ class PermissionPolicy
     {
         // 시스템 기본 권한은 삭제 불가
         if (in_array($permission->name, [
-            'user-list', 'user-view', 'user-create', 'user-edit', 'user-delete',
             'role-list', 'role-view', 'role-create', 'role-edit', 'role-delete',
             'permission-list', 'permission-view', 'permission-create', 'permission-edit', 'permission-delete',
         ])) {
@@ -112,7 +110,6 @@ class PermissionPolicy
     {
         // 시스템 기본 권한은 복원 불가
         if (in_array($permission->name, [
-            'user-list', 'user-view', 'user-create', 'user-edit', 'user-delete',
             'role-list', 'role-view', 'role-create', 'role-edit', 'role-delete',
             'permission-list', 'permission-view', 'permission-create', 'permission-edit', 'permission-delete',
         ])) {
@@ -134,7 +131,6 @@ class PermissionPolicy
     {
         // 시스템 기본 권한은 영구 삭제 불가
         if (in_array($permission->name, [
-            'user-list', 'user-view', 'user-create', 'user-edit', 'user-delete',
             'role-list', 'role-view', 'role-create', 'role-edit', 'role-delete',
             'permission-list', 'permission-view', 'permission-create', 'permission-edit', 'permission-delete',
         ])) {

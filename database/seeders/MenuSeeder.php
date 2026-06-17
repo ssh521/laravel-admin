@@ -19,19 +19,14 @@ class MenuSeeder extends Seeder
                 'sort_order' => 1,
                 'is_active' => true,
             ],
-            'member' => [
-                'name' => '회원 관리',
-                'sort_order' => 2,
-                'is_active' => true,
-            ],
             'menu' => [
                 'name' => '메뉴 관리',
-                'sort_order' => 3,
+                'sort_order' => 2,
                 'is_active' => true,
             ],
             'admin_only' => [
                 'name' => '관리자 전용',
-                'sort_order' => 4,
+                'sort_order' => 3,
                 'is_active' => true,
             ],
         ];
@@ -92,20 +87,6 @@ class MenuSeeder extends Seeder
                 'is_active' => true,
                 'icon' => 'fas fa-user-shield',
                 'description' => '관리자 계정 관리',
-            ],
-
-            // 회원 관리 카테고리
-            [
-                'name' => '회원',
-                'route_name' => 'admin.users.index',
-                'url' => '/admin/users',
-                'target' => '_self',
-                'category_id' => $categoryMap['member'],
-                'parent_id' => null,
-                'sort_order' => 1,
-                'is_active' => true,
-                'icon' => 'fas fa-user',
-                'description' => '사용자 목록',
             ],
             [
                 'name' => '역할',
@@ -198,28 +179,18 @@ class MenuSeeder extends Seeder
             ->where('guard_name', $guardName)
             ->first();
 
-        $userRole = Role::query()
-            ->where('name', 'User')
-            ->where('guard_name', $guardName)
-            ->first();
-
-        if (! $superAdminRole && ! $adminRole && ! $userRole) {
+        if (! $superAdminRole && ! $adminRole) {
             $this->command?->warn('RolePermissionSeeder를 먼저 실행하면 메뉴 카테고리 역할이 할당됩니다.');
 
             return;
         }
 
         $generalCategoryId = $categoryMap['general'] ?? null;
-        $memberCategoryId = $categoryMap['member'] ?? null;
         $adminOnlyCategoryId = $categoryMap['admin_only'] ?? null;
         $menuCategoryId = $categoryMap['menu'] ?? null;
 
-        if ($generalCategoryId && $userRole) {
-            MenuCategory::find($generalCategoryId)?->roles()->syncWithoutDetaching([$userRole->id]);
-        }
-
         if ($superAdminRole) {
-            $superAdminCategoryIds = array_filter([$generalCategoryId, $memberCategoryId, $adminOnlyCategoryId, $menuCategoryId]);
+            $superAdminCategoryIds = array_filter([$generalCategoryId, $adminOnlyCategoryId, $menuCategoryId]);
 
             foreach ($superAdminCategoryIds as $categoryId) {
                 MenuCategory::find($categoryId)?->roles()->syncWithoutDetaching([$superAdminRole->id]);
@@ -227,7 +198,7 @@ class MenuSeeder extends Seeder
         }
 
         if ($adminRole) {
-            $adminCategoryIds = array_filter([$generalCategoryId, $memberCategoryId, $menuCategoryId]);
+            $adminCategoryIds = array_filter([$generalCategoryId, $menuCategoryId]);
 
             foreach ($adminCategoryIds as $categoryId) {
                 MenuCategory::find($categoryId)?->roles()->syncWithoutDetaching([$adminRole->id]);

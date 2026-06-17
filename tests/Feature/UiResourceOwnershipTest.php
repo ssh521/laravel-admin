@@ -43,10 +43,8 @@ class UiResourceOwnershipTest extends TestCase
             'laravel-admin::admin.menus.index',
             'laravel-admin::admin.permissions.index',
             'laravel-admin::admin.roles.index',
-            'laravel-admin::admin.users.index',
             'laravel-admin::livewire.admin.header-nav',
             'laravel-admin::livewire.admin.left-menu',
-            'laravel-admin::livewire.admin.users.user-table',
         ];
 
         foreach ($views as $view) {

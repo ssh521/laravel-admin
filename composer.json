@@ -22,9 +22,7 @@
         "illuminate/routing": "^13.0",
         "illuminate/database": "^13.0",
         "illuminate/view": "^13.0",
-        "laravel/jetstream": "^5.0",
         "livewire/livewire": "^3.0|^4.0",
-        "laravel/sanctum": "^4.0",
         "spatie/laravel-permission": "^6.0",
         "ssh521/laravel-admin-ui": "^1.0"
     },
