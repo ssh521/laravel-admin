@@ -274,13 +274,14 @@ php artisan laravel-file:install
 
 목표: 메뉴 노출과 기능 접근 제어를 일관된 관리자 권한 모델로 고정한다.
 
-상태: 진행 중. web admin route에 route-level `can:*` middleware를 적용하기 시작했고, route middleware permission 이름이 seeder permission과 일치하는지 테스트로 고정했다.
+상태: 진행 중. web admin route에 route-level `can:*` middleware를 적용하기 시작했고, route middleware permission 이름이 seeder permission과 일치하는지 테스트로 고정했다. 메뉴 카테고리 변경과 메뉴 정렬 Livewire action도 admin guard 기준 `menu-edit` permission을 직접 확인하게 보강했다.
 
 - 모든 role/permission seeder가 admin guard 기준으로 생성되는지 확인한다.
 - `AdminPackageRegistrar`의 `roles`와 `permission_roles` 계약을 테스트로 고정한다.
 - Super Admin bypass 테스트를 추가한다. 진행: route-level `can:*` middleware에서도 Super Admin bypass가 동작하는지 확인한다.
 - menu category role 노출 테스트를 추가한다.
 - route-level `can:*` middleware 적용 기준을 기능 패키지 템플릿에 반영한다. 진행: core web admin route부터 같은 기준을 적용한다.
+- 권한이 필요한 Livewire action은 action 시작 지점에서 검사한다. 진행: menu category 변경과 menu order 변경 action은 `menu-edit` permission을 직접 확인한다.
 - 기능 패키지 API 권한을 Sanctum ability, Spatie permission, policy 중 어떤 조합으로 쓸지 결정한다.
 
 완료 기준:

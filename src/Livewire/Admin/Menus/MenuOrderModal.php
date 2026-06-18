@@ -2,6 +2,8 @@
 
 namespace Ssh521\LaravelAdmin\Livewire\Admin\Menus;
 
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
@@ -23,6 +25,8 @@ class MenuOrderModal extends Component
     #[On('admin-menus:menu-order-modal:open')]
     public function open(mixed $data = null): void
     {
+        $this->authorizeMenuEdit();
+
         $this->resetModal();
 
         $payload = $this->normalizePayload($data);
@@ -55,6 +59,8 @@ class MenuOrderModal extends Component
 
     public function loadMenus(): void
     {
+        $this->authorizeMenuEdit();
+
         if (! $this->categoryId) {
             return;
         }
@@ -81,6 +87,8 @@ class MenuOrderModal extends Component
 
     public function updateOrder($newOrder = []): void
     {
+        $this->authorizeMenuEdit();
+
         // newOrder는 [{id: 1, sort_order: 0}, {id: 2, sort_order: 1}, ...] 형태의 배열
         if (! is_array($newOrder) || empty($newOrder) || ! $this->categoryId) {
             return;
@@ -128,6 +136,8 @@ class MenuOrderModal extends Component
 
     private function saveOrder(): void
     {
+        $this->authorizeMenuEdit();
+
         if (! $this->categoryId || empty($this->menus)) {
             return;
         }
@@ -200,5 +210,22 @@ class MenuOrderModal extends Component
     public function render()
     {
         return view('laravel-admin::livewire.admin.menus.menu-order-modal');
+    }
+
+    private function authorizeMenuEdit(): void
+    {
+        $guard = config('laravel-admin.auth.guard', 'laravel_admin');
+
+        Auth::shouldUse($guard);
+        request()->setUserResolver(fn () => Auth::guard($guard)->user());
+
+        $user = Auth::guard($guard)->user();
+        $superAdminRole = config('laravel-admin.super_admin_role', 'Super Admin');
+
+        if ($user && ($user->hasRole($superAdminRole) || $user->hasPermissionTo('menu-edit'))) {
+            return;
+        }
+
+        throw new AuthorizationException;
     }
 }

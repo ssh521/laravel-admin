@@ -2,6 +2,8 @@
 
 namespace Ssh521\LaravelAdmin\Livewire\Admin\Menus;
 
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -39,6 +41,8 @@ class ChangeCategoryModal extends Component
     #[On('admin-menus:change-category-modal:set-selected')]
     public function setSelectedMenuIds($ids): void
     {
+        $this->authorizeMenuEdit();
+
         // 객체로 전달된 경우 ids 키에서 배열 추출
         $menuIds = is_array($ids) && isset($ids['ids']) ? $ids['ids'] : $ids;
 
@@ -53,6 +57,8 @@ class ChangeCategoryModal extends Component
 
     public function save(): void
     {
+        $this->authorizeMenuEdit();
+
         if (count($this->selectedMenuIds) === 0) {
             $this->js('alert("변경할 메뉴를 선택해주세요.");');
 
@@ -78,5 +84,22 @@ class ChangeCategoryModal extends Component
     public function render()
     {
         return view('laravel-admin::livewire.admin.menus.change-category-modal');
+    }
+
+    private function authorizeMenuEdit(): void
+    {
+        $guard = config('laravel-admin.auth.guard', 'laravel_admin');
+
+        Auth::shouldUse($guard);
+        request()->setUserResolver(fn () => Auth::guard($guard)->user());
+
+        $user = Auth::guard($guard)->user();
+        $superAdminRole = config('laravel-admin.super_admin_role', 'Super Admin');
+
+        if ($user && ($user->hasRole($superAdminRole) || $user->hasPermissionTo('menu-edit'))) {
+            return;
+        }
+
+        throw new AuthorizationException;
     }
 }
