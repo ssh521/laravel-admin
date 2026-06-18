@@ -2,16 +2,17 @@
 
 namespace Ssh521\LaravelAdmin\Livewire\Admin\Menus;
 
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Ssh521\LaravelAdmin\Livewire\Concerns\AuthorizesMenuEditing;
 use Ssh521\LaravelAdmin\Models\Menu;
 
 class MenuOrderModal extends Component
 {
+    use AuthorizesMenuEditing;
+
     public ?int $categoryId = null;
 
     public ?string $categoryName = null;
@@ -136,8 +137,6 @@ class MenuOrderModal extends Component
 
     private function saveOrder(): void
     {
-        $this->authorizeMenuEdit();
-
         if (! $this->categoryId || empty($this->menus)) {
             return;
         }
@@ -210,22 +209,5 @@ class MenuOrderModal extends Component
     public function render()
     {
         return view('laravel-admin::livewire.admin.menus.menu-order-modal');
-    }
-
-    private function authorizeMenuEdit(): void
-    {
-        $guard = config('laravel-admin.auth.guard', 'laravel_admin');
-
-        Auth::shouldUse($guard);
-        request()->setUserResolver(fn () => Auth::guard($guard)->user());
-
-        $user = Auth::guard($guard)->user();
-        $superAdminRole = config('laravel-admin.super_admin_role', 'Super Admin');
-
-        if ($user && ($user->hasRole($superAdminRole) || $user->hasPermissionTo('menu-edit'))) {
-            return;
-        }
-
-        throw new AuthorizationException;
     }
 }

@@ -180,7 +180,6 @@ class RoleForm extends Component
     {
         $groups = [
             'menu-category-' => 'Menu Category',
-            'menu-item-' => 'Menu Item',
             'super-admin-' => 'Super Admin',
             'admin-' => 'Admin Dashboard',
             'role-' => 'Role',

@@ -2,6 +2,7 @@
 
 namespace Ssh521\LaravelAdmin\Tests\Feature;
 
+use Illuminate\Support\Facades\Auth;
 use Livewire\Livewire;
 use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Models\Role;
@@ -27,6 +28,17 @@ class LivewireMenuAuthorizationTest extends TestCase
             ->assertForbidden();
 
         $this->assertSame($sourceCategory->id, $menu->refresh()->category_id);
+    }
+
+    public function test_admin_without_menu_edit_permission_can_select_menus_without_writing(): void
+    {
+        [$admin, $guard] = $this->createAdminWithoutPermissions();
+        [$menu] = $this->createMenuFixture();
+
+        Livewire::actingAs($admin, $guard)
+            ->test(ChangeCategoryModal::class)
+            ->call('setSelectedMenuIds', ['ids' => [$menu->id]])
+            ->assertSet('selectedMenuIds', [$menu->id]);
     }
 
     public function test_super_admin_can_change_menu_categories_without_direct_permission(): void
@@ -78,6 +90,27 @@ class LivewireMenuAuthorizationTest extends TestCase
             ]);
 
         $this->assertSame(0, $menu->refresh()->sort_order);
+    }
+
+    public function test_menu_edit_authorization_does_not_mutate_default_auth_guard(): void
+    {
+        [$superAdmin, $guard] = $this->createSuperAdminWithoutPermissions();
+        [$menu, , $sourceCategory] = $this->createMenuFixture();
+
+        Auth::shouldUse('web');
+
+        Auth::guard($guard)->setUser($superAdmin);
+
+        $component = new MenuOrderModal;
+        $component->categoryId = $sourceCategory->id;
+        $component->menus = [
+            ['id' => $menu->id, 'name' => $menu->name, 'sort_order' => 0, 'icon' => null, 'is_active' => true],
+        ];
+        $component->updateOrder([
+            ['id' => $menu->id, 'sort_order' => 3],
+        ]);
+
+        $this->assertSame('web', Auth::getDefaultDriver());
     }
 
     /**

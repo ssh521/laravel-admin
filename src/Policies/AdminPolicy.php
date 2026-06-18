@@ -117,7 +117,7 @@ class AdminPolicy
             return true;
         }
 
-        return $user->hasPermissionTo('admin-manage-users');
+        return $user->hasPermissionTo('super-admin-manage');
     }
 
     /**

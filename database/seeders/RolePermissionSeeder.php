@@ -95,7 +95,7 @@ class RolePermissionSeeder extends Seeder
         ]);
 
         // Super Admin 역할에 모든 권한 부여
-        $superAdminRole->syncPermissions($permissions);
+        $superAdminRole->givePermissionTo($permissions);
 
         // 관리자 역할
         $adminRole = Role::firstOrCreate([
@@ -103,7 +103,7 @@ class RolePermissionSeeder extends Seeder
             'guard_name' => $guardName,
         ]);
         // Admin 역할도 기본 설치 시 모든 권한을 가진다.
-        $adminRole->syncPermissions($permissions);
+        $adminRole->givePermissionTo($permissions);
 
         // 실행시키기
         // php artisan db:seed RolePermissionSeeder

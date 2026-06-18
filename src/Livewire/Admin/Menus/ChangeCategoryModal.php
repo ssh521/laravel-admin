@@ -2,16 +2,17 @@
 
 namespace Ssh521\LaravelAdmin\Livewire\Admin\Menus;
 
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Ssh521\LaravelAdmin\Livewire\Concerns\AuthorizesMenuEditing;
 use Ssh521\LaravelAdmin\Models\Menu;
 use Ssh521\LaravelAdmin\Models\MenuCategory;
 
 class ChangeCategoryModal extends Component
 {
+    use AuthorizesMenuEditing;
+
     /** @var array<int> */
     public array $selectedMenuIds = [];
 
@@ -29,11 +30,13 @@ class ChangeCategoryModal extends Component
     {
         $this->categories = MenuCategory::active()
             ->ordered()
-            ->get(['id', 'name'])
+            ->select(['id', 'name'])
+            ->withCount('menus')
+            ->get()
             ->map(fn ($c) => [
                 'id' => $c->id,
                 'name' => $c->name,
-                'count' => $c->menus()->count(),
+                'count' => $c->menus_count,
             ])
             ->toArray();
     }
@@ -41,8 +44,6 @@ class ChangeCategoryModal extends Component
     #[On('admin-menus:change-category-modal:set-selected')]
     public function setSelectedMenuIds($ids): void
     {
-        $this->authorizeMenuEdit();
-
         // 객체로 전달된 경우 ids 키에서 배열 추출
         $menuIds = is_array($ids) && isset($ids['ids']) ? $ids['ids'] : $ids;
 
@@ -84,22 +85,5 @@ class ChangeCategoryModal extends Component
     public function render()
     {
         return view('laravel-admin::livewire.admin.menus.change-category-modal');
-    }
-
-    private function authorizeMenuEdit(): void
-    {
-        $guard = config('laravel-admin.auth.guard', 'laravel_admin');
-
-        Auth::shouldUse($guard);
-        request()->setUserResolver(fn () => Auth::guard($guard)->user());
-
-        $user = Auth::guard($guard)->user();
-        $superAdminRole = config('laravel-admin.super_admin_role', 'Super Admin');
-
-        if ($user && ($user->hasRole($superAdminRole) || $user->hasPermissionTo('menu-edit'))) {
-            return;
-        }
-
-        throw new AuthorizationException;
     }
 }

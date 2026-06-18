@@ -59,4 +59,23 @@ class RolePermissionSeederTest extends TestCase
         $this->assertTrue($superAdminRole->permissions()->whereKey($permission->id)->exists());
         $this->assertTrue($adminRole->permissions()->whereKey($permission->id)->exists());
     }
+
+    public function test_reseeding_does_not_detach_existing_admin_role_permissions(): void
+    {
+        $adminRole = Role::query()
+            ->where('name', 'Admin')
+            ->where('guard_name', 'laravel_admin')
+            ->firstOrFail();
+        $adminRole->syncPermissions([]);
+
+        $permission = Permission::query()->create([
+            'name' => 'sample-package-view',
+            'guard_name' => 'laravel_admin',
+        ]);
+        $adminRole->givePermissionTo($permission);
+
+        $this->seed(\Ssh521\LaravelAdmin\Database\Seeders\RolePermissionSeeder::class);
+
+        $this->assertTrue($adminRole->refresh()->permissions()->whereKey($permission->id)->exists());
+    }
 }
