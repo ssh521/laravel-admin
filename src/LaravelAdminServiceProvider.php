@@ -8,6 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
+use Ssh521\LaravelAdmin\Console\Commands\InstallAiContextCommand;
 use Ssh521\LaravelAdmin\Console\Commands\InstallCommand;
 use Ssh521\LaravelAdmin\Console\Commands\MakeSuperAdminCommand;
 use Ssh521\LaravelAdmin\Console\Commands\UpdateCommand;
@@ -162,6 +163,7 @@ class LaravelAdminServiceProvider extends ServiceProvider
         }
 
         $this->commands([
+            InstallAiContextCommand::class,
             InstallCommand::class,
             MakeSuperAdminCommand::class,
             UpdateCommand::class,
@@ -189,6 +191,14 @@ class LaravelAdminServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../database/seeders' => database_path('seeders/vendor/laravel-admin'),
         ], 'laravel-admin-seeders');
+
+        $this->publishes([
+            __DIR__.'/../stubs/ai/laravel-admin.md' => base_path('.agents/laravel-admin.md'),
+        ], 'laravel-admin-ai-context');
+
+        $this->publishes([
+            __DIR__.'/../stubs/codex-skills/laravel-admin-package' => base_path('.codex/skills/laravel-admin-package'),
+        ], 'laravel-admin-codex-skill');
 
     }
 

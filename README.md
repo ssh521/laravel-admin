@@ -98,6 +98,30 @@ npm run build
 
 일반 업데이트 중에는 config, migration, seeder, view를 강제로 퍼블리시하지 않는다. 해당 파일들은 호스트 앱에서 커스터마이징했을 수 있다.
 
+## AI 개발 문맥 설치
+
+호스트 프로젝트에서 Codex, Cursor, Claude, GitHub Copilot 같은 AI 도구가 `laravel-admin`의 책임 경계와 UI/권한 계약을 참조하게 하려면 AI 문맥 파일을 설치한다.
+
+```bash
+php artisan laravel-admin:install-ai-context
+```
+
+기본 출력 위치는 `.agents/laravel-admin.md`다. 기존 파일은 덮어쓰지 않는다. 갱신이 필요하면 아래처럼 실행한다.
+
+```bash
+php artisan laravel-admin:install-ai-context --force
+```
+
+이 파일은 `docs/ai-development-guide.md`, 기능 패키지 템플릿, 권한 계약, `laravel-admin-ui` 디자인 계약을 AI가 먼저 읽도록 안내한다. 사용하는 AI 도구의 루트 지침 파일이 있다면 `.agents/laravel-admin.md`를 참조하도록 연결한다.
+
+Codex용 skill 템플릿도 프로젝트 안에 함께 설치할 수 있다.
+
+```bash
+php artisan laravel-admin:install-ai-context --with-codex-skill
+```
+
+기본 출력 위치는 `.codex/skills/laravel-admin-package`다. 전역 Codex 환경에서 자동 발견되게 하려면 이 skill 폴더를 사용하는 환경의 Codex skills 경로로 옮기거나 동기화한다.
+
 ## Seeder 퍼블리시
 
 호스트 앱에서 초기 역할, 권한, 메뉴, 관리자 계정을 커스터마이징하려면 패키지 seeder를 퍼블리시할 수 있다.

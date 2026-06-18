@@ -24,6 +24,8 @@ class UiResourceOwnershipTest extends TestCase
         $this->assertNotSame([], ServiceProvider::pathsToPublish(LaravelAdminServiceProvider::class, 'laravel-admin-config'));
         $this->assertNotSame([], ServiceProvider::pathsToPublish(LaravelAdminServiceProvider::class, 'laravel-admin-migrations'));
         $this->assertNotSame([], ServiceProvider::pathsToPublish(LaravelAdminServiceProvider::class, 'laravel-admin-seeders'));
+        $this->assertNotSame([], ServiceProvider::pathsToPublish(LaravelAdminServiceProvider::class, 'laravel-admin-ai-context'));
+        $this->assertNotSame([], ServiceProvider::pathsToPublish(LaravelAdminServiceProvider::class, 'laravel-admin-codex-skill'));
     }
 
     public function test_core_provider_loads_admin_ui_views_through_ui_package_dependency(): void
