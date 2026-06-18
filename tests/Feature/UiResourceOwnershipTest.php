@@ -2,8 +2,8 @@
 
 namespace Ssh521\LaravelAdmin\Tests\Feature;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 use Ssh521\LaravelAdmin\LaravelAdminServiceProvider;
 use Ssh521\LaravelAdmin\Tests\TestCase;
 
@@ -31,6 +31,15 @@ class UiResourceOwnershipTest extends TestCase
         $this->assertFalse(View::exists('admin.index'));
         $this->assertTrue(View::exists('laravel-admin::admin.index'));
         $this->assertTrue(View::exists('laravel-admin::partials.assets'));
+    }
+
+    public function test_core_provider_does_not_depend_on_sibling_admin_ui_path_fallbacks(): void
+    {
+        $providerSource = file_get_contents($this->packagePath('src/LaravelAdminServiceProvider.php'));
+
+        $this->assertIsString($providerSource);
+        $this->assertStringNotContainsString('../laravel-admin-ui/resources/views', $providerSource);
+        $this->assertStringNotContainsString('registerAdminUiViewFallbacks', $providerSource);
     }
 
     public function test_packaged_admin_controller_views_use_the_admin_ui_namespace(): void
