@@ -6,7 +6,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Ssh521\LaravelAdmin\Http\Controllers\Controller;
 use Ssh521\LaravelAdmin\Models\Menu;
 use Ssh521\LaravelAdmin\Models\MenuCategory;
@@ -230,22 +229,34 @@ class MenuController extends Controller
     {
         $query = trim($request->get('q', ''));
 
-        // 디버깅을 위한 로그
-        Log::info('Search request', [
-            'query' => $query,
-            'user_authenticated' => Auth::check(),
-        ]);
-
         if (empty($query)) {
+            return response()->json([]);
+        }
+
+        $user = Auth::user();
+
+        if (! $user) {
             return response()->json([]);
         }
 
         // 띄어쓰기 제거한 검색어 생성
         $normalizedQuery = preg_replace('/\s+/', '', $query);
+        $superAdminRole = config('laravel-admin.super_admin_role', 'Super Admin');
 
         // 검색 결과를 우선순위에 따라 정렬하기 위해 raw SQL 사용
         $menus = Menu::with('category')
             ->where('is_active', true)
+            ->whereHas('category', function ($categoryQuery) use ($user, $superAdminRole) {
+                $categoryQuery->where('is_active', true);
+
+                if (! $user->hasRole($superAdminRole)) {
+                    $userRoleIds = $user->roles->pluck('id');
+
+                    $categoryQuery->whereHas('roles', function ($roleQuery) use ($userRoleIds) {
+                        $roleQuery->whereIn('role_id', $userRoleIds);
+                    });
+                }
+            })
             ->where(function ($q) use ($query, $normalizedQuery) {
                 // 원본 검색어로 검색
                 $q->where('name', 'like', "%{$query}%")
@@ -288,11 +299,6 @@ class MenuController extends Controller
                     'descriptionMatch' => $descriptionMatch,
                 ];
             });
-
-        Log::info('Search results', [
-            'count' => $menus->count(),
-            'results' => $menus->toArray(),
-        ]);
 
         return response()->json($menus);
     }
