@@ -83,4 +83,44 @@ class AdminPackageRegistrarTest extends TestCase
         $this->assertSame('샘플 목록 변경', Menu::query()->where('route_name', 'sample.admin.index')->value('name'));
         $this->assertSame('샘플 관리 변경', Permission::query()->where('name', 'sample-manage')->value('description'));
     }
+
+    public function test_it_keeps_menu_roles_and_permission_roles_separate(): void
+    {
+        Role::query()->firstOrCreate([
+            'name' => 'Editor',
+            'guard_name' => 'laravel_admin',
+        ]);
+
+        app(AdminPackageRegistrar::class)->register('sample-package', [
+            'category' => [
+                'name' => '에디터 관리',
+                'sort_order' => 98,
+            ],
+            'menus' => [
+                [
+                    'name' => '에디터 목록',
+                    'route_name' => 'sample.editor.index',
+                    'url' => '/admin/sample/editors',
+                ],
+            ],
+            'permissions' => [
+                ['name' => 'sample-editor-manage'],
+            ],
+            'roles' => ['Editor'],
+            'permission_roles' => ['Super Admin'],
+        ]);
+
+        $category = MenuCategory::query()->where('name', '에디터 관리')->firstOrFail();
+        $permission = Permission::query()->where('name', 'sample-editor-manage')->firstOrFail();
+        $editorRole = Role::query()->where('name', 'Editor')->where('guard_name', 'laravel_admin')->firstOrFail();
+        $adminRole = Role::query()->where('name', 'Admin')->where('guard_name', 'laravel_admin')->firstOrFail();
+        $superAdminRole = Role::query()->where('name', 'Super Admin')->where('guard_name', 'laravel_admin')->firstOrFail();
+
+        $this->assertTrue($category->roles()->whereKey($editorRole->id)->exists());
+        $this->assertFalse($category->roles()->whereKey($adminRole->id)->exists());
+        $this->assertFalse($category->roles()->whereKey($superAdminRole->id)->exists());
+        $this->assertTrue($superAdminRole->permissions()->whereKey($permission->id)->exists());
+        $this->assertFalse($editorRole->permissions()->whereKey($permission->id)->exists());
+        $this->assertFalse($adminRole->permissions()->whereKey($permission->id)->exists());
+    }
 }
