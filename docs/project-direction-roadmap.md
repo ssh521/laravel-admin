@@ -231,7 +231,7 @@ php artisan laravel-file:install
 
 목표: 호스트 앱 `User` 관리 기능을 첫 번째 feature package로 분리한다.
 
-세부 분리 대상과 작업 순서는 [laravel-admin-users 패키지 분리 준비](laravel-admin-users-extraction-plan.md)를 따른다.
+상태: 완료. 세부 분리 계획 문서는 제거하고, 현재 책임 경계는 README와 실제 패키지 구조를 기준으로 판단한다.
 
 - `ssh521/laravel-admin-users` repo를 만든다.
 - 기존 `UserController`, `UserService`, `Actions/User`, `DTOs/User`, `Validators/User`, `UserPolicy`를 이동한다.

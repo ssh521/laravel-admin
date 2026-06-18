@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\User;
 use Ssh521\LaravelAdmin\Http\Middleware\AuthenticateAdmin;
 use Ssh521\LaravelAdmin\Models\AdminUser;
 
@@ -41,7 +40,7 @@ return [
     |
     | 이 모델은 위 laravel_admin_users provider에서 사용됩니다.
     | 관리자와 일반 회원의 로그인 화면, 계정 생명주기, 권한 정책이 다르면
-    | App\Models\User와 분리해서 유지하는 것이 좋습니다.
+    | 일반 회원 모델과 분리해서 유지하는 것이 좋습니다.
     |
     */
     'admin_user_model' => AdminUser::class,
@@ -54,7 +53,6 @@ return [
         'verified' => env('LARAVEL_ADMIN_SEED_ADMIN_VERIFIED', true),
         'role' => env('LARAVEL_ADMIN_SEED_ADMIN_ROLE', 'Super Admin'),
     ],
-    'user_model' => User::class,
     'super_admin_role' => 'Super Admin',
     'vite' => [
         'resources/vendor/laravel-admin/admin.css',
