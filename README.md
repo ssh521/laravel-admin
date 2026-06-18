@@ -1,48 +1,76 @@
 # ssh521/laravel-admin
 
-Laravel 13용 재사용 관리자 패널 패키지다.
+Laravel 13 프로젝트에 관리자 기반을 빠르게 붙이기 위한 재사용 패키지다.
 
-## 프로젝트 방향
+`ssh521/laravel-admin`은 Laravel starter kit 위에 얹어 쓰는 admin foundation이다. Filament, Nova, Backpack 같은 범용 CRUD 빌더를 대체하기보다, 관리자 인증, 권한, 메뉴, 설치 흐름, 기능 패키지 등록 계약을 제공하는 데 집중한다.
 
-`ssh521/laravel-admin`은 Laravel starter kit 설치 후 관리자 기반을 빠르게 붙이고, 필요한 사이트 기능을 패키지 단위로 조립하기 위한 admin foundation이다.
+```text
+Laravel starter kit
+└── ssh521/laravel-admin
+    ├── ssh521/laravel-admin-ui
+    ├── ssh521/laravel-admin-users
+    ├── ssh521/laravel-file
+    ├── ssh521/laravel-bbs
+    └── ssh521/laravel-blog
+```
 
-이 패키지는 Filament, Nova, Backpack 같은 범용 CRUD 빌더를 그대로 대체하는 것이 아니라 다음 책임에 집중한다.
+자세한 제품 방향은 [프로젝트 방향과 개발 로드맵](docs/project-direction-roadmap.md)을 참고한다.
 
-- 관리자 전용 guard, provider, login/logout
+## 핵심 책임
+
+이 패키지가 직접 소유하는 영역은 아래와 같다.
+
+- 관리자 전용 guard/provider/login/logout
 - 패키지 소유 `admin_users` 관리자 계정
 - 관리자 role/permission 관리
 - menu/menu category 기반 관리자 메뉴 시스템
 - `AdminPackageRegistrar` 기반 기능 패키지 메뉴와 권한 등록 계약
-- install/update/make-super-admin command
-- `ssh521/laravel-admin-ui` 관리자 layout, component, asset 연결
+- `laravel-admin:install`, `laravel-admin:update`, `laravel-admin:make-super-admin` command
+- `ssh521/laravel-admin-ui` layout, component, asset 연결
 
-일반 회원 관리처럼 사이트 도메인에 가까운 기능은 core에 직접 포함하지 않고 `ssh521/laravel-admin-users`, `ssh521/laravel-file`, `ssh521/laravel-bbs`, `ssh521/laravel-blog` 같은 기능 패키지로 분리한다.
+일반 회원 관리, 게시판, 블로그, 파일 관리처럼 사이트 도메인에 가까운 기능은 core에 넣지 않는다. 이런 기능은 `ssh521/laravel-admin-users`, `ssh521/laravel-file`, `ssh521/laravel-bbs`, `ssh521/laravel-blog` 같은 기능 패키지로 분리한다.
 
-현재는 개발 초기이고 사용자가 패키지 작성자 1명이므로 이전 설치본 호환성보다 구조 정리와 책임 분리를 우선한다. 공개 사용자나 외부 프로젝트 사용자가 생기면 별도의 하위 호환성 정책을 적용한다.
+현재는 초기 개발 단계이므로 이전 설치본 호환성보다 구조 정리와 책임 분리를 우선한다. 공개 사용자나 외부 프로젝트 사용자가 생기면 별도의 하위 호환성 정책을 적용한다.
 
-자세한 방향과 로드맵은 [프로젝트 방향과 개발 로드맵](docs/project-direction-roadmap.md)을 참고한다.
+## 요구 사항
 
-## 로컬 설치
+- PHP `^8.3`
+- Laravel/Illuminate `^13.0`
+- Livewire `^3.0` 또는 `^4.0`
+- Spatie Laravel Permission `^6.0`
+- `ssh521/laravel-admin-ui ^1.0`
+
+관리자 CSS/JS는 Laravel Vite 빌드에 포함해서 사용한다.
+
+## 빠른 설치
+
+일반 프로젝트에서는 Composer로 패키지를 설치한다.
 
 ```bash
-composer config repositories.ssh521-laravel-admin path ../packages/laravel-admin
-composer require ssh521/laravel-admin:dev-main
-php artisan vendor:publish --tag=laravel-admin-config --no-interaction
-php artisan vendor:publish --tag=laravel-admin-migrations --no-interaction
-php artisan vendor:publish --tag=laravel-admin-seeders --no-interaction
-php artisan laravel-admin:install --force --no-interaction
+composer require ssh521/laravel-admin
+php artisan laravel-admin:install
 npm run build
-php artisan migrate
-php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\RolePermissionSeeder"
-php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\AdminUserSeeder"
-php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\MenuSeeder"
 ```
 
-관리자 인증은 설정 가능한 `laravel_admin` guard와 패키지 소유 `admin_users` 테이블을 사용한다.
+로컬 패키지 개발 환경에서는 path repository를 연결해서 설치한다.
 
-`AdminUser`는 `Ssh521\LaravelAdmin\Services\AdminUserService` 아래 별도 서비스 계층을 가진다. 관련 DTO, action, validator도 `AdminUser` 네임스페이스 아래에 있다. 패키지 소유 관리자 계정은 core 책임으로 유지하고, 호스트 앱의 일반 `User` 관리는 별도 기능 패키지로 분리한다.
+```bash
+composer config repositories.ssh521-laravel-admin path ../packages/ssh521/laravel-admin
+composer config repositories.ssh521-laravel-admin-ui path ../packages/ssh521/laravel-admin-ui
+composer require ssh521/laravel-admin:dev-main
+php artisan laravel-admin:install --force
+npm run build
+```
 
-패키지의 `AdminUserSeeder`는 초기 관리자 계정을 생성하거나 갱신하고 설정된 관리자 역할을 부여한다. seeding 전에 호스트 앱 `.env`에서 아래 값을 바꿀 수 있다.
+기본 설치 커맨드는 아래 작업을 수행한다.
+
+- migration과 관리자 UI asset을 퍼블리시한다.
+- 관리자 테이블을 migrate한다.
+- 기본 role/permission, menu, admin user를 seed한다.
+- `vite.config.js`에 관리자 CSS/JS input을 추가한다.
+- `--with=...` 옵션이 있으면 기능 패키지 installer를 이어서 실행한다.
+
+설치 후 `/admin/login`으로 접속한다. 기본 seed 계정은 환경 변수로 바꿀 수 있다.
 
 ```dotenv
 LARAVEL_ADMIN_SEED_ADMIN_EMAIL=admin@example.com
@@ -51,7 +79,180 @@ LARAVEL_ADMIN_SEED_ADMIN_NAME="Super Admin"
 LARAVEL_ADMIN_SEED_ADMIN_VERIFIED=true
 ```
 
-관리자 스타일시트는 Tailwind CSS v4 기준으로 작성되어 있으며 Laravel 13 스타터 킷의 Vite 빌드에 포함할 수 있다. 설치 커맨드는 관리자 에셋을 퍼블리시하고 `vite.config.js`에 아래 input을 추가한다.
+## 설치 옵션
+
+`laravel-admin:install`에서 자주 쓰는 옵션은 아래와 같다.
+
+```bash
+php artisan laravel-admin:install --force
+php artisan laravel-admin:install --skip-migrate
+php artisan laravel-admin:install --skip-seed
+php artisan laravel-admin:install --skip-admin-user
+php artisan laravel-admin:install --skip-vite
+php artisan laravel-admin:install --publish-config
+php artisan laravel-admin:install --publish-views
+php artisan laravel-admin:install --publish-seeders
+```
+
+기능 패키지를 함께 설치할 수도 있다.
+
+```bash
+php artisan laravel-admin:install --with=users,file
+php artisan laravel-admin:install --with=bbs,blog --with-test-data
+```
+
+현재 core installer가 알고 있는 기능 패키지 키는 `users`, `bbs`, `blog`, `file`이다.
+
+## 설정
+
+기본 설정 파일은 `config/laravel-admin.php`로 퍼블리시할 수 있다.
+
+```bash
+php artisan vendor:publish --tag=laravel-admin-config --no-interaction
+```
+
+주요 설정은 아래와 같다.
+
+```php
+return [
+    'route_prefix' => 'admin',
+    'route_name_prefix' => 'admin.',
+    'middleware' => [
+        'web',
+        Ssh521\LaravelAdmin\Http\Middleware\AuthenticateAdmin::class,
+        'verified',
+    ],
+
+    'auth' => [
+        'guard' => 'laravel_admin',
+        'provider' => 'laravel_admin_users',
+        'admin_login' => [
+            'enabled' => true,
+            'middleware' => ['web'],
+            'redirect_to' => '/admin',
+        ],
+    ],
+
+    'admin_user_model' => Ssh521\LaravelAdmin\Models\AdminUser::class,
+    'admin_users_table' => 'admin_users',
+    'super_admin_role' => 'Super Admin',
+];
+```
+
+서비스 프로바이더는 설정된 guard/provider를 런타임에 등록한다. 새 Laravel 프로젝트에서 기본 `laravel_admin` guard를 그대로 쓴다면 `config/auth.php`를 직접 수정하지 않아도 된다.
+
+## 관리자 인증
+
+이 패키지는 호스트 앱의 `/login`, `/register`, Fortify view를 덮어쓰지 않는다. Breeze, Jetstream, 기존 커스텀 인증 화면과 route/view 충돌을 피하기 위해 관리자 로그인은 별도 경로인 `/admin/login`을 사용한다.
+
+`auth.admin_login.enabled`가 `true`이면 인증되지 않은 관리자 요청은 `/admin/login`으로 이동한다. 비활성화하면 호스트 앱의 `login` route로 fallback한다.
+
+관리자 계정은 일반 회원 `users` 테이블이 아니라 패키지 소유 `admin_users` 테이블을 사용한다. 일반 회원 관리는 `ssh521/laravel-admin-users` 기능 패키지의 책임이다.
+
+## Super Admin
+
+설치 seeder는 기본 관리자 계정을 만들고 `Super Admin` 역할을 부여한다. 별도 계정을 만들거나 기존 관리자 계정을 승격하려면 아래 command를 사용한다.
+
+```bash
+php artisan laravel-admin:make-super-admin admin@example.com --verified
+```
+
+비대화형 설치에서는 비밀번호 옵션을 넘길 수 있다.
+
+```bash
+php artisan laravel-admin:make-super-admin admin@example.com --password=secret --verified
+```
+
+`Super Admin` 역할은 `Gate::before`를 통해 관리자 권한 검사를 통과한다.
+
+## Seeder
+
+패키지 seeder는 퍼블리시하지 않고도 네임스페이스로 실행할 수 있다.
+
+```bash
+php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\RolePermissionSeeder"
+php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\MenuSeeder"
+php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\AdminUserSeeder"
+```
+
+호스트 앱에서 역할, 권한, 메뉴, 관리자 계정 seeder를 커스터마이징해야 한다면 퍼블리시한다.
+
+```bash
+php artisan vendor:publish --tag=laravel-admin-seeders --no-interaction
+```
+
+퍼블리시 위치는 아래와 같다.
+
+```text
+database/seeders/vendor/laravel-admin
+```
+
+기본 `MenuSeeder`는 관리자 계정, 역할, 권한 관리를 위한 `관리자 전용` 메뉴 폴더를 만든다. 이 폴더는 `Super Admin` 역할에만 연결된다.
+
+## 권한과 메뉴 계약
+
+권한 엔진은 `spatie/laravel-permission`을 사용한다. 모든 관리자 role/permission은 `config('laravel-admin.auth.guard')` 기준 guard로 생성한다.
+
+권한 구조는 아래 기준을 따른다.
+
+- `Super Admin`은 모든 관리자 권한을 통과한다.
+- role은 메뉴 카테고리 노출을 제어한다.
+- permission은 화면과 기능 단위 접근을 제어한다.
+- 기능 패키지는 `AdminPackageRegistrar`로 메뉴와 permission을 등록한다.
+- 관리자 화면용 API는 route-level `can:*` 미들웨어와 Policy/Gate를 사용한다.
+
+자세한 기준은 [관리자 권한 계약](docs/admin-authorization-contract.md)을 참고한다.
+
+## 기능 패키지
+
+기능 패키지는 `laravel-admin` 위에 올라가는 독립 패키지다. core는 기능 자체를 직접 품지 않고 기능 패키지가 관리자 메뉴, 권한, route, installer를 등록할 수 있는 계약을 제공한다.
+
+새 기능 패키지를 만들 때는 [새 기능 패키지 만드는 법](docs/feature-package-template.md)을 기준으로 삼는다.
+
+기능 패키지에서 지켜야 할 기본 규칙은 아래와 같다.
+
+- `ssh521/laravel-admin`에 의존한다.
+- `AdminPackageRegistrar`로 메뉴와 permission을 등록한다.
+- 관리자 route는 `config('laravel-admin.middleware')`와 admin guard 계약을 따른다.
+- package-local 디자인 시스템을 만들지 않고 `ssh521/laravel-admin-ui` 컴포넌트를 사용한다.
+- migration, seeder, installer는 반복 실행해도 안전해야 한다.
+
+일반 회원 관리는 `ssh521/laravel-admin-users`가 담당한다. 이 패키지는 core에서 분리된 첫 표준 기능 패키지이자 `AdminPackageRegistrar` 계약을 검증하는 기준 패키지다.
+
+## UI와 Blade 컴포넌트
+
+관리자 화면의 source of truth는 `ssh521/laravel-admin-ui`다. 새 관리자 화면이나 기능 패키지 UI를 만들 때는 아래 문서를 먼저 확인한다.
+
+- `../laravel-admin-ui/docs/admin-design-rules.md`
+- `../laravel-admin-ui/docs/admin-ui-design-contract.md`
+
+패키지 소유 관리자 컴포넌트는 `laravel-admin` 네임스페이스로 등록된다. 패키지 view 안에서는 prefix 있는 컴포넌트를 사용한다.
+
+```blade
+<x-laravel-admin::admin.layouts.admin>
+<x-laravel-admin::admin.primary-button>
+<x-laravel-admin::admin.input>
+```
+
+`<x-button>`, `<x-input>`, `<x-layouts.admin>`처럼 prefix 없는 컴포넌트는 호스트 앱의 소유일 수 있으므로 패키지 view에서 사용하지 않는다.
+
+컴포넌트만 퍼블리시하려면 아래 명령을 사용한다.
+
+```bash
+php artisan vendor:publish --tag=laravel-admin-ui-components --no-interaction
+```
+
+전체 view를 커스터마이징하려면 명시적으로 퍼블리시한다.
+
+```bash
+php artisan vendor:publish --tag=laravel-admin-ui-views --no-interaction
+```
+
+## 에셋과 Vite
+
+관리자 CSS/JS는 `ssh521/laravel-admin-ui`가 제공하고, `laravel-admin:install`이 `resources/vendor/laravel-admin`으로 퍼블리시한다.
+
+설치 커맨드는 `vite.config.js`의 Laravel plugin input에 아래 값을 추가한다.
 
 ```js
 laravel({
@@ -64,41 +265,25 @@ laravel({
 })
 ```
 
-## 인증
-
-이 패키지는 호스트 앱의 `/login`, `/register`, Fortify view를 덮어쓰지 않는다. Breeze, Jetstream, 기존 커스텀 인증 화면과 route/view 충돌을 피하기 위해서다.
-
-별도 관리자 로그인 화면을 `/admin/login`에서 사용하려면 아래처럼 설정한다.
-
-```php
-'auth' => [
-    'guard' => 'laravel_admin',
-    'provider' => 'laravel_admin_users',
-    'admin_login' => [
-        'enabled' => true,
-        'middleware' => ['web'],
-        'redirect_to' => '/admin',
-    ],
-],
-'admin_user_model' => Ssh521\LaravelAdmin\Models\AdminUser::class,
-'admin_users_table' => 'admin_users',
-```
-
-관리자 route는 기본적으로 패키지의 `AuthenticateAdmin` 미들웨어를 사용한다. 관리자 로그인이 활성화되어 있으면 인증되지 않은 `/admin` 요청은 `/admin/login`으로 이동한다. 비활성 상태에서는 호스트 앱의 `login` route로 fallback한다. 패키지는 설정된 guard/provider를 런타임에 등록하므로, 새 Laravel 프로젝트는 커스텀 guard 이름이나 모델을 쓰려는 경우가 아니라면 `config/auth.php`를 직접 수정하지 않아도 된다.
-
-## 에셋 업데이트
-
-퍼블리시된 CSS/JS 파일은 `ssh521/laravel-admin-ui`에서 제공한다. 패키지 업데이트 후 호스트 Vite 빌드가 최신 관리자 에셋을 사용하도록 아래 명령으로 덮어쓴다.
+패키지 업데이트 후에는 asset을 다시 퍼블리시하고 빌드한다.
 
 ```bash
 composer update ssh521/laravel-admin ssh521/laravel-admin-ui
-php artisan laravel-admin:install --force --no-interaction
+php artisan laravel-admin:update
 npm run build
 ```
 
-일반 업데이트 중에는 config, migration, seeder, view를 강제로 퍼블리시하지 않는다. 해당 파일들은 호스트 앱에서 커스터마이징했을 수 있다.
+`laravel-admin:update`는 기본적으로 migration과 UI asset만 업데이트에 안전한 방식으로 갱신한다. config, view, seeder는 호스트 앱에서 수정했을 수 있으므로 명시 옵션이 있을 때만 퍼블리시한다.
 
-## AI 개발 문맥 설치
+```bash
+php artisan laravel-admin:update --publish-config
+php artisan laravel-admin:update --publish-views
+php artisan laravel-admin:update --publish-seeders
+```
+
+덮어쓰기가 필요할 때만 `--force-config`, `--force-views`, `--force-seeders`를 사용한다.
+
+## AI 개발 문맥
 
 호스트 프로젝트에서 Codex, Cursor, Claude, GitHub Copilot 같은 AI 도구가 `laravel-admin`의 책임 경계와 UI/권한 계약을 참조하게 하려면 AI 문맥 파일을 설치한다.
 
@@ -106,139 +291,47 @@ npm run build
 php artisan laravel-admin:install-ai-context
 ```
 
-기본 출력 위치는 `.agents/laravel-admin.md`다. 기존 파일은 덮어쓰지 않는다. 갱신이 필요하면 아래처럼 실행한다.
+기본 출력 위치는 `.agents/laravel-admin.md`다. 기존 파일은 덮어쓰지 않는다. 갱신하려면 `--force`를 사용한다.
 
 ```bash
 php artisan laravel-admin:install-ai-context --force
 ```
 
-이 파일은 `docs/ai-development-guide.md`, 기능 패키지 템플릿, 권한 계약, `laravel-admin-ui` 디자인 계약을 AI가 먼저 읽도록 안내한다. 사용하는 AI 도구의 루트 지침 파일이 있다면 `.agents/laravel-admin.md`를 참조하도록 연결한다.
-
-Codex용 skill 템플릿도 프로젝트 안에 함께 설치할 수 있다.
+Codex용 skill 템플릿도 함께 설치할 수 있다.
 
 ```bash
 php artisan laravel-admin:install-ai-context --with-codex-skill
 ```
 
-기본 출력 위치는 `.codex/skills/laravel-admin-package`다. 전역 Codex 환경에서 자동 발견되게 하려면 이 skill 폴더를 사용하는 환경의 Codex skills 경로로 옮기거나 동기화한다.
+기본 출력 위치는 `.codex/skills/laravel-admin-package`다.
 
-## Seeder 퍼블리시
+## 개발 문서
 
-호스트 앱에서 초기 역할, 권한, 메뉴, 관리자 계정을 커스터마이징하려면 패키지 seeder를 퍼블리시할 수 있다.
+- [프로젝트 방향과 개발 로드맵](docs/project-direction-roadmap.md)
+- [관리자 권한 계약](docs/admin-authorization-contract.md)
+- [새 기능 패키지 만드는 법](docs/feature-package-template.md)
+- [AI 개발 가이드](docs/ai-development-guide.md)
 
-```bash
-php artisan vendor:publish --tag=laravel-admin-seeders --no-interaction
-```
+관리자 UI 변경은 `ssh521/laravel-admin-ui` 문서와 현재 `Admin Users` 화면을 기준으로 맞춘다.
 
-퍼블리시된 seeder는 아래 위치로 복사된다.
+## 로컬 검증
 
-```text
-database/seeders/vendor/laravel-admin
-```
-
-패키지 seeder는 퍼블리시하지 않고도 패키지 네임스페이스로 실행할 수 있다.
+패키지 자체 테스트는 아래 명령을 기준으로 한다.
 
 ```bash
-php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\RolePermissionSeeder"
-php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\AdminUserSeeder"
-php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\MenuSeeder"
+vendor/bin/phpunit --configuration phpunit.xml.dist
 ```
 
-기본적으로 `MenuSeeder`는 관리자 계정, 역할, 권한 관리를 위한 `관리자 전용` 메뉴 폴더를 만든다. 이 폴더는 `Super Admin` 역할에만 연결된다. 일반 `Admin` 역할은 일반 관리와 메뉴 관리 폴더를 받지만 `관리자 전용` 폴더는 받지 않는다. 회원 관리는 별도 기능 패키지로 분리한다.
+로컬 패키지 checkout에 `vendor/bin/phpunit`이 없으면 workbench Laravel 앱에서 path repository로 설치한 뒤 검증한다. 패키지 변경 후 최소한 아래 항목을 확인한다.
 
-역할 부여는 관리자 메뉴 폴더 노출을 제어하고, Spatie permission은 세부 기능 권한을 제어한다. 기본 설치 기준으로 `RolePermissionSeeder`는 `Super Admin`과 `Admin` 모두에게 설정된 admin guard의 모든 permission을 부여한다. 기능 패키지는 `AdminPackageRegistrar`로 메뉴와 permission을 등록해야 한다. 자세한 기준은 [관리자 권한 계약](docs/admin-authorization-contract.md)을 참고한다.
+- `php artisan laravel-admin:install --force`
+- `php artisan route:list --name=admin`
+- `php artisan view:cache`
+- `npm run build`
+- `/admin/login`, `/admin`, 관리자 계정, 역할, 권한, 메뉴 화면 렌더링
 
-## 기능 패키지 템플릿
-
-`laravel-bbs`, `laravel-blog`, `laravel-file` 같은 패키지를 만들 때는 [새 기능 패키지 만드는 법](docs/feature-package-template.md)을 기준으로 삼는다.
-
-이 템플릿은 패키지 네이밍, ServiceProvider 구조, 설치 커맨드, 퍼블리시 정책, `AdminPackageRegistrar` 메뉴/권한 등록, route-level `can:*` 미들웨어, `laravel-admin:install --with=...` 연동, Testbench 테스트 기준을 다룬다.
-
-일반 회원 관리는 `ssh521/laravel-admin-users` 기능 패키지로 분리한다. 이 패키지는 `laravel-admin`의 첫 번째 표준 기능 패키지이자 `AdminPackageRegistrar` 계약을 검증하는 기준 패키지로 사용한다.
-
-## Blade 컴포넌트 규칙
-
-패키지 소유 관리자 컴포넌트는 `ssh521/laravel-admin-ui`의 `resources/views/components/admin` 아래에 있으며 `laravel-admin` 네임스페이스로 등록된다. 패키지 view 안에서는 `<x-laravel-admin::admin.primary-button>`, `<x-laravel-admin::admin.layouts.admin>`, `<x-laravel-admin::admin.input>`처럼 사용한다.
-
-`<x-button>`, `<x-input>`, `<x-layouts.admin>`처럼 prefix 없는 패키지 컴포넌트를 추가하거나 사용하지 않는다. 이런 이름은 호스트 Laravel 앱의 소유이며 Breeze, Jetstream, Flux, 커스텀 앱 컴포넌트가 이미 제공하고 있을 수 있다.
-
-퍼블리시된 패키지 view는 `resources/views/vendor/laravel-admin` 아래에 두고, 컴포넌트는 `resources/views/vendor/laravel-admin/components`에 분리한다. 컴포넌트만 필요하면 아래 명령만 실행한다.
+문서만 수정한 경우에는 Markdown diff와 공백 오류를 확인한다.
 
 ```bash
-php artisan vendor:publish --tag=laravel-admin-ui-components --no-interaction
+git diff --check
 ```
-
-호스트 앱이 커스터마이징을 위해 패키지 view를 퍼블리시하더라도 패키지 컴포넌트에는 `x-laravel-admin::` prefix를 유지한다. View가 의도적으로 호스트 앱 컴포넌트를 호출하려는 경우에만 prefix 없는 `<x-...>` 태그로 바꾼다.
-
-## 초기 Super Admin 설정
-
-Migration과 역할/권한 seeding 후 패키지 seeder를 실행한다.
-
-```bash
-php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\AdminUserSeeder"
-```
-
-특정 관리자 계정을 직접 생성하거나 `Super Admin`으로 승격할 수도 있다.
-
-```bash
-php artisan laravel-admin:make-super-admin admin@example.com --verified
-```
-
-관리자 사용자가 이미 있으면 이 커맨드는 `Super Admin` 역할을 부여한다. 사용자가 없으면 `admin_users`에 계정을 만들고 비밀번호를 입력받는다. 비대화형 설치에서는 `--password=...` 옵션을 넘긴다.
-
-## 포함 기능
-
-- `ssh521/laravel-admin-ui`를 통해 admin-yaver에서 가져온 관리자 layout, 좌측 메뉴, header, dark mode, modal UI
-- 관리자 계정, 역할, 권한, 메뉴 카테고리, 메뉴 관리 화면
-- `MenuCategory`와 `menu_category_role` 기반 역할별 메뉴 폴더 접근 제어
-- 이 패키지에서 제공하는 퍼블리시 가능 config, migration, seeder
-- `ssh521/laravel-admin-ui`에서 제공하는 퍼블리시 가능 view와 Vite 에셋
-
-## 추가 개발 노트
-
-아래 항목은 추출된 관리자 패널을 다른 Laravel 프로젝트에 안전하게 설치 가능한 패키지로 다듬기 위해 계속 점검해야 하는 영역이다.
-
-### 패키지 안정화
-
-- 복사된 모든 view/component에서 앱 고유 브랜딩, 문구, route, asset이 남아 있는지 검토하고 필요한 값은 `config/laravel-admin.php`로 이동한다.
-- 관리자 route prefix, middleware, 기본 guard, dashboard route, API route prefix, 활성화 모듈에 대한 config 옵션을 추가한다.
-- 모든 패키지 모델이 패키지 네임스페이스를 일관되게 사용하면서도 호스트 프로젝트가 user model을 override할 수 있는지 확인한다.
-- 남아 있는 호스트 앱 가정을 설정값이나 패키지 기본값으로 대체한다.
-- config, asset, migration, seeder, view에 대해 업데이트에 안전한 퍼블리시 tag를 추가한다.
-
-### 인증과 권한
-
-- 관리자 인증은 호스트 `users` 테이블과 분리한다.
-- 온보딩 중 `php artisan laravel-admin:make-super-admin`을 통해 Super Admin 설정을 명시적으로 안내한다.
-- 모든 Policy가 Super Admin bypass와 역할/메뉴 permission 검사를 일관되게 유지하는지 확인한다.
-- 역할 기반 좌측 메뉴 폴더 노출 테스트를 추가한다. 특히 `MenuCategory` 접근이 역할에 따라 달라지는지 확인한다.
-- API 접근 제어 기준은 [관리자 권한 계약](docs/admin-authorization-contract.md)을 따른다. 관리자 화면용 API는 Spatie permission을 기본으로 하고, 외부 token 연동 API는 필요한 경우 Sanctum ability를 함께 사용한다.
-
-### UI와 에셋
-
-- 현재 관리자 UI 형태인 좌측 메뉴 폴더, header, dark mode, modal 기반 CRUD, Livewire 이벤트 네이밍을 유지한다.
-- 관리자 계정 관리를 향후 CRUD 화면의 기준 패턴으로 삼는다.
-- 새 관리자 모듈을 추가한 뒤 modal 크기, 모바일 동작, dark mode를 확인한다.
-- 퍼블리시된 관리자 CSS가 Laravel 13 Tailwind CSS v4 Vite 플러그인과 호환되는지 유지한다.
-- 퍼블리시된 에셋을 호스트 `resources/vendor/laravel-admin`에 복사할지, production에서 패키지 리소스로 제공할지 검토한다.
-
-### 기능 패키지 API
-
-- core는 기본 API surface를 비워두고, 기능 패키지가 필요한 API route를 직접 등록한다.
-- 새 기능 패키지 API에는 API Resource를 추가하고, API surface가 커지면 route versioning을 유지한다.
-- API가 필요한 기능 패키지는 호스트 프로젝트를 위한 Sanctum 설정 권장안을 해당 패키지 README에 문서화한다.
-- 기능 패키지 API endpoint에 대해 미인증, ability 없는 인증 사용자, Super Admin 케이스를 포함한 authorization 테스트를 추가한다.
-
-### 테스트 앱
-
-- `testapp`은 Composer path repository 기반 로컬 설치 검증 프로젝트로 유지한다.
-- 패키지 코드를 변경하기 전 `testapp`에서 설치 시점 문제를 재현한다.
-- `composer install`, `npm run build`, `php artisan migrate --seed`, Super Admin 생성, register/login view, 기본 관리자 페이지 렌더링을 계속 확인한다.
-- `/register`, `/login`, `/admin`, 관리자 계정, 메뉴 화면, API token 화면에 대한 작은 smoke test suite를 `testapp`에 추가한다.
-
-### 릴리스 체크리스트
-
-- 퍼블리시 전에 패키지 단위 Pest 테스트 또는 orchestra/testbench 구성을 추가한다.
-- Migration과 seeder가 반복 로컬 설치에도 충분히 idempotent한지 확인한다.
-- 첫 공개 version tag와 지원 Laravel/PHP 버전을 결정한다.
-- 공개 릴리스 전에 Packagist metadata, license, contribution note를 준비한다.
