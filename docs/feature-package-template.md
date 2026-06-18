@@ -407,15 +407,52 @@ public function updateOrder(array $order): void
 
 core `laravel-admin`은 기본 API surface를 비워두고, 기능 패키지가 필요한 API route를 직접 등록한다.
 
-관리자 화면에서 AJAX나 fetch로 호출하는 API는 web admin route와 같은 Spatie permission 이름을 사용한다.
+API route를 추가할 때는 먼저 API 성격을 정한다.
 
-외부 클라이언트나 token 기반 연동 API는 Sanctum ability를 추가할 수 있다.
+- 관리자 화면 보조 API: admin 화면의 AJAX, fetch, modal, reorder, search를 지원한다.
+- 외부 token API: 외부 클라이언트나 자동화가 token으로 호출한다.
+- 관리자 기능 token API: token으로 호출하지만 관리자 데이터 변경이나 관리자 기능 실행까지 수행한다.
+- 공개 API: 관리자 권한 계약 밖의 공개 surface다.
+
+관리자 화면에서 AJAX나 fetch로 호출하는 API는 web admin route와 같은 admin session middleware와 Spatie permission 이름을 사용한다. 외부 token API는 기능 패키지가 명시적으로 opt-in하고, Sanctum 같은 token 인증과 ability를 사용한다. Sanctum 의존성과 설정 권장안은 기능 패키지 README에 문서화한다.
 
 권장 조합:
 
-- 관리자 화면 보조 API: admin middleware + `can:{permission-name}` 또는 Policy
-- token 연동 API: Sanctum auth + token ability
-- token 연동 API가 관리자 권한까지 요구하는 경우: Sanctum ability + Spatie permission/Policy
+- 관리자 화면 보조 API: `config('laravel-admin.middleware')` + `can:{permission-name}` 또는 Policy
+- 외부 token API: `auth:sanctum` + token ability
+- 관리자 기능 token API: `auth:sanctum` + token ability + `can:{permission-name}` 또는 Policy
+- 공개 API: 패키지 도메인 정책에 따로 정의하고 관리자 메뉴/permission seeder에 묶지 않는다.
+
+관리자 화면 보조 API 예시:
+
+```php
+$middleware = config('laravel-{feature}.admin.middleware') ?: config('laravel-admin.middleware', ['web', 'auth', 'verified']);
+
+Route::prefix($prefix.'/api')
+    ->name('{feature}.admin.api.')
+    ->middleware($middleware)
+    ->group(function () {
+        Route::get('/{resources}/search', [{Resource}Controller::class, 'search'])
+            ->middleware('can:{feature}-{resources}-view')
+            ->name('{resources}.search');
+
+        Route::post('/{resources}/reorder', [{Resource}Controller::class, 'reorder'])
+            ->middleware('can:{feature}-{resources}-update')
+            ->name('{resources}.reorder');
+    });
+```
+
+외부 token API 예시:
+
+```php
+Route::prefix('api/{feature}')
+    ->name('{feature}.api.')
+    ->middleware(['api', 'auth:sanctum', 'ability:{feature}:read'])
+    ->group(function () {
+        Route::get('/{resources}', [Api\{Resource}Controller::class, 'index'])
+            ->name('{resources}.index');
+    });
+```
 
 API 테스트에는 미인증, ability 없는 token, permission 없는 관리자, 허용 관리자, Super Admin bypass 케이스를 포함한다.
 

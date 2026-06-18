@@ -41,11 +41,21 @@ Livewire는 기본 CRUD 소유자가 아니라 보조 UI다.
 API route는 core가 기본 surface를 제공하지 않고 기능 패키지가 직접 등록한다.
 
 - core `routes/api.php`는 비워둔다.
-- 기능 패키지가 관리자 API를 제공할 때는 `config('laravel-admin.api_middleware', ['api'])` 또는 패키지별 API middleware 설정을 명시한다.
-- 사람이 관리자 화면에서 조작하는 API는 Spatie permission 기반 `can:*` 또는 Policy 검사를 기본으로 한다.
-- 외부 클라이언트나 token 기반 연동 API는 Sanctum ability를 추가로 사용할 수 있다.
-- token API가 관리자 permission까지 요구한다면 Sanctum ability와 Spatie permission을 둘 다 테스트한다.
-- API 테스트에는 미인증, ability 없는 token, permission 없는 관리자, 허용 관리자, Super Admin bypass 케이스를 포함한다.
+- 기능 패키지가 API를 제공할 때는 API 성격을 먼저 관리자 화면 보조 API, 외부 token API, 공개 API 중 하나로 분류한다.
+- 관리자 화면에서 AJAX나 fetch로 호출하는 보조 API는 web admin route와 같은 admin session guard를 사용하고, Spatie permission 기반 `can:*` 또는 Policy 검사를 기본으로 한다. 이 API는 사람이 관리자 화면에서 조작하는 기능이므로 route permission 이름도 web admin route와 같은 문자열을 사용한다.
+- 외부 클라이언트나 token 기반 연동 API는 기능 패키지가 명시적으로 opt-in하고, Sanctum 같은 token 인증과 ability를 사용한다. Sanctum 의존성과 설정 권장안은 해당 기능 패키지 책임이다.
+- token API가 관리자 데이터를 변경하거나 관리자 기능을 실행한다면 Sanctum ability와 Spatie permission/Policy를 둘 다 요구한다.
+- 공개 API는 관리자 권한 계약 밖의 surface로 보고, 관리자 메뉴/permission seeder에 묶지 않는다.
+- API 테스트에는 API 성격에 따라 미인증, ability 없는 token, permission 없는 관리자, 허용 관리자, Super Admin bypass 케이스를 포함한다.
+
+권장 조합:
+
+```text
+관리자 화면 보조 API  = admin session middleware + can:{permission-name}
+외부 token API        = auth:sanctum + ability
+관리자 기능 token API = auth:sanctum + ability + can:{permission-name}/Policy
+공개 API              = 패키지 도메인 정책에 따로 정의
+```
 
 ## 패키지 Seeder 계약
 

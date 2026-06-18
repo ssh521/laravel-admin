@@ -282,7 +282,7 @@ php artisan laravel-file:install
 - menu category role 노출 테스트를 추가한다. 진행: LeftMenu가 Admin, Super Admin, custom role별로 허용된 active menu category만 노출하는지 확인한다.
 - route-level `can:*` middleware 적용 기준을 기능 패키지 템플릿에 반영한다. 완료: route middleware, seeder permission, 테스트 fixture가 같은 permission 문자열을 쓰도록 템플릿과 테스트 예시를 보강했다.
 - 권한이 필요한 Livewire action은 action 시작 지점에서 검사한다. 진행: menu category 변경과 menu order 변경 action은 `menu-edit` permission을 직접 확인한다.
-- 기능 패키지 API 권한을 Sanctum ability, Spatie permission, policy 중 어떤 조합으로 쓸지 결정한다.
+- 기능 패키지 API 권한을 Sanctum ability, Spatie permission, policy 중 어떤 조합으로 쓸지 결정한다. 완료: 관리자 화면 보조 API는 admin session middleware + Spatie permission, 외부 token API는 Sanctum ability, 관리자 기능 token API는 Sanctum ability + Spatie permission/Policy 조합으로 정한다.
 
 완료 기준:
 
