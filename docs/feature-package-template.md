@@ -366,6 +366,8 @@ CRUD 권한은 route middleware와 seeder permission name이 일치해야 한다
 {feature}-{resources}-force-delete
 ```
 
+web admin route는 route-level `can:*` 미들웨어를 기본 권한 경계로 둔다. Controller action 내부에서는 record 상태가 필요한 검사만 Policy나 service action으로 보강한다.
+
 ### 7.6 Livewire 사용 기준
 
 Livewire는 기본 CRUD 구현 방식이 아니라 보조 UI로 사용한다.
@@ -384,6 +386,24 @@ Livewire는 기본 CRUD 구현 방식이 아니라 보조 UI로 사용한다.
 - 단순 index/create/edit/show CRUD 전체를 Livewire로만 구현하는 것
 - route, field name, validation behavior를 Livewire 내부 상태에만 숨기는 것
 - view publish 후 커스터마이징하기 어려운 대형 component로 화면 전체를 묶는 것
+
+권한이 필요한 Livewire action은 admin route와 같은 guard/middleware 위에서 동작한다는 전제에 더해 action 시작 지점에서 `Gate::authorize()` 또는 `$this->authorize()`로 검사한다.
+
+### 7.7 API 권한 기준
+
+core `laravel-admin`은 기본 API surface를 비워두고, 기능 패키지가 필요한 API route를 직접 등록한다.
+
+관리자 화면에서 AJAX나 fetch로 호출하는 API는 web admin route와 같은 Spatie permission 이름을 사용한다.
+
+외부 클라이언트나 token 기반 연동 API는 Sanctum ability를 추가할 수 있다.
+
+권장 조합:
+
+- 관리자 화면 보조 API: admin middleware + `can:{permission-name}` 또는 Policy
+- token 연동 API: Sanctum auth + token ability
+- token 연동 API가 관리자 권한까지 요구하는 경우: Sanctum ability + Spatie permission/Policy
+
+API 테스트에는 미인증, ability 없는 token, permission 없는 관리자, 허용 관리자, Super Admin bypass 케이스를 포함한다.
 
 ## 8. 관리자 메뉴/권한 seeder 템플릿
 

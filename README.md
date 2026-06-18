@@ -190,7 +190,7 @@ php artisan laravel-admin:make-super-admin admin@example.com --verified
 - 온보딩 중 `php artisan laravel-admin:make-super-admin`을 통해 Super Admin 설정을 명시적으로 안내한다.
 - 모든 Policy가 Super Admin bypass와 역할/메뉴 permission 검사를 일관되게 유지하는지 확인한다.
 - 역할 기반 좌측 메뉴 폴더 노출 테스트를 추가한다. 특히 `MenuCategory` 접근이 역할에 따라 달라지는지 확인한다.
-- API 접근 제어는 기능 패키지별로 Sanctum token ability, Spatie permission, 또는 둘 모두를 선택하도록 기준을 정한다.
+- API 접근 제어 기준은 [관리자 권한 계약](docs/admin-authorization-contract.md)을 따른다. 관리자 화면용 API는 Spatie permission을 기본으로 하고, 외부 token 연동 API는 필요한 경우 Sanctum ability를 함께 사용한다.
 
 ### UI와 에셋
 
@@ -204,7 +204,7 @@ php artisan laravel-admin:make-super-admin admin@example.com --verified
 
 - core는 기본 API surface를 비워두고, 기능 패키지가 필요한 API route를 직접 등록한다.
 - 새 기능 패키지 API에는 API Resource를 추가하고, API surface가 커지면 route versioning을 유지한다.
-- API가 필요한 기능 패키지는 호스트 프로젝트를 위한 Sanctum 설정 권장안을 문서화한다.
+- API가 필요한 기능 패키지는 호스트 프로젝트를 위한 Sanctum 설정 권장안을 해당 패키지 README에 문서화한다.
 - 기능 패키지 API endpoint에 대해 미인증, ability 없는 인증 사용자, Super Admin 케이스를 포함한 authorization 테스트를 추가한다.
 
 ### 테스트 앱

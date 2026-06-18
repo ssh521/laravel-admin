@@ -9,7 +9,7 @@
 - `menu_categories`와 `menu_category_role`은 특정 역할이 어떤 메뉴 폴더를 볼 수 있는지 결정한다.
 - 관리자 계정에 역할을 부여하는 것은 기본적으로 좌측 메뉴 폴더 노출을 결정하는 일이다.
 - `MenuSeeder`는 `Super Admin` 역할에 기본 메뉴 폴더 전체를 연결한다.
-- `MenuSeeder`는 `Admin` 역할에 기본 일반, 회원 관리, 메뉴 관리 폴더를 연결하지만 `관리자 전용` 폴더는 연결하지 않는다.
+- `MenuSeeder`는 `Admin` 역할에 기본 일반, 메뉴 관리 폴더를 연결하지만 `관리자 전용` 폴더는 연결하지 않는다.
 - 기능 패키지는 `AdminPackageRegistrar`를 통해 자기 메뉴 카테고리를 `Super Admin`, `Admin`, 또는 패키지 전용 역할에 연결할 수 있다.
 
 ## 세부 권한
@@ -21,6 +21,31 @@
 - 기본 설치 기준으로 `Super Admin`과 `Admin`은 설정된 admin guard의 모든 permission을 받는다.
 - 기능 패키지의 관리자 seeder는 `AdminPackageRegistrar`로 permission을 등록한다. 기본값은 패키지 permission을 `Super Admin`, `Admin` 양쪽에 연결한다.
 - 기능 패키지가 더 좁은 기본 권한을 원하면 `permission_roles`를 명시한다.
+
+## 권한 적용 위치
+
+관리자 web route는 인증 미들웨어와 `can:*` 미들웨어를 함께 사용한다.
+
+- route group은 `config('laravel-admin.middleware', ['web', 'auth', 'verified'])`를 따른다.
+- 기능 접근은 route-level `can:{permission-name}` 미들웨어를 우선 사용한다.
+- controller action 내부에서 추가 상태 전환, owner 확인, 삭제 가능 여부처럼 record 상태가 필요한 검사를 Policy나 service action에서 보강한다.
+- permission 이름은 route middleware, seeder, 테스트에서 같은 문자열을 사용한다.
+
+Livewire는 기본 CRUD 소유자가 아니라 보조 UI다.
+
+- 정렬, 검색 모달, 상태 토글, 짧은 quick edit처럼 화면 안 상호작용이 필요한 경우에 사용한다.
+- Livewire component도 admin route와 같은 guard/middleware 위에서 동작해야 한다.
+- 권한이 필요한 Livewire action은 action 시작 지점에서 `Gate::authorize()` 또는 `$this->authorize()`로 검사한다.
+- 단순 index/create/edit/show 전체를 Livewire 내부 상태에만 숨기지 않는다. 공개 route name, form field, validation behavior는 controller/resource contract에 남긴다.
+
+API route는 core가 기본 surface를 제공하지 않고 기능 패키지가 직접 등록한다.
+
+- core `routes/api.php`는 비워둔다.
+- 기능 패키지가 관리자 API를 제공할 때는 `config('laravel-admin.api_middleware', ['api'])` 또는 패키지별 API middleware 설정을 명시한다.
+- 사람이 관리자 화면에서 조작하는 API는 Spatie permission 기반 `can:*` 또는 Policy 검사를 기본으로 한다.
+- 외부 클라이언트나 token 기반 연동 API는 Sanctum ability를 추가로 사용할 수 있다.
+- token API가 관리자 permission까지 요구한다면 Sanctum ability와 Spatie permission을 둘 다 테스트한다.
+- API 테스트에는 미인증, ability 없는 token, permission 없는 관리자, 허용 관리자, Super Admin bypass 케이스를 포함한다.
 
 ## 패키지 Seeder 계약
 
