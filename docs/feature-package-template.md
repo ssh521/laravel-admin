@@ -247,6 +247,9 @@ Route::prefix($prefix)->name('{feature}.admin.')->middleware($middleware)->group
 - 라우트 권한은 Spatie permission name과 동일하게 둔다.
 - 권한 이름은 기능 단위로 읽히게 만든다. 예: `{feature}-manage-orders`, `{feature}-manage-settings`.
 - CRUD 권한 이름은 기본적으로 `{feature}-{resources}-view`, `{feature}-{resources}-create`, `{feature}-{resources}-update`, `{feature}-{resources}-delete` 형식을 사용한다.
+- route middleware permission, `AdminPackageRegistrar` seeder permission, 테스트 fixture permission은 같은 문자열을 사용한다.
+- index/show/search/read-only 보조 API는 view 권한을, create/store는 create 권한을, edit/update/reorder/toggle/status 변경은 update 권한을, destroy는 delete 권한을 사용한다.
+- `Super Admin` bypass는 core `Gate::before`에 맡기고, 기능 패키지는 route-level permission과 action-level permission을 일관되게 선언한다.
 
 ## 7. Controller + Blade CRUD 계약
 
@@ -349,7 +352,7 @@ UI는 `ssh521/laravel-admin-ui/docs/admin-ui-design-contract.md`를 따른다.
 
 ### 7.5 Permissions
 
-CRUD 권한은 route middleware와 seeder permission name이 일치해야 한다.
+CRUD 권한은 route middleware와 seeder permission name이 일치해야 한다. 아래 네 가지 permission은 route, seeder, 테스트에서 같은 문자열로 반복 사용한다.
 
 ```text
 {feature}-{resources}-view
@@ -366,7 +369,7 @@ CRUD 권한은 route middleware와 seeder permission name이 일치해야 한다
 {feature}-{resources}-force-delete
 ```
 
-web admin route는 route-level `can:*` 미들웨어를 기본 권한 경계로 둔다. Controller action 내부에서는 record 상태가 필요한 검사만 Policy나 service action으로 보강한다.
+web admin route는 route-level `can:*` 미들웨어를 기본 권한 경계로 둔다. Controller action 내부에서는 record 상태가 필요한 검사만 Policy나 service action으로 보강한다. route-level permission은 사용자에게 기능 화면이 열리는지 결정하고, Policy는 owner, publish 상태, 삭제 가능 여부처럼 record 상태에 따른 추가 제약만 담당한다.
 
 ### 7.6 Livewire 사용 기준
 
@@ -387,7 +390,18 @@ Livewire는 기본 CRUD 구현 방식이 아니라 보조 UI로 사용한다.
 - route, field name, validation behavior를 Livewire 내부 상태에만 숨기는 것
 - view publish 후 커스터마이징하기 어려운 대형 component로 화면 전체를 묶는 것
 
-권한이 필요한 Livewire action은 admin route와 같은 guard/middleware 위에서 동작한다는 전제에 더해 action 시작 지점에서 `Gate::authorize()` 또는 `$this->authorize()`로 검사한다.
+권한이 필요한 Livewire action은 admin route와 같은 guard/middleware 위에서 동작한다는 전제에 더해 action 시작 지점에서 `Gate::authorize()` 또는 `$this->authorize()`로 검사한다. route 밖에서 실행될 수 있는 정렬, 카테고리 변경, 상태 토글, quick edit 저장 action은 route middleware에만 의존하지 않는다.
+
+예:
+
+```php
+public function updateOrder(array $order): void
+{
+    Gate::authorize('{feature}-{resources}-update');
+
+    // reorder...
+}
+```
 
 ### 7.7 API 권한 기준
 
@@ -437,7 +451,10 @@ class Laravel{Feature}AdminMenuSeeder extends Seeder
             ],
             'permissions' => [
                 ['name' => '{feature}-dashboard-access', 'description' => '{기능명} 관리자 대시보드 접근', 'sort_order' => 700],
-                ['name' => '{feature}-manage-settings', 'description' => '{기능명} 설정 관리', 'sort_order' => 710],
+                ['name' => '{feature}-{resources}-view', 'description' => '{기능명} 목록/상세 조회', 'sort_order' => 710],
+                ['name' => '{feature}-{resources}-create', 'description' => '{기능명} 등록', 'sort_order' => 711],
+                ['name' => '{feature}-{resources}-update', 'description' => '{기능명} 수정/정렬/상태 변경', 'sort_order' => 712],
+                ['name' => '{feature}-{resources}-delete', 'description' => '{기능명} 삭제', 'sort_order' => 713],
             ],
         ]);
 
@@ -670,6 +687,28 @@ abstract class TestCase extends Orchestra
 route middleware assertion 예시:
 
 ```php
+public function test_admin_routes_use_seeded_route_level_permissions(): void
+{
+    $expected = [
+        '{feature}.admin.dashboard' => '{feature}-dashboard-access',
+        '{feature}.admin.{resources}.index' => '{feature}-{resources}-view',
+        '{feature}.admin.{resources}.create' => '{feature}-{resources}-create',
+        '{feature}.admin.{resources}.store' => '{feature}-{resources}-create',
+        '{feature}.admin.{resources}.show' => '{feature}-{resources}-view',
+        '{feature}.admin.{resources}.edit' => '{feature}-{resources}-update',
+        '{feature}.admin.{resources}.update' => '{feature}-{resources}-update',
+        '{feature}.admin.{resources}.destroy' => '{feature}-{resources}-delete',
+    ];
+
+    foreach ($expected as $routeName => $permission) {
+        $this->assertRouteHasMiddleware($routeName, "can:{$permission}");
+        $this->assertDatabaseHas('permissions', [
+            'name' => $permission,
+            'guard_name' => config('laravel-admin.auth.guard', 'laravel_admin'),
+        ]);
+    }
+}
+
 private function assertRouteHasMiddleware(string $routeName, string $middleware): void
 {
     $route = Route::getRoutes()->getByName($routeName);
@@ -721,7 +760,8 @@ php artisan route:list --path=admin/{feature} -v
 - `php artisan laravel-{feature}:install`이 반복 실행 가능하다.
 - 관리자 메뉴와 권한 등록이 idempotent하다.
 - `Admin`, `Super Admin`에 기본 메뉴/권한이 연결된다.
-- route-level `can:*` 권한이 존재한다.
+- route-level `can:*` 권한이 존재하고 seeder permission name과 일치한다.
+- 권한이 필요한 Livewire action은 action 시작 지점에서 route-level permission과 같은 이름으로 검사한다.
 - config/views/seeders publish가 명시 옵션으로 분리되어 있다.
 - Testbench 테스트가 통과한다.
 - host app의 auth, view, component 이름을 침범하지 않는다.
