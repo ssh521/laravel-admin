@@ -31,7 +31,6 @@ php artisan vendor:publish --tag=laravel-admin-config --no-interaction
 php artisan vendor:publish --tag=laravel-admin-migrations --no-interaction
 php artisan vendor:publish --tag=laravel-admin-seeders --no-interaction
 php artisan laravel-admin:install --force --no-interaction
-npm install sortablejs
 npm run build
 php artisan migrate
 php artisan db:seed --class="Ssh521\\LaravelAdmin\\Database\\Seeders\\RolePermissionSeeder"
@@ -94,7 +93,6 @@ laravel({
 ```bash
 composer update ssh521/laravel-admin ssh521/laravel-admin-ui
 php artisan laravel-admin:install --force --no-interaction
-npm install sortablejs
 npm run build
 ```
 
