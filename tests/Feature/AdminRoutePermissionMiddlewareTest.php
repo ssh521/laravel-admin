@@ -26,6 +26,7 @@ class AdminRoutePermissionMiddlewareTest extends TestCase
             'admin.permissions.create' => 'permission-create',
             'admin.permissions.store' => 'permission-create',
             'admin.permissions.update-order' => 'permission-edit',
+            'admin.permissions.show' => 'permission-view',
             'admin.permissions.edit' => 'permission-edit',
             'admin.permissions.update' => 'permission-edit',
             'admin.permissions.destroy' => 'permission-delete',

@@ -61,6 +61,7 @@ Route::prefix(config('laravel-admin.route_prefix', 'admin'))
             Route::get('/create', [PermissionController::class, 'create'])->middleware('can:permission-create')->name('create');
             Route::post('/', [PermissionController::class, 'store'])->middleware('can:permission-create')->name('store');
             Route::post('/update-order', [PermissionController::class, 'updateOrder'])->middleware('can:permission-edit')->name('update-order');
+            Route::get('/{permission}', [PermissionController::class, 'show'])->middleware('can:permission-view')->name('show');
             Route::get('/{permission}/edit', [PermissionController::class, 'edit'])->middleware('can:permission-edit')->name('edit');
             Route::put('/{permission}', [PermissionController::class, 'update'])->middleware('can:permission-edit')->name('update');
             Route::delete('/{permission}', [PermissionController::class, 'destroy'])->middleware('can:permission-delete')->name('destroy');
