@@ -93,9 +93,9 @@ UI 원칙:
 
 보완해야 할 UI 구조:
 
-- admin shell의 legacy 색상, favicon, `route('home')` 같은 호스트 앱 가정을 config화하거나 제거한다.
-- Livewire layout/view namespace를 `laravel-admin::` 계열로 통일한다.
-- `laravel-admin-ui` ServiceProvider가 view namespace를 책임지게 하고, core의 path repository 의존 fallback은 줄인다.
+- admin shell의 legacy 색상, favicon, `route('home')` 같은 호스트 앱 가정을 config화하거나 제거한다. 완료: `laravel-admin-ui` packaged view에서 host `home` route와 favicon/manifest hardcode를 제거했다.
+- Livewire layout/view namespace를 `laravel-admin::` 계열로 통일한다. 완료: core controller/view 참조와 UI package view namespace는 `laravel-admin::` 기준으로 정리했다.
+- `laravel-admin-ui` ServiceProvider가 view namespace를 책임지게 하고, core의 path repository 의존 fallback은 줄인다. 완료: core provider는 UI package provider 등록에 의존하고 sibling path fallback은 제거했다.
 - `회원 리스트` 같은 표현은 contract에 맞춰 `회원 목록`으로 통일한다.
 - index 화면에서 자기 자신으로 가는 `목록보기` 버튼을 제거한다.
 
@@ -250,6 +250,8 @@ php artisan laravel-file:install
 
 목표: `laravel-admin-ui`가 모든 관리자 화면의 안정적인 presentation layer가 되게 한다.
 
+상태: 완료. `laravel-admin-ui`가 admin shell view namespace와 공통 layout/component를 책임지고, core는 UI package provider를 등록하는 구조로 정리했다. Admin shell과 packaged resource view에서 host `home` route, root favicon/manifest, Jetstream/profile/logout route 직접 가정을 제거하거나 조건부 route fallback으로 바꿨다.
+
 - admin layout의 legacy 색상과 호스트 앱 favicon/home route 가정을 제거하거나 config화한다.
 - `laravel-admin-ui` ServiceProvider가 view namespace와 component namespace를 책임지게 정리한다.
 - core의 path repository 전용 view fallback을 줄인다.
@@ -262,15 +264,23 @@ php artisan laravel-file:install
 - 새 Laravel starter kit 앱에 설치해도 admin layout이 호스트 앱 가정 없이 렌더링된다.
 - 주요 admin resource 화면의 용어, 버튼 배치, dark mode가 contract와 맞는다.
 
+검증 기준:
+
+- `laravel-admin` core의 `UiResourceOwnershipTest`가 core resource directory 제거, UI publish tag 분리, `laravel-admin::` namespace view resolution, sibling path fallback 미사용을 확인한다.
+- `laravel-admin-ui`의 `LaravelAdminUiServiceProviderTest`가 packaged views에서 `route('home')`, favicon, manifest hardcode가 재도입되지 않는지 확인한다.
+- admin header account dropdown은 gray/indigo 중심의 조용한 shell tone으로 정리하고 logout만 red action으로 분리한다.
+
 ### 4단계: 권한 계약 강화
 
 목표: 메뉴 노출과 기능 접근 제어를 일관된 관리자 권한 모델로 고정한다.
 
+상태: 진행 중. web admin route에 route-level `can:*` middleware를 적용하기 시작했고, route middleware permission 이름이 seeder permission과 일치하는지 테스트로 고정했다.
+
 - 모든 role/permission seeder가 admin guard 기준으로 생성되는지 확인한다.
 - `AdminPackageRegistrar`의 `roles`와 `permission_roles` 계약을 테스트로 고정한다.
-- Super Admin bypass 테스트를 추가한다.
+- Super Admin bypass 테스트를 추가한다. 진행: route-level `can:*` middleware에서도 Super Admin bypass가 동작하는지 확인한다.
 - menu category role 노출 테스트를 추가한다.
-- route-level `can:*` middleware 적용 기준을 기능 패키지 템플릿에 반영한다.
+- route-level `can:*` middleware 적용 기준을 기능 패키지 템플릿에 반영한다. 진행: core web admin route부터 같은 기준을 적용한다.
 - 기능 패키지 API 권한을 Sanctum ability, Spatie permission, policy 중 어떤 조합으로 쓸지 결정한다.
 
 완료 기준:
@@ -343,14 +353,13 @@ php artisan laravel-file:install
 
 ## 단기 실행 순서
 
-가장 먼저 할 일은 아래 순서가 좋다.
+현재 1-3단계는 완료 상태로 보고, 다음 작업은 아래 순서가 좋다.
 
-1. `laravel-admin` core에서 `User` 기능 분리 계획을 issue 또는 checklist로 만든다.
-2. `ssh521/laravel-admin-users` 패키지를 생성한다.
-3. 기존 user 관리 기능을 새 패키지로 이동한다.
-4. `AdminPackageRegistrar`로 user 메뉴와 권한을 등록한다.
-5. workbench에서 `laravel-admin + laravel-admin-users` 조합을 검증한다.
-6. admin shell의 호스트 앱 가정을 제거한다.
-7. installer와 `--with=users` 흐름을 정리한다.
+1. `laravel-admin` core의 web admin route에 route-level `can:*` middleware 계약을 적용한다.
+2. seeder permission name, route middleware name, 테스트 fixture의 permission string이 같은 이름 체계를 쓰는지 맞춘다.
+3. Admin과 Super Admin의 차이를 route 접근 테스트로 고정한다.
+4. 권한이 필요한 Livewire action에서 `Gate::authorize()` 또는 `$this->authorize()` 누락이 없는지 확인한다.
+5. installer와 `--with=users,file,bbs,blog` 기능 패키지 설치 흐름을 정리한다.
+6. workbench fresh install smoke test를 만든다.
 
-이 순서로 가면 core 정체성이 먼저 안정되고, 이후 `file`, `bbs`, `blog` 같은 기능 패키지를 같은 방식으로 확장할 수 있다.
+이 순서로 가면 UI shell 안정화 이후 권한 계약을 먼저 고정하고, 그 위에 installer/workbench와 기능 패키지 생태계를 안정적으로 확장할 수 있다.
