@@ -42,6 +42,50 @@ Laravel starter kit
 
 관리자 CSS/JS는 Laravel Vite 빌드에 포함해서 사용한다.
 
+## 로컬 개발 폴더 구조
+
+로컬에서 여러 `ssh521/*` 패키지를 함께 개발할 때는 workbench Laravel 앱과 패키지 repo를 분리해서 둔다.
+
+```text
+~/Projects/Packagist/
+├── workbench-laravel13/
+└── packages/
+    └── ssh521/
+        ├── laravel-admin/
+        ├── laravel-admin-ui/
+        ├── laravel-admin-users/
+        ├── laravel-file/
+        ├── laravel-bbs/
+        └── laravel-blog/
+```
+
+`workbench-laravel13`은 Laravel starter kit 설치 후 패키지를 path repository로 연결해 실제 설치, 화면, migrate/seed, Vite build를 검증하는 앱이다. 각 패키지는 독립 GitHub repo로 관리하고, workbench에서는 symlink 기반 path repository로 연결한다.
+
+workbench `composer.json` 예시는 아래와 같다.
+
+```json
+{
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../packages/ssh521/laravel-admin",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "../packages/ssh521/laravel-admin-ui",
+            "options": {
+                "symlink": true
+            }
+        }
+    ]
+}
+```
+
+이 구조를 쓰면 `laravel-admin`, `laravel-admin-ui`, 기능 패키지를 각각 독립 repo로 커밋하면서도 workbench에서 실제 Laravel 앱 기준으로 바로 검증할 수 있다.
+
 ## 빠른 설치
 
 일반 프로젝트에서는 Composer로 패키지를 설치한다.
