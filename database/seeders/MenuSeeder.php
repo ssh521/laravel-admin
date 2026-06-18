@@ -47,7 +47,7 @@ class MenuSeeder extends Seeder
                 'parent_id' => null,
                 'sort_order' => 0,
                 'is_active' => true,
-                'icon' => 'fas fa-home',
+                'icon' => 'house',
                 'description' => '사이트 홈페이지',
             ],
             [
@@ -59,7 +59,7 @@ class MenuSeeder extends Seeder
                 'parent_id' => null,
                 'sort_order' => 1,
                 'is_active' => true,
-                'icon' => 'fas fa-tachometer-alt',
+                'icon' => 'gauge',
                 'description' => '관리자 대시보드',
             ],
             [
@@ -71,7 +71,7 @@ class MenuSeeder extends Seeder
                 'parent_id' => null,
                 'sort_order' => 2,
                 'is_active' => true,
-                'icon' => 'fas fa-tachometer-alt',
+                'icon' => 'gauge',
                 'description' => '사용자 대시보드',
             ],
 
@@ -85,7 +85,7 @@ class MenuSeeder extends Seeder
                 'parent_id' => null,
                 'sort_order' => 0,
                 'is_active' => true,
-                'icon' => 'fas fa-user-shield',
+                'icon' => 'user-shield',
                 'description' => '관리자 계정 관리',
             ],
             [
@@ -97,7 +97,7 @@ class MenuSeeder extends Seeder
                 'parent_id' => null,
                 'sort_order' => 2,
                 'is_active' => true,
-                'icon' => 'fas fa-user-tag',
+                'icon' => 'user-tag',
                 'description' => '사용자 역할 관리',
             ],
             [
@@ -109,7 +109,7 @@ class MenuSeeder extends Seeder
                 'parent_id' => null,
                 'sort_order' => 3,
                 'is_active' => true,
-                'icon' => 'fas fa-key',
+                'icon' => 'key',
                 'description' => '시스템 권한 관리',
             ],
 
@@ -123,7 +123,7 @@ class MenuSeeder extends Seeder
                 'parent_id' => null,
                 'sort_order' => 0,
                 'is_active' => true,
-                'icon' => 'fas fa-bars',
+                'icon' => 'bars',
                 'description' => '메뉴 항목 관리',
             ],
             [
@@ -135,7 +135,7 @@ class MenuSeeder extends Seeder
                 'parent_id' => null,
                 'sort_order' => 1,
                 'is_active' => true,
-                'icon' => 'fas fa-folder',
+                'icon' => 'folder',
                 'description' => '메뉴 카테고리 관리',
             ],
 

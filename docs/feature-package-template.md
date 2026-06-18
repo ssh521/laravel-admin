@@ -482,7 +482,7 @@ class Laravel{Feature}AdminMenuSeeder extends Seeder
                     'route_name' => '{feature}.admin.dashboard',
                     'url' => '/admin/{feature}',
                     'sort_order' => 0,
-                    'icon' => 'fas fa-cog',
+                    'icon' => 'gauge',
                     'description' => '{기능명} 관리 홈',
                 ],
             ],
