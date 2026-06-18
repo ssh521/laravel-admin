@@ -17,7 +17,7 @@ class UpdateCommand extends Command
         {--force-config : Overwrite published Laravel Admin config}
         {--force-views : Overwrite published Laravel Admin views and components}
         {--force-seeders : Overwrite published Laravel Admin seeders}
-        {--with=* : Run feature package update flow after admin update (bbs, blog, file)}';
+        {--with=* : Run feature package update flow after admin update (users, bbs, blog, file)}';
 
     protected $description = 'Update Laravel Admin package resources without overwriting app-owned config or views by default.';
 
@@ -74,6 +74,7 @@ class UpdateCommand extends Command
     private function updateFeaturePackages(): void
     {
         $installers = [
+            'users' => 'laravel-admin-users:install',
             'bbs' => 'laravel-bbs:install',
             'blog' => 'laravel-blog:install',
             'file' => 'laravel-file:install',

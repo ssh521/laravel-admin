@@ -139,7 +139,7 @@ class PackageInstaller
                 continue;
             }
 
-            $this->runArtisan($command, $installerCommand, $parameters);
+            $this->runArtisan($command, $installerCommand, $this->supportedParameters($installerCommand, $parameters));
         }
     }
 
@@ -172,6 +172,25 @@ class PackageInstaller
             ->unique()
             ->sort()
             ->values()
+            ->all();
+    }
+
+    /**
+     * @param  array<string, mixed>  $parameters
+     * @return array<string, mixed>
+     */
+    private function supportedParameters(string $artisanCommand, array $parameters): array
+    {
+        $definition = Artisan::all()[$artisanCommand]?->getDefinition();
+
+        return collect($parameters)
+            ->filter(function (mixed $value, string $parameter) use ($definition): bool {
+                if (! str_starts_with($parameter, '--')) {
+                    return true;
+                }
+
+                return $definition->hasOption(substr($parameter, 2));
+            })
             ->all();
     }
 

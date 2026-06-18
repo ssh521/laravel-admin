@@ -22,7 +22,7 @@ class InstallCommand extends Command
         {--force-config : Overwrite published Laravel Admin config}
         {--force-views : Overwrite published Laravel Admin views and components}
         {--force-seeders : Overwrite published Laravel Admin seeders}
-        {--with=* : Run feature package installers after admin install (bbs, blog, file)}
+        {--with=* : Run feature package installers after admin install (users, bbs, blog, file)}
         {--with-test-data : Pass sample data option to feature package installers}';
 
     protected $description = 'Publish, migrate, seed, and configure Laravel Admin resources.';
@@ -154,6 +154,7 @@ class InstallCommand extends Command
     private function installFeaturePackages(): void
     {
         $installers = [
+            'users' => 'laravel-admin-users:install',
             'bbs' => 'laravel-bbs:install',
             'blog' => 'laravel-blog:install',
             'file' => 'laravel-file:install',
