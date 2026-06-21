@@ -18,6 +18,7 @@ use Ssh521\LaravelAdmin\DTOs\AdminUser\GetAdminUserDetailDTO;
 use Ssh521\LaravelAdmin\DTOs\AdminUser\GetAdminUserListDTO;
 use Ssh521\LaravelAdmin\DTOs\AdminUser\SetAdminUserEmailVerificationDTO;
 use Ssh521\LaravelAdmin\DTOs\AdminUser\UpdateAdminUserDTO;
+use Ssh521\LaravelAdmin\Support\AdminBroadcastNotifier;
 use Ssh521\LaravelAdmin\Validators\AdminUser\AssignRolesToAdminUserValidator;
 use Ssh521\LaravelAdmin\Validators\AdminUser\CreateAdminUserValidator;
 use Ssh521\LaravelAdmin\Validators\AdminUser\DeleteAdminUserValidator;
@@ -36,6 +37,7 @@ final class AdminUserService
         private readonly GetAdminUserListAction $getAdminUserListAction,
         private readonly GetAdminUserDetailAction $getAdminUserDetailAction,
         private readonly SetAdminUserEmailVerificationAction $setAdminUserEmailVerificationAction,
+        private readonly AdminBroadcastNotifier $broadcastNotifier,
     ) {}
 
     /**
@@ -46,7 +48,11 @@ final class AdminUserService
         $validated = CreateAdminUserValidator::validate($data);
         $dto = CreateAdminUserDTO::make($validated);
 
-        return $this->createAdminUserAction->execute($dto);
+        $adminUser = $this->createAdminUserAction->execute($dto);
+
+        $this->broadcastNotifier->adminUserCreated($adminUser);
+
+        return $adminUser;
     }
 
     /**
@@ -57,7 +63,11 @@ final class AdminUserService
         $validated = UpdateAdminUserValidator::validate($data);
         $dto = UpdateAdminUserDTO::make($validated);
 
-        return $this->updateAdminUserAction->execute($dto);
+        $adminUser = $this->updateAdminUserAction->execute($dto);
+
+        $this->broadcastNotifier->adminUserUpdated($adminUser);
+
+        return $adminUser;
     }
 
     /**
@@ -68,7 +78,14 @@ final class AdminUserService
         $validated = DeleteAdminUserValidator::validate($data);
         $dto = DeleteAdminUserDTO::make($validated);
 
-        return $this->deleteAdminUserAction->execute($dto);
+        $adminUser = $this->getAdminUserDetailAction->execute(new GetAdminUserDetailDTO($dto->adminUserId));
+        $deleted = $this->deleteAdminUserAction->execute($dto);
+
+        if ($deleted) {
+            $this->broadcastNotifier->adminUserDeleted($adminUser);
+        }
+
+        return $deleted;
     }
 
     /**
@@ -79,7 +96,11 @@ final class AdminUserService
         $validated = AssignRolesToAdminUserValidator::validate($data);
         $dto = AssignRolesToAdminUserDTO::make($validated);
 
-        return $this->assignRolesToAdminUserAction->execute($dto);
+        $adminUser = $this->assignRolesToAdminUserAction->execute($dto);
+
+        $this->broadcastNotifier->adminUserRolesUpdated($adminUser);
+
+        return $adminUser;
     }
 
     /**
@@ -112,6 +133,10 @@ final class AdminUserService
         $validated = SetAdminUserEmailVerificationValidator::validate($data);
         $dto = SetAdminUserEmailVerificationDTO::make($validated);
 
-        return $this->setAdminUserEmailVerificationAction->execute($dto);
+        $adminUser = $this->setAdminUserEmailVerificationAction->execute($dto);
+
+        $this->broadcastNotifier->adminUserEmailVerificationUpdated($adminUser, $dto->isVerified);
+
+        return $adminUser;
     }
 }

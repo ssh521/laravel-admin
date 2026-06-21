@@ -54,6 +54,10 @@ return [
         'role' => env('LARAVEL_ADMIN_SEED_ADMIN_ROLE', 'Super Admin'),
     ],
     'super_admin_role' => 'Super Admin',
+    'broadcast_notifications' => [
+        'enabled' => env('LARAVEL_ADMIN_BROADCAST_NOTIFICATIONS_ENABLED', true),
+        'facade' => 'Ssh521\\LaravelBroadcastNotification\\Facades\\BroadcastNotification',
+    ],
     'vite' => [
         'resources/vendor/laravel-admin/admin.css',
         'resources/vendor/laravel-admin/admin.js',
