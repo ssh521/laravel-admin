@@ -7,12 +7,13 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Ssh521\LaravelAdmin\Http\Controllers\Controller;
 use Ssh521\LaravelAdmin\Models\Permission;
+use Ssh521\LaravelAdmin\Support\AdminBroadcastNotifier;
 
 class PermissionController extends Controller
 {
     use AuthorizesRequests;
 
-    public function __construct()
+    public function __construct(private readonly AdminBroadcastNotifier $broadcastNotifier)
     {
         // authorizeResource 대신 개별 메서드에서 authorize 호출
     }
@@ -71,6 +72,13 @@ class PermissionController extends Controller
             'description' => $validatedData['description'] ?? null,
         ]);
 
+        $this->broadcastNotifier->resourceChanged(
+            resource: $permission,
+            resourceType: 'permission',
+            event: 'created',
+            title: '관리자 권한이 생성되었습니다',
+        );
+
         return redirect()->route('admin.permissions.index')->with('success', 'Permission created successfully!');
     }
 
@@ -102,12 +110,29 @@ class PermissionController extends Controller
             'description' => $validatedData['description'] ?? null,
         ]);
 
+        $this->broadcastNotifier->resourceChanged(
+            resource: $permission,
+            resourceType: 'permission',
+            event: 'updated',
+            title: '관리자 권한이 수정되었습니다',
+            type: 'warning',
+        );
+
         return redirect()->route('admin.permissions.index')->with('success', 'Permission updated successfully!');
     }
 
     public function destroy(Permission $permission)
     {
         $this->authorize('delete', $permission);
+
+        $this->broadcastNotifier->resourceChanged(
+            resource: $permission,
+            resourceType: 'permission',
+            event: 'deleted',
+            title: '관리자 권한이 삭제되었습니다',
+            type: 'warning',
+            includeUrl: false,
+        );
 
         $permission->delete();
 
@@ -127,6 +152,19 @@ class PermissionController extends Controller
         try {
             foreach ($request->order as $item) {
                 Permission::where('id', $item['id'])->update(['sort_order' => $item['order']]);
+            }
+
+            $permission = Permission::find(data_get($request->order, '0.id'));
+
+            if ($permission) {
+                $this->broadcastNotifier->resourceChanged(
+                    resource: $permission,
+                    resourceType: 'permission',
+                    event: 'reordered',
+                    title: '관리자 권한 순서가 변경되었습니다',
+                    type: 'warning',
+                    payload: ['updated_count' => count($request->order)],
+                );
             }
 
             return response()->json([

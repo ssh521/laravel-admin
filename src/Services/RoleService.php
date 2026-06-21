@@ -7,6 +7,7 @@ use Ssh521\LaravelAdmin\Actions\Role\GetRoleDetailAction;
 use Ssh521\LaravelAdmin\Actions\Role\UpdateRoleAction;
 use Ssh521\LaravelAdmin\DTOs\Role\GetRoleDetailDTO;
 use Ssh521\LaravelAdmin\DTOs\Role\UpdateRoleDTO;
+use Ssh521\LaravelAdmin\Support\AdminBroadcastNotifier;
 use Ssh521\LaravelAdmin\Validators\Role\GetRoleDetailValidator;
 use Ssh521\LaravelAdmin\Validators\Role\UpdateRoleValidator;
 
@@ -15,6 +16,7 @@ final class RoleService
     public function __construct(
         private readonly GetRoleDetailAction $getRoleDetailAction,
         private readonly UpdateRoleAction $updateRoleAction,
+        private readonly AdminBroadcastNotifier $broadcastNotifier,
     ) {}
 
     /**
@@ -36,6 +38,16 @@ final class RoleService
         $validated = UpdateRoleValidator::validate($data);
         $dto = UpdateRoleDTO::make($validated);
 
-        return $this->updateRoleAction->execute($dto);
+        $role = $this->updateRoleAction->execute($dto);
+
+        $this->broadcastNotifier->resourceChanged(
+            resource: $role,
+            resourceType: 'role',
+            event: 'updated',
+            title: '관리자 역할이 수정되었습니다',
+            type: 'warning',
+        );
+
+        return $role;
     }
 }

@@ -10,6 +10,16 @@ use Throwable;
 
 class AdminBroadcastNotifier
 {
+    /**
+     * @var array<string, string>
+     */
+    private const RESOURCE_ROUTE_NAMES = [
+        'role' => 'roles.show',
+        'permission' => 'permissions.show',
+        'menu' => 'menus.show',
+        'menu_category' => 'menu-categories.show',
+    ];
+
     public function adminUserCreated(Model $adminUser): void
     {
         $this->sendAdminUserNotification(
@@ -37,7 +47,7 @@ class AdminBroadcastNotifier
             type: 'warning',
             title: '관리자 계정이 삭제되었습니다',
             event: 'deleted',
-            url: null,
+            includeUrl: false,
         );
     }
 
@@ -61,12 +71,60 @@ class AdminBroadcastNotifier
         );
     }
 
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    public function resourceChanged(
+        Model $resource,
+        string $resourceType,
+        string $event,
+        string $title,
+        string $type = 'info',
+        ?string $body = null,
+        ?string $url = null,
+        bool $includeUrl = true,
+        array $payload = [],
+    ): void {
+        if (! $this->isEnabled()) {
+            return;
+        }
+
+        $facade = $this->facade();
+
+        if (! class_exists($facade) || ! is_callable([$facade, 'to'])) {
+            return;
+        }
+
+        try {
+            $routeName = $this->resourceRouteName($resourceType);
+
+            $facade::to($this->adminRecipients())
+                ->type($type)
+                ->title($title)
+                ->body($body ?? $this->resourceLabel($resource))
+                ->url($includeUrl ? ($url ?? $this->resourceUrl($resource, $routeName)) : null)
+                ->payload($payload + [
+                    'resource' => $resourceType,
+                    'resource_id' => $resource->getKey(),
+                    'event' => $event,
+                    'route_name' => $routeName,
+                ])
+                ->source('laravel-admin')
+                ->related($resource)
+                ->actor($this->actor())
+                ->send();
+        } catch (Throwable $exception) {
+            report($exception);
+        }
+    }
+
     private function sendAdminUserNotification(
         Model $adminUser,
         string $type,
         string $title,
         string $event,
         ?string $url = null,
+        bool $includeUrl = true,
     ): void {
         if (! $this->isEnabled()) {
             return;
@@ -83,7 +141,7 @@ class AdminBroadcastNotifier
                 ->type($type)
                 ->title($title)
                 ->body($this->adminUserLabel($adminUser))
-                ->url($url ?? $this->adminUserUrl($adminUser))
+                ->url($includeUrl ? ($url ?? $this->adminUserUrl($adminUser)) : null)
                 ->payload([
                     'resource' => 'admin_user',
                     'resource_id' => $adminUser->getKey(),
@@ -158,5 +216,37 @@ class AdminBroadcastNotifier
         $email = (string) ($adminUser->getAttribute('email') ?? '');
 
         return trim($name.' '.$email) ?: null;
+    }
+
+    private function resourceRouteName(string $resourceType): ?string
+    {
+        $routeSuffix = self::RESOURCE_ROUTE_NAMES[$resourceType] ?? null;
+
+        if ($routeSuffix === null) {
+            return null;
+        }
+
+        $routeName = config('laravel-admin.route_name_prefix', 'admin.').$routeSuffix;
+
+        return Route::has($routeName) ? $routeName : null;
+    }
+
+    private function resourceUrl(Model $resource, ?string $routeName): ?string
+    {
+        if ($routeName === null || ! $resource->exists) {
+            return null;
+        }
+
+        return route($routeName, $resource->getKey());
+    }
+
+    private function resourceLabel(Model $resource): ?string
+    {
+        $label = collect(['name', 'title', 'email', 'description'])
+            ->map(fn (string $attribute): string => (string) ($resource->getAttribute($attribute) ?? ''))
+            ->filter()
+            ->implode(' ');
+
+        return trim($label) ?: null;
     }
 }

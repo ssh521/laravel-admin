@@ -11,10 +11,13 @@ use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Role;
 use Ssh521\LaravelAdmin\Http\Controllers\Controller;
 use Ssh521\LaravelAdmin\Models\MenuCategory;
+use Ssh521\LaravelAdmin\Support\AdminBroadcastNotifier;
 
 class MenuCategoryController extends Controller
 {
     use AuthorizesRequests;
+
+    public function __construct(private readonly AdminBroadcastNotifier $broadcastNotifier) {}
 
     /**
      * Display a listing of the resource.
@@ -65,7 +68,14 @@ class MenuCategoryController extends Controller
         $input['sort_order'] = $input['sort_order'] ?? 0;
         $input['is_active'] = $request->has('is_active');
 
-        MenuCategory::create($input);
+        $menuCategory = MenuCategory::create($input);
+
+        $this->broadcastNotifier->resourceChanged(
+            resource: $menuCategory,
+            resourceType: 'menu_category',
+            event: 'created',
+            title: '관리자 메뉴 카테고리가 생성되었습니다',
+        );
 
         return redirect()->route('admin.menu-categories.index')
             ->with('success', '메뉴 카테고리가 성공적으로 생성되었습니다.');
@@ -114,6 +124,14 @@ class MenuCategoryController extends Controller
 
         $menuCategory->update($input);
 
+        $this->broadcastNotifier->resourceChanged(
+            resource: $menuCategory,
+            resourceType: 'menu_category',
+            event: 'updated',
+            title: '관리자 메뉴 카테고리가 수정되었습니다',
+            type: 'warning',
+        );
+
         return redirect()->route('admin.menu-categories.index')
             ->with('success', '메뉴 카테고리가 성공적으로 수정되었습니다.');
     }
@@ -129,6 +147,15 @@ class MenuCategoryController extends Controller
         if ($menuCategory->menus()->count() > 0) {
             return back()->with('error', '이 카테고리에 속한 메뉴가 있어 삭제할 수 없습니다.');
         }
+
+        $this->broadcastNotifier->resourceChanged(
+            resource: $menuCategory,
+            resourceType: 'menu_category',
+            event: 'deleted',
+            title: '관리자 메뉴 카테고리가 삭제되었습니다',
+            type: 'warning',
+            includeUrl: false,
+        );
 
         $menuCategory->delete();
 
@@ -146,6 +173,14 @@ class MenuCategoryController extends Controller
         $menuCategory->update([
             'is_active' => ! $menuCategory->is_active,
         ]);
+
+        $this->broadcastNotifier->resourceChanged(
+            resource: $menuCategory,
+            resourceType: 'menu_category',
+            event: $menuCategory->is_active ? 'activated' : 'deactivated',
+            title: $menuCategory->is_active ? '관리자 메뉴 카테고리가 활성화되었습니다' : '관리자 메뉴 카테고리가 비활성화되었습니다',
+            type: 'warning',
+        );
 
         return response()->json([
             'success' => true,
@@ -168,6 +203,14 @@ class MenuCategoryController extends Controller
         $menuCategory->update([
             'sort_order' => $request->sort_order,
         ]);
+
+        $this->broadcastNotifier->resourceChanged(
+            resource: $menuCategory,
+            resourceType: 'menu_category',
+            event: 'reordered',
+            title: '관리자 메뉴 카테고리 순서가 변경되었습니다',
+            type: 'warning',
+        );
 
         return response()->json([
             'success' => true,
@@ -202,6 +245,19 @@ class MenuCategoryController extends Controller
             }
 
             DB::commit();
+
+            $category = MenuCategory::find(data_get($request->categories, '0.id'));
+
+            if ($category) {
+                $this->broadcastNotifier->resourceChanged(
+                    resource: $category,
+                    resourceType: 'menu_category',
+                    event: 'reordered',
+                    title: '관리자 메뉴 카테고리 순서가 변경되었습니다',
+                    type: 'warning',
+                    payload: ['updated_count' => count($request->categories)],
+                );
+            }
 
             // 로깅이 실패해도 API 응답 자체는 실패시키지 않기 위함
             try {
@@ -261,6 +317,14 @@ class MenuCategoryController extends Controller
 
         $this->syncMenuCategoryRoles($menuCategory, $request->roles);
 
+        $this->broadcastNotifier->resourceChanged(
+            resource: $menuCategory->load('roles'),
+            resourceType: 'menu_category',
+            event: 'roles_updated',
+            title: '관리자 메뉴 카테고리 접근 역할이 변경되었습니다',
+            type: 'warning',
+        );
+
         return redirect()->route('admin.menu-categories.index')
             ->with('success', '허용 역할이 저장되었습니다.');
     }
@@ -319,6 +383,14 @@ class MenuCategoryController extends Controller
 
         try {
             $this->syncMenuCategoryRoles($menuCategory, $request->roles);
+
+            $this->broadcastNotifier->resourceChanged(
+                resource: $menuCategory->load('roles'),
+                resourceType: 'menu_category',
+                event: 'roles_updated',
+                title: '관리자 메뉴 카테고리 접근 역할이 변경되었습니다',
+                type: 'warning',
+            );
 
             return response()->json([
                 'success' => true,

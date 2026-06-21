@@ -8,6 +8,7 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 use Spatie\Permission\Models\Role;
 use Ssh521\LaravelAdmin\Models\MenuCategory;
+use Ssh521\LaravelAdmin\Support\AdminBroadcastNotifier;
 
 class RoleModal extends Component
 {
@@ -102,6 +103,14 @@ class RoleModal extends Component
         $this->authorize('update', $category);
 
         $category->roles()->sync($this->selectedRoles);
+
+        app(AdminBroadcastNotifier::class)->resourceChanged(
+            resource: $category->load('roles'),
+            resourceType: 'menu_category',
+            event: 'roles_updated',
+            title: '관리자 메뉴 카테고리 접근 역할이 변경되었습니다',
+            type: 'warning',
+        );
 
         $this->close();
 

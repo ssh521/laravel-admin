@@ -6,12 +6,16 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Ssh521\LaravelAdmin\Http\Controllers\Controller;
 use Ssh521\LaravelAdmin\Models\Menu;
 use Ssh521\LaravelAdmin\Models\MenuCategory;
+use Ssh521\LaravelAdmin\Support\AdminBroadcastNotifier;
 
 class MenuController extends Controller
 {
+    public function __construct(private readonly AdminBroadcastNotifier $broadcastNotifier) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -81,7 +85,7 @@ class MenuController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        Menu::create([
+        $menu = Menu::create([
             'name' => $request->name,
             'route_name' => $request->route_name,
             'route_parameters' => $request->route_parameters,
@@ -94,6 +98,13 @@ class MenuController extends Controller
             'icon' => $request->icon,
             'description' => $request->description,
         ]);
+
+        $this->broadcastNotifier->resourceChanged(
+            resource: $menu,
+            resourceType: 'menu',
+            event: 'created',
+            title: '관리자 메뉴가 생성되었습니다',
+        );
 
         return redirect()->route('admin.menus.index')
             ->with('success', '메뉴가 성공적으로 생성되었습니다.');
@@ -165,6 +176,14 @@ class MenuController extends Controller
 
         $menu->update($updateData);
 
+        $this->broadcastNotifier->resourceChanged(
+            resource: $menu,
+            resourceType: 'menu',
+            event: 'updated',
+            title: '관리자 메뉴가 수정되었습니다',
+            type: 'warning',
+        );
+
         return redirect()->route('admin.menus.index')
             ->with('success', '메뉴가 성공적으로 수정되었습니다.');
     }
@@ -178,6 +197,15 @@ class MenuController extends Controller
         if ($menu->children()->count() > 0) {
             return back()->with('error', '하위 메뉴가 있어 삭제할 수 없습니다.');
         }
+
+        $this->broadcastNotifier->resourceChanged(
+            resource: $menu,
+            resourceType: 'menu',
+            event: 'deleted',
+            title: '관리자 메뉴가 삭제되었습니다',
+            type: 'warning',
+            includeUrl: false,
+        );
 
         $menu->delete();
 
@@ -193,6 +221,14 @@ class MenuController extends Controller
         $menu->update([
             'is_active' => ! $menu->is_active,
         ]);
+
+        $this->broadcastNotifier->resourceChanged(
+            resource: $menu,
+            resourceType: 'menu',
+            event: $menu->is_active ? 'activated' : 'deactivated',
+            title: $menu->is_active ? '관리자 메뉴가 활성화되었습니다' : '관리자 메뉴가 비활성화되었습니다',
+            type: 'warning',
+        );
 
         return response()->json([
             'success' => true,
@@ -213,6 +249,14 @@ class MenuController extends Controller
         $menu->update([
             'sort_order' => $request->sort_order,
         ]);
+
+        $this->broadcastNotifier->resourceChanged(
+            resource: $menu,
+            resourceType: 'menu',
+            event: 'reordered',
+            title: '관리자 메뉴 순서가 변경되었습니다',
+            type: 'warning',
+        );
 
         return response()->json([
             'success' => true,
@@ -358,6 +402,22 @@ class MenuController extends Controller
 
             DB::commit();
 
+            $menu = Menu::find(data_get($request->menu_orders, '0.id'));
+
+            if ($menu) {
+                $this->broadcastNotifier->resourceChanged(
+                    resource: $menu,
+                    resourceType: 'menu',
+                    event: 'reordered',
+                    title: '관리자 메뉴 순서가 변경되었습니다',
+                    type: 'warning',
+                    payload: [
+                        'category_id' => $request->category_id,
+                        'updated_count' => count($request->menu_orders),
+                    ],
+                );
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => '메뉴 순서가 성공적으로 업데이트되었습니다.',
@@ -402,6 +462,22 @@ class MenuController extends Controller
             $categoryName = $request->category_id
                 ? MenuCategory::find($request->category_id)->name
                 : '미분류';
+
+            $menu = Menu::find(data_get($request->menu_ids, 0));
+
+            if ($menu) {
+                $this->broadcastNotifier->resourceChanged(
+                    resource: $menu,
+                    resourceType: 'menu',
+                    event: 'category_updated',
+                    title: '관리자 메뉴 카테고리가 변경되었습니다',
+                    type: 'warning',
+                    payload: [
+                        'category_id' => $request->category_id,
+                        'updated_count' => $updatedCount,
+                    ],
+                );
+            }
 
             return response()->json([
                 'success' => true,

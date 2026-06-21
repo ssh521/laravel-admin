@@ -8,12 +8,13 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Ssh521\LaravelAdmin\Http\Controllers\Controller;
 use Ssh521\LaravelAdmin\Models\Permission;
+use Ssh521\LaravelAdmin\Support\AdminBroadcastNotifier;
 
 class RoleController extends Controller
 {
     use AuthorizesRequests;
 
-    public function __construct()
+    public function __construct(private readonly AdminBroadcastNotifier $broadcastNotifier)
     {
         // authorizeResource 대신 개별 메서드에서 authorize 호출
     }
@@ -63,6 +64,13 @@ class RoleController extends Controller
             $role->syncPermissions([]);
         }
 
+        $this->broadcastNotifier->resourceChanged(
+            resource: $role->load('permissions'),
+            resourceType: 'role',
+            event: 'created',
+            title: '관리자 역할이 생성되었습니다',
+        );
+
         return redirect()->route('admin.roles.index')->with('success', 'Role added successfully');
     }
 
@@ -106,12 +114,29 @@ class RoleController extends Controller
             $role->syncPermissions([]);
         }
 
+        $this->broadcastNotifier->resourceChanged(
+            resource: $role->load('permissions'),
+            resourceType: 'role',
+            event: 'updated',
+            title: '관리자 역할이 수정되었습니다',
+            type: 'warning',
+        );
+
         return redirect()->route('admin.roles.index')->with('success', 'Role updated successfully');
     }
 
     public function destroy(Role $role)
     {
         $this->authorize('delete', $role);
+
+        $this->broadcastNotifier->resourceChanged(
+            resource: $role,
+            resourceType: 'role',
+            event: 'deleted',
+            title: '관리자 역할이 삭제되었습니다',
+            type: 'warning',
+            includeUrl: false,
+        );
 
         $role->delete();
 
