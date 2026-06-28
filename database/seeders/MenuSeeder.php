@@ -89,6 +89,18 @@ class MenuSeeder extends Seeder
                 'description' => '관리자 계정 관리',
             ],
             [
+                'name' => 'UI 컴포넌트',
+                'route_name' => 'admin.ui.components',
+                'url' => '/admin/ui/components',
+                'target' => '_self',
+                'category_id' => $categoryMap['admin_only'],
+                'parent_id' => null,
+                'sort_order' => 1,
+                'is_active' => true,
+                'icon' => 'swatchbook',
+                'description' => '관리자 UI 컴포넌트 참고',
+            ],
+            [
                 'name' => '역할',
                 'route_name' => 'admin.roles.index',
                 'url' => '/admin/roles',

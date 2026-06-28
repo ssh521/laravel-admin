@@ -14,8 +14,8 @@ class AdminRoutePermissionMiddlewareTest extends TestCase
     {
         $expected = [
             'admin.index' => 'admin-dashboard-access',
-            'admin.ui.components' => 'admin-dashboard-access',
             'admin.admin-users.index' => 'super-admin-manage',
+            'admin.ui.components' => 'super-admin-manage',
             'admin.roles.index' => 'role-list',
             'admin.roles.create' => 'role-create',
             'admin.roles.store' => 'role-create',

@@ -10,7 +10,7 @@ use Ssh521\LaravelAdmin\Tests\TestCase;
 
 class MenuSeederTest extends TestCase
 {
-    public function test_it_places_role_and_permission_menus_under_admin_only_category(): void
+    public function test_it_places_reference_role_and_permission_menus_under_admin_only_category(): void
     {
         $this->seed(MenuSeeder::class);
 
@@ -18,7 +18,7 @@ class MenuSeederTest extends TestCase
         $adminOnlyCategory = MenuCategory::query()->where('name', '관리자 전용')->firstOrFail();
 
         Menu::query()
-            ->whereIn('name', ['역할', '권한'])
+            ->whereIn('name', ['UI 컴포넌트', '역할', '권한'])
             ->update(['category_id' => $menuCategory->id]);
 
         $this->seed(MenuSeeder::class);
@@ -27,10 +27,11 @@ class MenuSeederTest extends TestCase
         $adminOnlyCategory = $adminOnlyCategory->fresh();
 
         $this->assertSame($adminOnlyCategory->id, Menu::query()->where('name', '관리자 계정')->value('category_id'));
+        $this->assertSame($adminOnlyCategory->id, Menu::query()->where('name', 'UI 컴포넌트')->value('category_id'));
         $this->assertSame($adminOnlyCategory->id, Menu::query()->where('name', '역할')->value('category_id'));
         $this->assertSame($adminOnlyCategory->id, Menu::query()->where('name', '권한')->value('category_id'));
         $this->assertSame(2, $menuCategory->fresh()->menu_count);
-        $this->assertSame(3, $adminOnlyCategory->fresh()->menu_count);
+        $this->assertSame(4, $adminOnlyCategory->fresh()->menu_count);
     }
 
     public function test_it_exposes_admin_only_menu_category_to_super_admin_only(): void
