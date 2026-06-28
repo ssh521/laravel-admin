@@ -39,6 +39,10 @@ Route::prefix(config('laravel-admin.route_prefix', 'admin'))
             ->middleware('can:admin-dashboard-access')
             ->name('index');
 
+        Route::view('/ui/components', 'laravel-admin::admin.ui.components')
+            ->middleware('can:admin-dashboard-access')
+            ->name('ui.components');
+
         // Admin User Routes
         Route::resource('admin-users', AdminUserController::class)
             ->middleware('can:super-admin-manage')
