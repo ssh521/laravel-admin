@@ -131,8 +131,29 @@ class MenuOrderModal extends Component
 
         $this->menus = $reorderedMenus;
 
-        // 바로 저장
+        // 이벤트로 전달된 순서를 저장
         $this->saveOrder();
+    }
+
+    #[On('admin-menus:menu-order-modal:update-order')]
+    public function updateOrderFromEvent(mixed $data = null): void
+    {
+        $this->authorizeMenuEdit();
+
+        $payload = $this->normalizePayload($data);
+        $eventCategoryId = $payload['data']['categoryId'] ?? $payload['categoryId'] ?? null;
+        $newOrder = $payload['data']['newOrder'] ?? $payload['newOrder'] ?? [];
+
+        if (! $this->categoryId || (int) $eventCategoryId !== $this->categoryId || ! is_array($newOrder) || empty($newOrder)) {
+            $this->dispatch('admin-menus:menu-order-modal:notification', [
+                'message' => '메뉴 순서 저장 요청이 올바르지 않습니다.',
+                'type' => 'error',
+            ]);
+
+            return;
+        }
+
+        $this->updateOrder($newOrder);
     }
 
     private function saveOrder(): void
@@ -157,12 +178,10 @@ class MenuOrderModal extends Component
             // 왼쪽 메뉴 새로고침을 위한 이벤트 발생
             $this->dispatch('admin-menus:menu-order:updated');
 
-            // 성공 알림은 표시하지 않음 (자동 저장이므로)
-            // 필요시 알림을 표시하려면 아래 주석 해제
-            // $this->dispatch('menu-order-modal:notification', [
-            //     'message' => '메뉴 순서가 자동으로 저장되었습니다.',
-            //     'type' => 'success',
-            // ]);
+            $this->dispatch('admin-menus:menu-order-modal:notification', [
+                'message' => '메뉴 순서가 저장되었습니다.',
+                'type' => 'success',
+            ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -181,8 +200,6 @@ class MenuOrderModal extends Component
 
     public function save(): void
     {
-        // 이제는 updateOrder에서 자동으로 저장되므로, 이 메서드는 모달 닫기용으로만 사용
-        // 모달 닫기
         $this->close();
     }
 

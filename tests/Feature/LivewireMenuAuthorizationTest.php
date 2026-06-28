@@ -92,6 +92,39 @@ class LivewireMenuAuthorizationTest extends TestCase
         $this->assertSame(0, $menu->refresh()->sort_order);
     }
 
+    public function test_super_admin_can_reorder_menus_from_livewire_event(): void
+    {
+        [$superAdmin, $guard] = $this->createSuperAdminWithoutPermissions();
+        [$menu, , $sourceCategory] = $this->createMenuFixture();
+        $secondMenu = Menu::query()->create([
+            'name' => 'Second Managed Menu',
+            'url' => '/admin/second-managed-menu',
+            'category_id' => $sourceCategory->id,
+            'is_active' => true,
+            'sort_order' => 2,
+        ]);
+
+        Livewire::actingAs($superAdmin, $guard)
+            ->test(MenuOrderModal::class)
+            ->set('categoryId', $sourceCategory->id)
+            ->set('menus', [
+                ['id' => $menu->id, 'name' => $menu->name, 'sort_order' => 1, 'icon' => null, 'is_active' => true],
+                ['id' => $secondMenu->id, 'name' => $secondMenu->name, 'sort_order' => 2, 'icon' => null, 'is_active' => true],
+            ])
+            ->call('updateOrderFromEvent', [
+                'data' => [
+                    'categoryId' => $sourceCategory->id,
+                    'newOrder' => [
+                        ['id' => $secondMenu->id, 'sort_order' => 0],
+                        ['id' => $menu->id, 'sort_order' => 1],
+                    ],
+                ],
+            ]);
+
+        $this->assertSame(1, $menu->refresh()->sort_order);
+        $this->assertSame(0, $secondMenu->refresh()->sort_order);
+    }
+
     public function test_menu_edit_authorization_does_not_mutate_default_auth_guard(): void
     {
         [$superAdmin, $guard] = $this->createSuperAdminWithoutPermissions();
