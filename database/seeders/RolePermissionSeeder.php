@@ -53,6 +53,14 @@ class RolePermissionSeeder extends Seeder
         'menu-category-create',
         'menu-category-edit',
         'menu-category-delete',
+
+        // 일반 회원 관련 권한
+        'user-list',
+        'user-view',
+        'user-create',
+        'user-edit',
+        'user-delete',
+        'user-view-auth-list',
     ];
 
     private $obsoletePermissions = [
@@ -60,12 +68,6 @@ class RolePermissionSeeder extends Seeder
         'permission-view-assignments',
         'super-admin-users',
         'admin-manage-users',
-        'user-list',
-        'user-view',
-        'user-create',
-        'user-edit',
-        'user-delete',
-        'user-view-auth-list',
         'user-assign-roles',
         'user-assign-permissions',
     ];

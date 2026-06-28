@@ -45,6 +45,31 @@ return [
     */
     'admin_user_model' => AdminUser::class,
     'admin_users_table' => 'admin_users',
+
+    /*
+    |--------------------------------------------------------------------------
+    | 일반 회원 모델
+    |--------------------------------------------------------------------------
+    |
+    | 관리자 화면에서 관리할 사이트 회원 모델입니다. Laravel starter kit의
+    | 기본 App\Models\User를 사용하며, 호스트 앱이 다른 회원 모델을 쓰면
+    | 이 값만 교체하면 됩니다.
+    |
+    */
+    'user_model' => App\Models\User::class,
+    'users' => [
+        'admin' => [
+            'route_prefix' => 'users',
+            'route_name_prefix' => 'users.',
+            'middleware' => null,
+        ],
+        'api' => [
+            'enabled' => false,
+            'route_prefix' => 'users',
+            'middleware' => ['auth:sanctum'],
+        ],
+    ],
+
     'seed_admin_user' => [
         'enabled' => env('LARAVEL_ADMIN_SEED_ADMIN_ENABLED', true),
         'name' => env('LARAVEL_ADMIN_SEED_ADMIN_NAME', 'Super Admin'),

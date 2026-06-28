@@ -1,6 +1,6 @@
 ---
 name: laravel-admin-package
-description: Work on ssh521 Laravel Admin package projects. Use when changing laravel-admin core, laravel-admin-ui backed admin screens, feature packages such as laravel-admin-users/bbs/blog/file/page, admin route/menu/permission registration, package installers, package documentation, or host-project integration for ssh521/laravel-admin.
+description: Work on ssh521 Laravel Admin package projects. Use when changing laravel-admin core, laravel-admin-ui backed admin screens, feature packages such as bbs/blog/file/page, admin route/menu/permission registration, package installers, package documentation, or host-project integration for ssh521/laravel-admin.
 ---
 
 # Laravel Admin Package
@@ -15,7 +15,7 @@ Before editing, identify the owner of the behavior.
 
 - Core admin guard, admin users, roles, permissions, menus, installers, and `AdminPackageRegistrar` belong in `ssh521/laravel-admin`.
 - Admin Blade resources and shared components usually come from `ssh521/laravel-admin-ui` through the `laravel-admin::` namespace.
-- General user management belongs in `ssh521/laravel-admin-users`, not in core.
+- General user management belongs in `ssh521/laravel-admin` core and follows `config('laravel-admin.user_model')`.
 - Site-domain features belong in separate feature packages such as `laravel-bbs`, `laravel-blog`, `laravel-file`, or `laravel-page`.
 
 Read these files when they exist in the current install or path repository:

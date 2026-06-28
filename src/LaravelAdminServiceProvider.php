@@ -20,15 +20,21 @@ use Ssh521\LaravelAdmin\Livewire\Admin\Menus\ChangeCategoryModal;
 use Ssh521\LaravelAdmin\Livewire\Admin\Menus\MenuOrderModal;
 use Ssh521\LaravelAdmin\Livewire\Admin\Roles\RoleDetailModal;
 use Ssh521\LaravelAdmin\Livewire\Admin\Roles\RoleForm;
+use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserDetailModal;
+use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserForm;
+use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserSearchModal;
+use Ssh521\LaravelAdmin\Livewire\Admin\Users\UserTable;
 use Ssh521\LaravelAdmin\Models\AdminUser;
 use Ssh521\LaravelAdmin\Models\Menu;
 use Ssh521\LaravelAdmin\Models\MenuCategory;
 use Ssh521\LaravelAdmin\Models\Permission;
+use Ssh521\LaravelAdmin\Models\User;
 use Ssh521\LaravelAdmin\Policies\AdminPolicy;
 use Ssh521\LaravelAdmin\Policies\MenuCategoryPolicy;
 use Ssh521\LaravelAdmin\Policies\MenuPolicy;
 use Ssh521\LaravelAdmin\Policies\PermissionPolicy;
 use Ssh521\LaravelAdmin\Policies\RolePolicy;
+use Ssh521\LaravelAdmin\Policies\UserPolicy;
 use Ssh521\LaravelAdmin\Support\AdminMenuRegistrar;
 use Ssh521\LaravelAdmin\Support\AdminPackageRegistrar;
 use Ssh521\LaravelAdmin\Support\AdminPermissionRegistrar;
@@ -57,10 +63,18 @@ class LaravelAdminServiceProvider extends ServiceProvider
     private function registerRoutes(): void
     {
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        $this->loadRoutesFrom(__DIR__.'/../routes/users.php');
 
         Route::middleware(config('laravel-admin.api_middleware', ['api']))
             ->prefix(config('laravel-admin.api_prefix', 'api/admin'))
             ->group(__DIR__.'/../routes/api.php');
+
+        if (config('laravel-admin.users.api.enabled', false)) {
+            Route::middleware(config('laravel-admin.users.api.middleware', ['auth:sanctum']))
+                ->prefix(trim(config('laravel-admin.api_prefix', 'api/admin'), '/').'/'.trim(config('laravel-admin.users.api.route_prefix', 'users'), '/'))
+                ->name(config('laravel-admin.route_name_prefix', 'admin.').'users.api.')
+                ->group(__DIR__.'/../routes/users-api.php');
+        }
     }
 
     private function registerAuthConfiguration(): void
@@ -106,6 +120,10 @@ class LaravelAdminServiceProvider extends ServiceProvider
         Livewire::component('admin.menus.change-category-modal', ChangeCategoryModal::class);
         Livewire::component('admin.roles.role-detail-modal', RoleDetailModal::class);
         Livewire::component('admin.roles.role-form', RoleForm::class);
+        Livewire::component('admin.users.user-detail-modal', UserDetailModal::class);
+        Livewire::component('admin.users.user-form', UserForm::class);
+        Livewire::component('admin.users.user-search-modal', UserSearchModal::class);
+        Livewire::component('admin.users.user-table', UserTable::class);
     }
 
     private function registerLivewirePersistentMiddleware(): void
@@ -146,6 +164,14 @@ class LaravelAdminServiceProvider extends ServiceProvider
         Gate::policy(Permission::class, PermissionPolicy::class);
         Gate::policy(MenuCategory::class, MenuCategoryPolicy::class);
         Gate::policy(Menu::class, MenuPolicy::class);
+        Gate::policy(User::class, UserPolicy::class);
+
+        $userModel = config('laravel-admin.user_model');
+
+        if (is_string($userModel) && class_exists($userModel)) {
+            Gate::policy($userModel, UserPolicy::class);
+        }
+
         Gate::define('viewDashboard', [AdminPolicy::class, 'viewDashboard']);
         Gate::define('viewStatistics', [AdminPolicy::class, 'viewStatistics']);
         Gate::define('manageUsers', [AdminPolicy::class, 'manageUsers']);

@@ -20,9 +20,9 @@ class FeaturePackageInstallerTest extends TestCase
     public function test_it_filters_unsupported_options_before_running_feature_package_installers(): void
     {
         FeaturePackageInstallerDummyCommand::$receivedOptions = [];
-        FeaturePackageInstallerCallerCommand::$packages = ['users'];
+        FeaturePackageInstallerCallerCommand::$packages = ['bbs'];
         FeaturePackageInstallerCallerCommand::$installers = [
-            'users' => 'laravel-admin-users:install',
+            'bbs' => 'laravel-bbs:install',
         ];
         FeaturePackageInstallerCallerCommand::$parameters = [
             '--force' => true,
@@ -43,9 +43,9 @@ class FeaturePackageInstallerTest extends TestCase
 
 class FeaturePackageInstallerDummyCommand extends Command
 {
-    protected $signature = 'laravel-admin-users:install {--force : Force publish and seed operations}';
+    protected $signature = 'laravel-bbs:install {--force : Force publish and seed operations}';
 
-    protected $description = 'Dummy Laravel Admin Users installer for tests.';
+    protected $description = 'Dummy Laravel BBS installer for tests.';
 
     /**
      * @var array<string, mixed>

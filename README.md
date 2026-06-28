@@ -8,7 +8,6 @@ Laravel 13 프로젝트에 관리자 기반을 빠르게 붙이기 위한 재사
 Laravel starter kit
 └── ssh521/laravel-admin
     ├── ssh521/laravel-admin-ui
-    ├── ssh521/laravel-admin-users
     ├── ssh521/laravel-file
     ├── ssh521/laravel-bbs
     └── ssh521/laravel-blog
@@ -22,13 +21,14 @@ Laravel starter kit
 
 - 관리자 전용 guard/provider/login/logout
 - 패키지 소유 `admin_users` 관리자 계정
+- 호스트 앱 `User` 모델 기반 일반 회원 관리
 - 관리자 role/permission 관리
 - menu/menu category 기반 관리자 메뉴 시스템
 - `AdminPackageRegistrar` 기반 기능 패키지 메뉴와 권한 등록 계약
 - `laravel-admin:install`, `laravel-admin:update`, `laravel-admin:make-super-admin` command
 - `ssh521/laravel-admin-ui` layout, component, asset 연결
 
-일반 회원 관리, 게시판, 블로그, 파일 관리처럼 사이트 도메인에 가까운 기능은 core에 넣지 않는다. 이런 기능은 `ssh521/laravel-admin-users`, `ssh521/laravel-file`, `ssh521/laravel-bbs`, `ssh521/laravel-blog` 같은 기능 패키지로 분리한다.
+일반 회원 관리는 starter kit 기반 프로젝트의 기본 관리자 기능으로 보고 core에 포함한다. 게시판, 블로그, 파일 관리처럼 사이트 도메인에 가까운 기능은 `ssh521/laravel-file`, `ssh521/laravel-bbs`, `ssh521/laravel-blog` 같은 기능 패키지로 분리한다.
 
 현재는 초기 개발 단계이므로 이전 설치본 호환성보다 구조 정리와 책임 분리를 우선한다. 공개 사용자나 외부 프로젝트 사용자가 생기면 별도의 하위 호환성 정책을 적용한다.
 
@@ -53,7 +53,6 @@ Laravel starter kit
     └── ssh521/
         ├── laravel-admin/
         ├── laravel-admin-ui/
-        ├── laravel-admin-users/
         ├── laravel-file/
         ├── laravel-bbs/
         └── laravel-blog/
@@ -179,6 +178,7 @@ return [
 
     'admin_user_model' => Ssh521\LaravelAdmin\Models\AdminUser::class,
     'admin_users_table' => 'admin_users',
+    'user_model' => App\Models\User::class,
     'super_admin_role' => 'Super Admin',
 ];
 ```
@@ -191,7 +191,7 @@ return [
 
 `auth.admin_login.enabled`가 `true`이면 인증되지 않은 관리자 요청은 `/admin/login`으로 이동한다. 비활성화하면 호스트 앱의 `login` route로 fallback한다.
 
-관리자 계정은 일반 회원 `users` 테이블이 아니라 패키지 소유 `admin_users` 테이블을 사용한다. 일반 회원 관리는 `ssh521/laravel-admin-users` 기능 패키지의 책임이다.
+관리자 계정은 일반 회원 `users` 테이블이 아니라 패키지 소유 `admin_users` 테이블을 사용한다. 일반 회원 관리는 `user_model`에 지정한 호스트 앱 모델을 기준으로 동작한다.
 
 ## Super Admin
 
@@ -261,7 +261,7 @@ database/seeders/vendor/laravel-admin
 - package-local 디자인 시스템을 만들지 않고 `ssh521/laravel-admin-ui` 컴포넌트를 사용한다.
 - migration, seeder, installer는 반복 실행해도 안전해야 한다.
 
-일반 회원 관리는 `ssh521/laravel-admin-users`가 담당한다. 이 패키지는 core에서 분리된 첫 표준 기능 패키지이자 `AdminPackageRegistrar` 계약을 검증하는 기준 패키지다.
+일반 회원 관리는 core가 기본 제공한다. 호스트 앱이 기본 `App\Models\User`가 아닌 다른 회원 모델을 사용하면 `config('laravel-admin.user_model')`만 교체한다.
 
 ## UI와 Blade 컴포넌트
 

@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Ssh521\LaravelAdmin\Database\Seeders\AdminUserSeeder;
 use Ssh521\LaravelAdmin\Database\Seeders\MenuSeeder;
 use Ssh521\LaravelAdmin\Database\Seeders\RolePermissionSeeder;
+use Ssh521\LaravelAdmin\Database\Seeders\UserManagementSeeder;
 use Ssh521\LaravelAdmin\Support\PackageInstaller;
 
 class InstallCommand extends Command
@@ -22,7 +23,7 @@ class InstallCommand extends Command
         {--force-config : Overwrite published Laravel Admin config}
         {--force-views : Overwrite published Laravel Admin views and components}
         {--force-seeders : Overwrite published Laravel Admin seeders}
-        {--with=* : Run feature package installers after admin install (users, bbs, blog, file)}
+        {--with=* : Run feature package installers after admin install (bbs, blog, file)}
         {--with-test-data : Pass sample data option to feature package installers}';
 
     protected $description = 'Publish, migrate, seed, and configure Laravel Admin resources.';
@@ -53,6 +54,7 @@ class InstallCommand extends Command
         if (! $this->option('skip-seed') && $this->canSeedAdminCore()) {
             $this->seed(RolePermissionSeeder::class);
             $this->seed(MenuSeeder::class);
+            $this->seed(UserManagementSeeder::class);
 
             if (! $this->option('skip-admin-user')) {
                 $this->seed(AdminUserSeeder::class);
@@ -154,7 +156,6 @@ class InstallCommand extends Command
     private function installFeaturePackages(): void
     {
         $installers = [
-            'users' => 'laravel-admin-users:install',
             'bbs' => 'laravel-bbs:install',
             'blog' => 'laravel-blog:install',
             'file' => 'laravel-file:install',

@@ -18,8 +18,8 @@ Path repository 또는 monorepo 개발 중이면 `vendor/` 대신 실제 패키�
 ## Package Boundaries
 
 - `laravel-admin` core는 관리자 guard/provider/login/logout, `admin_users`, role/permission, menu/menu category, installer, `laravel-admin-ui` 연결을 소유한다.
-- 일반 회원 관리와 사이트 도메인 기능은 core에 넣지 않고 기능 패키지로 분리한다.
-- 일반 회원 관리는 `ssh521/laravel-admin-users` 패키지를 기준으로 삼는다.
+- 일반 회원 관리는 core 기본 기능이며 `config('laravel-admin.user_model')`로 호스트 앱 모델을 바꿀 수 있다.
+- 게시판, 블로그, 파일, 페이지처럼 사이트 도메인 기능은 기능 패키지로 분리한다.
 
 ## Feature Package Rules
 

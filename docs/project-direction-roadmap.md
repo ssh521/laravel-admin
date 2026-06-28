@@ -11,14 +11,13 @@
 ```text
 Laravel starter kit
 └── ssh521/laravel-admin
-    ├── ssh521/laravel-admin-users
     ├── ssh521/laravel-file
     ├── ssh521/laravel-bbs
     ├── ssh521/laravel-blog
     └── other feature packages
 ```
 
-`laravel-admin`은 관리자 기능 자체를 모두 품는 패키지가 아니라, 관리자 기능 패키지들이 올라가는 foundation 역할을 한다.
+`laravel-admin`은 starter kit 기반 프로젝트에서 기본으로 기대되는 관리자 인증, 회원 관리, 권한, 메뉴 foundation을 제공하고, 사이트 도메인 기능 패키지들이 올라가는 기반 역할을 한다.
 
 ## 개발 단계 정책
 
@@ -35,6 +34,7 @@ Laravel starter kit
 - 관리자 전용 guard, provider, login/logout
 - `admin_users` 관리자 계정
 - 관리자 role/permission 관리
+- 호스트 앱 `App\Models\User` 기준 일반 회원 관리
 - 관리자 menu/menu category 관리
 - `AdminPackageRegistrar` 기반 메뉴와 권한 등록 계약
 - install/update/make-super-admin command
@@ -44,9 +44,6 @@ Laravel starter kit
 
 ### laravel-admin core에서 뺄 것
 
-- 호스트 앱 `App\Models\User` CRUD
-- 일반 회원 API
-- user search/detail/form Livewire
 - 사이트별 도메인 기능
 - 특정 프로젝트 브랜딩, favicon, home route 같은 호스트 앱 가정
 
@@ -54,7 +51,7 @@ Laravel starter kit
 
 `AdminUser`는 관리자 인증 주체이므로 core에 남긴다.
 
-일반 `User`는 사이트 도메인 모델이다. 모든 사이트가 같은 회원 구조를 갖지 않기 때문에 `ssh521/laravel-admin-users` 같은 별도 기능 패키지로 분리한다.
+일반 `User`는 호스트 앱 모델이다. starter kit 기반 설치에서는 회원 관리가 기본 관리자 기능에 가깝기 때문에 core가 CRUD 화면과 기본 권한을 제공하되, 실제 모델은 `config('laravel-admin.user_model')`로 교체할 수 있게 한다.
 
 ## 역할과 권한 방향
 
@@ -127,7 +124,6 @@ Mac Air에 직접 clone해서 작업해야 한다면 작업 시작 전 `git pull
     └── ssh521/
         ├── laravel-admin/
         ├── laravel-admin-ui/
-        ├── laravel-admin-users/
         ├── laravel-file/
         ├── laravel-bbs/
         └── laravel-blog/
@@ -140,7 +136,6 @@ Mac Air에 직접 clone해서 작업해야 한다면 작업 시작 전 `git pull
 ```text
 ssh521/laravel-admin
 ssh521/laravel-admin-ui
-ssh521/laravel-admin-users
 ssh521/laravel-file
 ssh521/laravel-bbs
 ssh521/laravel-blog
@@ -196,16 +191,14 @@ php artisan laravel-admin:make-super-admin
 기능 패키지는 선택 설치한다.
 
 ```bash
-composer require ssh521/laravel-admin-users
 composer require ssh521/laravel-file
 
-php artisan laravel-admin:install --with=users,file
+php artisan laravel-admin:install --with=file
 ```
 
 또는 각 기능 패키지 installer를 직접 실행할 수 있게 한다.
 
 ```bash
-php artisan laravel-admin-users:install
 php artisan laravel-file:install
 ```
 
@@ -215,36 +208,35 @@ php artisan laravel-file:install
 
 목표: `laravel-admin`이 관리자 foundation이라는 정체성을 코드로 고정한다.
 
-- `AdminUser`와 일반 `User` 책임을 문서와 코드에서 분리한다.
+- `AdminUser`와 일반 `User` 책임을 문서와 코드에서 구분한다.
 - core에 남길 기능과 feature package로 뺄 기능을 README에 명시한다.
-- `User` 관련 controller, service, action, DTO, validator, policy, Livewire, view 목록을 분리 대상으로 표시한다.
+- `User` 관련 controller, service, action, DTO, validator, policy, Livewire, view가 core 기본 기능으로 동작한다.
 - `composer.json` 의존성 중 core 필수와 optional 성격을 구분한다.
-- core에서 일반 user API와 starter kit 인증 보조 기능을 제거하고 Jetstream/Sanctum 의존성을 기능 패키지 책임으로 분리한다.
+- core의 일반 user API는 기본 비활성화하고, token API가 필요할 때만 `laravel-admin.users.api.enabled`로 opt-in한다.
 
 완료 기준:
 
 - core 책임 범위가 README와 docs에 반영되어 있다.
-- `User` 관련 기능의 이동 대상이 명확하다.
+- 일반 회원 모델 교체 지점이 `config('laravel-admin.user_model')`로 명확하다.
 - 새 기능을 core에 추가하지 않는 기준이 정리되어 있다.
 
-### 2단계: laravel-admin-users 패키지 분리
+### 2단계: 일반 회원 관리 core 흡수
 
-목표: 호스트 앱 `User` 관리 기능을 첫 번째 feature package로 분리한다.
+목표: 호스트 앱 `User` 관리 기능을 `laravel-admin` 기본 기능으로 제공한다.
 
-상태: 완료. 세부 분리 계획 문서는 제거하고, 현재 책임 경계는 README와 실제 패키지 구조를 기준으로 판단한다.
+상태: 진행. 별도 `laravel-admin-users` 설치 흐름 대신 core route/service/policy/Livewire를 사용하고, 화면은 `laravel-admin-ui`의 `laravel-admin::admin.users.*` 뷰 계약을 따른다.
 
-- `ssh521/laravel-admin-users` repo를 만든다.
-- 기존 `UserController`, `UserService`, `Actions/User`, `DTOs/User`, `Validators/User`, `UserPolicy`를 이동한다.
-- user 관련 Livewire component와 Blade view를 이동한다.
-- user menu/permission seeder를 `AdminPackageRegistrar` 기반으로 작성한다.
-- `laravel-admin-users:install` command를 만든다.
-- core의 user route/menu/permission 기본 등록을 제거한다.
+- 기존 `UserController`, `UserService`, `Actions/User`, `DTOs/User`, `Validators/User`, `UserPolicy`를 core 네임스페이스로 이동한다.
+- user 관련 Livewire component는 core에 두고 Blade view는 `laravel-admin-ui`에 둔다.
+- user menu/permission seeder를 core 설치 흐름에 포함한다.
+- `laravel-admin-users:install` 없이 `laravel-admin:install`만으로 회원 메뉴가 등록된다.
+- 호스트 앱의 다른 회원 모델은 `config('laravel-admin.user_model')`로 지정한다.
 
 완료 기준:
 
-- `laravel-admin` 없이 일반 user CRUD 코드가 core에 남지 않는다.
-- `laravel-admin-users` 설치 후 기존 회원 관리 화면이 동작한다.
-- user feature package 테스트가 통과한다.
+- 별도 `ssh521/laravel-admin-users` 의존성 없이 회원 관리 화면이 동작한다.
+- user route permission과 seeder permission 이름이 일치한다.
+- `user_model`만 교체해도 query, validation, policy 대상이 함께 바뀐다.
 
 ### 3단계: UI shell 안정화
 

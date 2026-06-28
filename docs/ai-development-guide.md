@@ -10,6 +10,7 @@ Core 패키지가 직접 소유하는 책임:
 
 - 관리자 전용 guard, provider, login/logout
 - 패키지 소유 `admin_users` 관리자 계정
+- 호스트 앱 `User` 모델 기반 일반 회원 관리
 - 관리자 role/permission 관리
 - menu/menu category 기반 관리자 메뉴 시스템
 - `AdminPackageRegistrar` 기반 기능 패키지 메뉴와 권한 등록 계약
@@ -18,11 +19,10 @@ Core 패키지가 직접 소유하는 책임:
 
 Core에 넣지 않는 책임:
 
-- 호스트 앱의 일반 `User` CRUD
 - 사이트 도메인별 게시판, 블로그, 파일, 페이지 기능
 - 호스트 앱의 `/login`, `/register`, starter kit 인증 화면 덮어쓰기
 
-일반 회원 관리는 `ssh521/laravel-admin-users` 같은 기능 패키지로 분리한다.
+일반 회원 관리는 core가 기본 제공한다. 호스트 앱이 기본 `App\Models\User`가 아닌 다른 회원 모델을 사용하면 `config('laravel-admin.user_model')`만 교체한다.
 
 ## AI가 먼저 읽을 문서
 
