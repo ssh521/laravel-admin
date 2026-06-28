@@ -193,6 +193,8 @@ return [
 
 관리자 계정은 일반 회원 `users` 테이블이 아니라 패키지 소유 `admin_users` 테이블을 사용한다. 일반 회원 관리는 `user_model`에 지정한 호스트 앱 모델을 기준으로 동작한다.
 
+관리자 role/permission은 `admin_users` 모델과 관리자 guard 전용이다. 일반 회원 `user_model`에는 Spatie `HasRoles` trait을 요구하지 않으며, 일반 회원 관리 화면은 이름, 이메일, 비밀번호, 이메일 인증 상태 같은 회원 계정 정보만 다룬다.
+
 ## Super Admin
 
 설치 seeder는 기본 관리자 계정을 만들고 `Super Admin` 역할을 부여한다. 별도 계정을 만들거나 기존 관리자 계정을 승격하려면 아래 command를 사용한다.
@@ -240,6 +242,7 @@ database/seeders/vendor/laravel-admin
 권한 구조는 아래 기준을 따른다.
 
 - `Super Admin`은 모든 관리자 권한을 통과한다.
+- role/permission은 관리자 계정과 관리자 화면 접근 제어에만 사용한다.
 - role은 메뉴 카테고리 노출을 제어한다.
 - permission은 화면과 기능 단위 접근을 제어한다.
 - 기능 패키지는 `AdminPackageRegistrar`로 메뉴와 permission을 등록한다.
