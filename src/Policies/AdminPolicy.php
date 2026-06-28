@@ -13,17 +13,6 @@ class AdminPolicy
      */
     public function viewDashboard($user): bool
     {
-        // Super Admin은 항상 접근 가능
-        if ($user->hasRole('Super Admin')) {
-            return true;
-        }
-
-        // 관리자 역할을 가진 사용자만 접근 가능
-        if ($user->hasRole('Admin')) {
-            return true;
-        }
-
-        // 특정 권한을 가진 사용자도 접근 가능
         return $user->hasPermissionTo('admin-dashboard-access');
     }
 
@@ -32,14 +21,6 @@ class AdminPolicy
      */
     public function viewStatistics($user): bool
     {
-        if ($user->hasRole('Super Admin')) {
-            return true;
-        }
-
-        if ($user->hasRole('Admin')) {
-            return true;
-        }
-
         return $user->hasPermissionTo('admin-view-statistics');
     }
 
@@ -48,14 +29,6 @@ class AdminPolicy
      */
     public function viewReports($user): bool
     {
-        if ($user->hasRole('Super Admin')) {
-            return true;
-        }
-
-        if ($user->hasRole('Admin')) {
-            return true;
-        }
-
         return $user->hasPermissionTo('admin-view-reports');
     }
 
@@ -64,8 +37,7 @@ class AdminPolicy
      */
     public function manageSettings($user): bool
     {
-        // 시스템 설정은 Super Admin만 관리 가능
-        return $user->hasRole('Super Admin');
+        return $user->hasPermissionTo('super-admin-settings');
     }
 
     /**
@@ -73,10 +45,6 @@ class AdminPolicy
      */
     public function viewLogs($user): bool
     {
-        if ($user->hasRole('Super Admin')) {
-            return true;
-        }
-
         return $user->hasPermissionTo('admin-view-logs');
     }
 
@@ -85,10 +53,6 @@ class AdminPolicy
      */
     public function exportData($user): bool
     {
-        if ($user->hasRole('Super Admin')) {
-            return true;
-        }
-
         return $user->hasPermissionTo('admin-export-data');
     }
 
@@ -97,10 +61,6 @@ class AdminPolicy
      */
     public function manageMenus($user): bool
     {
-        if ($user->hasRole('Super Admin')) {
-            return true;
-        }
-
         return $user->hasPermissionTo('admin-manage-menus');
     }
 
@@ -109,14 +69,6 @@ class AdminPolicy
      */
     public function manageUsers($user): bool
     {
-        if ($user->hasRole('Super Admin')) {
-            return true;
-        }
-
-        if ($user->hasRole('Admin')) {
-            return true;
-        }
-
         return $user->hasPermissionTo('super-admin-manage');
     }
 
@@ -125,10 +77,6 @@ class AdminPolicy
      */
     public function manageRoles($user): bool
     {
-        if ($user->hasRole('Super Admin')) {
-            return true;
-        }
-
         return $user->hasPermissionTo('admin-manage-roles');
     }
 
@@ -137,10 +85,6 @@ class AdminPolicy
      */
     public function managePermissions($user): bool
     {
-        if ($user->hasRole('Super Admin')) {
-            return true;
-        }
-
         return $user->hasPermissionTo('admin-manage-permissions');
     }
 }

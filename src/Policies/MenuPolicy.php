@@ -36,8 +36,6 @@ class MenuPolicy
 
     private function can($user, string $permission): bool
     {
-        return $user->hasRole(config('laravel-admin.super_admin_role', 'Super Admin'))
-            || $user->hasRole('Admin')
-            || $user->hasPermissionTo($permission);
+        return $user->hasPermissionTo($permission);
     }
 }

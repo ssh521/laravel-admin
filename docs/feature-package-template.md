@@ -250,6 +250,7 @@ Route::prefix($prefix)->name('{feature}.admin.')->middleware($middleware)->group
 - route middleware permission, `AdminPackageRegistrar` seeder permission, 테스트 fixture permission은 같은 문자열을 사용한다.
 - index/show/search/read-only 보조 API는 view 권한을, create/store는 create 권한을, edit/update/reorder/toggle/status 변경은 update 권한을, destroy는 delete 권한을 사용한다.
 - `Super Admin` bypass는 core `Gate::before`에 맡기고, 기능 패키지는 route-level permission과 action-level permission을 일관되게 선언한다.
+- `Admin` 역할명으로 접근을 허용하지 않는다. `Admin` 또는 custom role이 접근해야 하면 seeder에서 해당 permission을 role에 연결한다.
 
 ## 7. Controller + Blade CRUD 계약
 
@@ -515,6 +516,8 @@ class Laravel{Feature}AdminMenuSeeder extends Seeder
 
 `AdminPackageRegistrar` 기본 역할은 `Super Admin`, `Admin`이다. `roles`는 메뉴 폴더 노출 역할이고, `permission_roles`는 세부 권한을 받을 역할이다. 패키지별로 다르게 주고 싶으면 definition에 `roles`, `permission_roles`를 넘긴다.
 
+메뉴 폴더 노출과 기능 접근은 별도 계약이다. `roles`에 포함된 역할은 좌측 메뉴 폴더를 볼 수 있지만, route와 action은 반드시 `permission_roles`로 연결된 permission 또는 직접 부여된 permission이 있어야 통과한다. `Admin` 역할명 자체로는 통과하지 않는다.
+
 ```php
 'roles' => ['Super Admin'],
 'permission_roles' => ['Super Admin', 'Admin'],
@@ -657,6 +660,9 @@ $this->installer()->installFeaturePackages(
 - seeder가 메뉴 카테고리, 메뉴, 권한을 만든다.
 - `Admin`, `Super Admin` 역할에 메뉴 카테고리와 권한이 연결된다.
 - admin route에 기대한 `can:*` 미들웨어가 붙는다.
+- permission 없는 `Admin` 또는 custom role은 접근하지 못한다.
+- permission 있는 `Admin` 또는 custom role은 접근할 수 있다.
+- `Super Admin`은 직접 permission 없이도 core bypass로 접근할 수 있다.
 
 `tests/TestCase.php` 예시:
 
@@ -799,6 +805,7 @@ php artisan route:list --path=admin/{feature} -v
 - `Admin`, `Super Admin`에 기본 메뉴/권한이 연결된다.
 - route-level `can:*` 권한이 존재하고 seeder permission name과 일치한다.
 - 권한이 필요한 Livewire action은 action 시작 지점에서 route-level permission과 같은 이름으로 검사한다.
+- `Admin` 역할명에 의존하는 Policy 우회가 없다.
 - config/views/seeders publish가 명시 옵션으로 분리되어 있다.
 - Testbench 테스트가 통과한다.
 - host app의 auth, view, component 이름을 침범하지 않는다.

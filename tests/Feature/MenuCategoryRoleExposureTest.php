@@ -12,7 +12,7 @@ use Ssh521\LaravelAdmin\Tests\TestCase;
 
 class MenuCategoryRoleExposureTest extends TestCase
 {
-    public function test_default_admin_left_menu_excludes_super_admin_only_categories(): void
+    public function test_default_admin_left_menu_includes_admin_only_categories(): void
     {
         $this->seed(MenuSeeder::class);
 
@@ -28,7 +28,7 @@ class MenuCategoryRoleExposureTest extends TestCase
 
         $this->assertContains('일반', $categoryNames);
         $this->assertContains('메뉴 관리', $categoryNames);
-        $this->assertNotContains('관리자 전용', $categoryNames);
+        $this->assertContains('관리자 전용', $categoryNames);
     }
 
     public function test_super_admin_left_menu_includes_all_active_categories(): void

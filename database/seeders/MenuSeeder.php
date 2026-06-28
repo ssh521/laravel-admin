@@ -210,7 +210,7 @@ class MenuSeeder extends Seeder
         }
 
         if ($adminRole) {
-            $adminCategoryIds = array_filter([$generalCategoryId, $menuCategoryId]);
+            $adminCategoryIds = array_filter([$generalCategoryId, $adminOnlyCategoryId, $menuCategoryId]);
 
             foreach ($adminCategoryIds as $categoryId) {
                 MenuCategory::find($categoryId)?->roles()->syncWithoutDetaching([$adminRole->id]);

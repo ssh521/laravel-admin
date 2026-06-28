@@ -34,7 +34,7 @@ class MenuSeederTest extends TestCase
         $this->assertSame(4, $adminOnlyCategory->fresh()->menu_count);
     }
 
-    public function test_it_exposes_admin_only_menu_category_to_super_admin_only(): void
+    public function test_it_exposes_admin_only_menu_category_to_default_admin_roles(): void
     {
         $this->seed(MenuSeeder::class);
 
@@ -50,6 +50,6 @@ class MenuSeederTest extends TestCase
 
         $this->assertTrue($generalCategory->roles()->whereKey($adminRole->id)->exists());
         $this->assertTrue($menuCategory->roles()->whereKey($adminRole->id)->exists());
-        $this->assertFalse($adminOnlyCategory->roles()->whereKey($adminRole->id)->exists());
+        $this->assertTrue($adminOnlyCategory->roles()->whereKey($adminRole->id)->exists());
     }
 }

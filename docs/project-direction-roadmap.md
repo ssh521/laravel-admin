@@ -224,17 +224,17 @@ php artisan laravel-file:install
 
 목표: 호스트 앱 `User` 관리 기능을 `laravel-admin` 기본 기능으로 제공한다.
 
-상태: 진행. 별도 `laravel-admin-users` 설치 흐름 대신 core route/service/policy/Livewire를 사용하고, 화면은 `laravel-admin-ui`의 `laravel-admin::admin.users.*` 뷰 계약을 따른다.
+상태: 완료. 일반 회원 관리는 별도 `laravel-admin-users` 패키지 없이 `laravel-admin` 기본 설치에 포함한다. core route/service/policy/Livewire를 사용하고, 화면은 `laravel-admin-ui`의 `laravel-admin::admin.users.*` 뷰 계약을 따른다.
 
 - 기존 `UserController`, `UserService`, `Actions/User`, `DTOs/User`, `Validators/User`, `UserPolicy`를 core 네임스페이스로 이동한다.
 - user 관련 Livewire component는 core에 두고 Blade view는 `laravel-admin-ui`에 둔다.
 - user menu/permission seeder를 core 설치 흐름에 포함한다.
-- `laravel-admin-users:install` 없이 `laravel-admin:install`만으로 회원 메뉴가 등록된다.
+- `laravel-admin:install`만으로 회원 메뉴와 `user-*` permission이 등록된다.
 - 호스트 앱의 다른 회원 모델은 `config('laravel-admin.user_model')`로 지정한다.
 
 완료 기준:
 
-- 별도 `ssh521/laravel-admin-users` 의존성 없이 회원 관리 화면이 동작한다.
+- 별도 user-management 패키지 의존성 없이 회원 관리 화면이 동작한다.
 - user route permission과 seeder permission 이름이 일치한다.
 - `user_model`만 교체해도 query, validation, policy 대상이 함께 바뀐다.
 
@@ -266,12 +266,12 @@ php artisan laravel-file:install
 
 목표: 메뉴 노출과 기능 접근 제어를 일관된 관리자 권한 모델로 고정한다.
 
-상태: 진행 중. web admin route에 route-level `can:*` middleware를 적용하기 시작했고, route middleware permission 이름이 seeder permission과 일치하는지 테스트로 고정했다. 메뉴 카테고리 변경과 메뉴 정렬 Livewire action도 admin guard 기준 `menu-edit` permission을 직접 확인하게 보강했다.
+상태: 진행 중. web admin route에 route-level `can:*` middleware를 적용했고, route middleware permission 이름이 seeder permission과 일치하는지 테스트로 고정했다. `Super Admin`은 core `Gate::before`로 우회하고, `Admin`과 custom role은 DB에 등록/부여된 permission으로 접근한다. 메뉴 카테고리 변경과 메뉴 정렬 Livewire action도 admin guard 기준 `menu-edit` permission을 직접 확인하게 보강했다.
 
 - 모든 role/permission seeder가 admin guard 기준으로 생성되는지 확인한다.
 - `AdminPackageRegistrar`의 `roles`와 `permission_roles` 계약을 테스트로 고정한다.
 - Super Admin bypass 테스트를 추가한다. 진행: route-level `can:*` middleware에서도 Super Admin bypass가 동작하는지 확인한다.
-- menu category role 노출 테스트를 추가한다. 진행: LeftMenu가 Admin, Super Admin, custom role별로 허용된 active menu category만 노출하는지 확인한다.
+- menu category role 노출 테스트를 추가한다. 진행: LeftMenu가 Admin, Super Admin, custom role별로 허용된 active menu category만 노출하는지 확인한다. 기본 Admin은 관리자 전용 메뉴 폴더도 보지만 실제 접근은 permission으로 판단한다.
 - route-level `can:*` middleware 적용 기준을 기능 패키지 템플릿에 반영한다. 완료: route middleware, seeder permission, 테스트 fixture가 같은 permission 문자열을 쓰도록 템플릿과 테스트 예시를 보강했다.
 - 권한이 필요한 Livewire action은 action 시작 지점에서 검사한다. 진행: menu category 변경과 menu order 변경 action은 `menu-edit` permission을 직접 확인한다.
 - 기능 패키지 API 권한을 Sanctum ability, Spatie permission, policy 중 어떤 조합으로 쓸지 결정한다. 완료: 관리자 화면 보조 API는 admin session middleware + Spatie permission, 외부 token API는 Sanctum ability, 관리자 기능 token API는 Sanctum ability + Spatie permission/Policy 조합으로 정한다.
@@ -279,7 +279,7 @@ php artisan laravel-file:install
 완료 기준:
 
 - web admin route, Livewire action, API route의 권한 방식이 문서화되어 있다.
-- 기본 Admin과 Super Admin의 차이가 테스트로 확인된다.
+- 기본 Admin과 Super Admin의 차이가 테스트로 확인된다. Super Admin은 Policy를 우회하고, Admin은 permission으로 통과한다.
 
 ### 5단계: Installer와 update 흐름 정리
 

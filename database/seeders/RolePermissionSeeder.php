@@ -21,6 +21,8 @@ class RolePermissionSeeder extends Seeder
         'admin-manage-permissions', // 권한 관리
         'admin-manage-roles', // 역할 관리
         'admin-view-statistics', // 통계 관리
+        'admin-view-reports',
+        'admin-export-data',
         'admin-dashboard-access',
 
         // Role 관련 권한
@@ -104,7 +106,7 @@ class RolePermissionSeeder extends Seeder
             'name' => 'Admin',
             'guard_name' => $guardName,
         ]);
-        // Admin 역할도 기본 설치 시 모든 권한을 가진다.
+        // Admin 역할도 기본 설치 시 모든 권한을 가진다. 실제 접근은 permission으로 판단한다.
         $adminRole->givePermissionTo($permissions);
 
         // 실행시키기

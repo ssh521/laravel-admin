@@ -14,12 +14,7 @@ class PermissionPolicy
      */
     public function viewAny($user): bool
     {
-        // Admin만 권한 목록을 볼 수 있음 (Super Admin은 Gate::before에서 처리됨)
-        if ($user->hasRole('Admin')) {
-            return $user->hasPermissionTo('permission-list');
-        }
-
-        return false;
+        return $user->hasPermissionTo('permission-list');
     }
 
     /**
@@ -27,15 +22,11 @@ class PermissionPolicy
      */
     public function view($user, Permission $permission): bool
     {
-        // Admin은 Super Admin 관련 권한을 제외한 모든 권한을 볼 수 있음
-        // 권한명에 super-admin이 포함된 권한들을 찾아서 제한
-        // 예: super-admin-manage, super-admin-settings, super-admin-users 등
-
-        if ($user->hasRole('Admin') && ! str_contains($permission->name, 'super-admin')) {
-            return $user->hasPermissionTo('permission-view');
+        if (str_contains($permission->name, 'super-admin')) {
+            return false;
         }
 
-        return false;
+        return $user->hasPermissionTo('permission-view');
     }
 
     /**
@@ -43,12 +34,7 @@ class PermissionPolicy
      */
     public function create($user): bool
     {
-        // Admin만 권한을 생성할 수 있음 (Super Admin은 Gate::before에서 처리됨)
-        if ($user->hasRole('Admin')) {
-            return $user->hasPermissionTo('permission-create');
-        }
-
-        return false;
+        return $user->hasPermissionTo('permission-create');
     }
 
     /**
@@ -64,12 +50,11 @@ class PermissionPolicy
             return false;
         }
 
-        // Admin은 Super Admin 관련 권한을 제외한 권한만 수정할 수 있음
-        if ($user->hasRole('Admin') && ! str_contains($permission->name, 'super-admin')) {
-            return $user->hasPermissionTo('permission-edit');
+        if (str_contains($permission->name, 'super-admin')) {
+            return false;
         }
 
-        return false;
+        return $user->hasPermissionTo('permission-edit');
     }
 
     /**
@@ -95,12 +80,11 @@ class PermissionPolicy
             return false;
         }
 
-        // Admin은 Super Admin 관련 권한을 제외한 권한만 삭제할 수 있음
-        if ($user->hasRole('Admin') && ! str_contains($permission->name, 'super-admin')) {
-            return $user->hasPermissionTo('permission-delete');
+        if (str_contains($permission->name, 'super-admin')) {
+            return false;
         }
 
-        return false;
+        return $user->hasPermissionTo('permission-delete');
     }
 
     /**
@@ -116,12 +100,11 @@ class PermissionPolicy
             return false;
         }
 
-        // Admin은 Super Admin 관련 권한을 제외한 권한만 복원할 수 있음
-        if ($user->hasRole('Admin') && ! str_contains($permission->name, 'super-admin')) {
-            return $user->hasPermissionTo('permission-edit');
+        if (str_contains($permission->name, 'super-admin')) {
+            return false;
         }
 
-        return false;
+        return $user->hasPermissionTo('permission-edit');
     }
 
     /**
@@ -137,12 +120,11 @@ class PermissionPolicy
             return false;
         }
 
-        // Admin은 Super Admin 관련 권한을 제외한 권한만 영구 삭제할 수 있음
-        if ($user->hasRole('Admin') && ! str_contains($permission->name, 'super-admin')) {
-            return $user->hasPermissionTo('permission-delete');
+        if (str_contains($permission->name, 'super-admin')) {
+            return false;
         }
 
-        return false;
+        return $user->hasPermissionTo('permission-delete');
     }
 
     /**
@@ -150,12 +132,11 @@ class PermissionPolicy
      */
     public function assignToRoles($user, Permission $permission): bool
     {
-        // Admin은 Super Admin 관련 권한을 제외한 권한만 역할에 할당할 수 있음
-        if ($user->hasRole('Admin') && ! str_contains($permission->name, 'super-admin')) {
-            return $user->hasPermissionTo('permission-assign-to-roles');
+        if (str_contains($permission->name, 'super-admin')) {
+            return false;
         }
 
-        return false;
+        return $user->hasPermissionTo('permission-assign-to-roles');
     }
 
 }

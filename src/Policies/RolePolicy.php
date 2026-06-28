@@ -14,12 +14,7 @@ class RolePolicy
      */
     public function viewAny($user): bool
     {
-        // Admin만 역할 목록을 볼 수 있음 (Super Admin은 Gate::before에서 처리됨)
-        if ($user->hasRole('Admin')) {
-            return $user->hasPermissionTo('role-list');
-        }
-
-        return false;
+        return $user->hasPermissionTo('role-list');
     }
 
     /**
@@ -27,12 +22,11 @@ class RolePolicy
      */
     public function view($user, Role $role): bool
     {
-        // Admin은 Super Admin 역할을 제외한 모든 역할을 볼 수 있음
-        if ($user->hasRole('Admin') && $role->name !== 'Super Admin') {
-            return $user->hasPermissionTo('role-view');
+        if ($role->name === config('laravel-admin.super_admin_role', 'Super Admin')) {
+            return false;
         }
 
-        return false;
+        return $user->hasPermissionTo('role-view');
     }
 
     /**
@@ -40,12 +34,7 @@ class RolePolicy
      */
     public function create($user): bool
     {
-        // Admin만 역할을 생성할 수 있음 (Super Admin은 Gate::before에서 처리됨)
-        if ($user->hasRole('Admin')) {
-            return $user->hasPermissionTo('role-create');
-        }
-
-        return false;
+        return $user->hasPermissionTo('role-create');
     }
 
     /**
@@ -53,12 +42,11 @@ class RolePolicy
      */
     public function update($user, Role $role): bool
     {
-        // Admin은 Super Admin과 Admin 역할을 제외한 역할만 수정할 수 있음
-        if ($user->hasRole('Admin') && ! in_array($role->name, ['Super Admin', 'Admin'])) {
-            return $user->hasPermissionTo('role-edit');
+        if ($role->name === config('laravel-admin.super_admin_role', 'Super Admin')) {
+            return false;
         }
 
-        return false;
+        return $user->hasPermissionTo('role-edit');
     }
 
     /**
@@ -66,8 +54,7 @@ class RolePolicy
      */
     public function delete($user, Role $role): bool
     {
-        // Super Admin과 Admin 역할은 삭제 불가
-        if (in_array($role->name, ['Super Admin', 'Admin'])) {
+        if ($role->name === config('laravel-admin.super_admin_role', 'Super Admin')) {
             return false;
         }
 
@@ -76,12 +63,7 @@ class RolePolicy
             return false;
         }
 
-        // Admin은 Super Admin과 Admin 역할을 제외한 역할만 삭제할 수 있음
-        if ($user->hasRole('Admin') && ! in_array($role->name, ['Super Admin', 'Admin'])) {
-            return $user->hasPermissionTo('role-delete');
-        }
-
-        return false;
+        return $user->hasPermissionTo('role-delete');
     }
 
     /**
@@ -89,17 +71,11 @@ class RolePolicy
      */
     public function restore($user, Role $role): bool
     {
-        // Super Admin과 Admin 역할은 복원 불가
-        if (in_array($role->name, ['Super Admin', 'Admin'])) {
+        if ($role->name === config('laravel-admin.super_admin_role', 'Super Admin')) {
             return false;
         }
 
-        // Admin은 Super Admin과 Admin 역할을 제외한 역할만 복원할 수 있음
-        if ($user->hasRole('Admin') && ! in_array($role->name, ['Super Admin', 'Admin'])) {
-            return $user->hasPermissionTo('role-edit');
-        }
-
-        return false;
+        return $user->hasPermissionTo('role-edit');
     }
 
     /**
@@ -107,17 +83,11 @@ class RolePolicy
      */
     public function forceDelete($user, Role $role): bool
     {
-        // Super Admin과 Admin 역할은 영구 삭제 불가
-        if (in_array($role->name, ['Super Admin'])) {
+        if ($role->name === config('laravel-admin.super_admin_role', 'Super Admin')) {
             return false;
         }
 
-        // Admin은 Super Admin과 Admin 역할을 제외한 역할만 영구 삭제할 수 있음
-        if ($user->hasRole('Admin') && ! in_array($role->name, ['Super Admin', 'Admin'])) {
-            return $user->hasPermissionTo('role-delete');
-        }
-
-        return false;
+        return $user->hasPermissionTo('role-delete');
     }
 
     /**
@@ -125,17 +95,11 @@ class RolePolicy
      */
     public function assignPermissions($user, Role $role): bool
     {
-        // Super Admin 역할의 권한은 수정 불가
-        if ($role->name === 'Super Admin') {
+        if ($role->name === config('laravel-admin.super_admin_role', 'Super Admin')) {
             return false;
         }
 
-        // Admin은 Super Admin과 Admin 역할을 제외한 역할에만 권한을 할당할 수 있음
-        if ($user->hasRole('Admin') && ! in_array($role->name, ['Super Admin', 'Admin'])) {
-            return $user->hasPermissionTo('role-assign-permissions');
-        }
-
-        return false;
+        return $user->hasPermissionTo('role-assign-permissions');
     }
 
     /**
@@ -143,11 +107,10 @@ class RolePolicy
      */
     public function viewPermissions($user, Role $role): bool
     {
-        // Admin은 Super Admin 역할을 제외한 모든 역할의 권한을 볼 수 있음
-        if ($user->hasRole('Admin') && $role->name !== 'Super Admin') {
-            return $user->hasPermissionTo('role-view-permissions');
+        if ($role->name === config('laravel-admin.super_admin_role', 'Super Admin')) {
+            return false;
         }
 
-        return false;
+        return $user->hasPermissionTo('role-view-permissions');
     }
 }

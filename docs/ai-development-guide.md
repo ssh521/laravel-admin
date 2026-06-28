@@ -89,6 +89,8 @@ Path repository로 개발 중이면 `vendor/` 대신 실제 패키지 경로의 
 - `Super Admin`은 모든 Gate를 통과할 수 있다.
 - 메뉴 폴더 노출은 role과 `menu_category_role`이 제어한다.
 - 세부 기능 접근은 Spatie permission과 route-level `can:*` middleware가 제어한다.
+- `Admin` 역할명 자체로 Policy를 통과시키지 않는다. `Admin`도 DB에 등록되고 부여된 permission으로 접근한다.
+- 새 permission 문자열을 route, Policy, Livewire action에서 쓰면 seeder 또는 `AdminPackageRegistrar`에도 같은 문자열을 등록한다.
 - 권한 문제를 수정할 때는 코드만 보지 말고 route middleware, seeder, 실제 DB role/permission/menu 상태를 함께 확인한다.
 
 ## 검증 기준

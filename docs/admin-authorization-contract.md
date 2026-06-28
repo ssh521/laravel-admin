@@ -2,25 +2,47 @@
 
 `ssh521/laravel-admin`은 관리자 권한을 두 계층으로 나누어 다룬다.
 
+- role은 좌측 메뉴 폴더 노출 대상을 정한다.
+- permission은 route, Policy, action 실행 가능 여부를 정한다.
+
+`Super Admin`은 예외 역할이다. core `Gate::before`가 `config('laravel-admin.super_admin_role', 'Super Admin')` 역할을 가진 관리자를 모든 Gate/Policy 검사에서 통과시킨다.
+
+`Admin`은 예외 역할이 아니다. `Admin` 역할명 자체로 Policy를 통과하지 않으며, DB에 등록된 permission을 역할 또는 관리자 계정이 실제로 가지고 있어야 기능에 접근할 수 있다.
+
 ## 메뉴 폴더 노출
 
 메뉴 폴더 노출은 역할 기반이다.
 
 - `menu_categories`와 `menu_category_role`은 특정 역할이 어떤 메뉴 폴더를 볼 수 있는지 결정한다.
-- 관리자 계정에 역할을 부여하는 것은 기본적으로 좌측 메뉴 폴더 노출을 결정하는 일이다.
+- 관리자 계정에 역할을 부여하는 것은 좌측 메뉴 폴더 노출을 결정하는 일이다.
 - `MenuSeeder`는 `Super Admin` 역할에 기본 메뉴 폴더 전체를 연결한다.
-- `MenuSeeder`는 `Admin` 역할에 기본 일반, 메뉴 관리 폴더를 연결하지만 `관리자 전용` 폴더는 연결하지 않는다.
+- `MenuSeeder`는 `Admin` 역할에도 기본 메뉴 폴더 전체를 연결한다. 기본 설치 화면에서 메뉴가 보이더라도 실제 접근은 permission으로 다시 제한한다.
 - 기능 패키지는 `AdminPackageRegistrar`를 통해 자기 메뉴 카테고리를 `Super Admin`, `Admin`, 또는 패키지 전용 역할에 연결할 수 있다.
+- 메뉴 폴더가 보이는 것과 route/action 접근이 허용되는 것은 같은 의미가 아니다.
 
 ## 세부 권한
 
 세부 기능 접근은 permission 기반이다.
 
 - 라우트 미들웨어, Policy, action 단위 권한 검사는 Spatie permission name을 사용한다.
-- `RolePermissionSeeder`는 laravel-admin의 기본 permission을 생성한다.
+- `RolePermissionSeeder`는 laravel-admin의 기본 Policy와 route에서 쓰는 permission을 생성한다.
 - 기본 설치 기준으로 `Super Admin`과 `Admin`은 설정된 admin guard의 모든 permission을 받는다.
 - 기능 패키지의 관리자 seeder는 `AdminPackageRegistrar`로 permission을 등록한다. 기본값은 패키지 permission을 `Super Admin`, `Admin` 양쪽에 연결한다.
 - 기능 패키지가 더 좁은 기본 권한을 원하면 `permission_roles`를 명시한다.
+
+permission은 반드시 DB에 등록되어 있어야 한다. route middleware, Policy, Livewire action, service action에서 새 permission 문자열을 쓰면 같은 문자열을 core `RolePermissionSeeder`, 기능 패키지 seeder, 또는 `AdminPackageRegistrar` definition에 추가한다.
+
+core 기본 permission prefix:
+
+```text
+super-admin-*
+admin-*
+role-*
+permission-*
+menu-*
+menu-category-*
+user-*
+```
 
 ## 권한 적용 위치
 
@@ -30,6 +52,8 @@
 - 기능 접근은 route-level `can:{permission-name}` 미들웨어를 우선 사용한다.
 - controller action 내부에서 추가 상태 전환, owner 확인, 삭제 가능 여부처럼 record 상태가 필요한 검사를 Policy나 service action에서 보강한다.
 - permission 이름은 route middleware, seeder, 테스트에서 같은 문자열을 사용한다.
+- `Admin` 역할명 확인으로 접근을 허용하지 않는다. `Super Admin` bypass는 core `Gate::before`에만 둔다.
+- `Admin`이 기본 설치 후 접근할 수 있는 이유는 역할명 때문이 아니라 기본 permission이 부여되기 때문이다.
 
 Livewire는 기본 CRUD 소유자가 아니라 보조 UI다.
 
@@ -89,3 +113,15 @@ app(AdminPackageRegistrar::class)->register('laravel-example', [
 ```
 
 이 계약을 따르면 기본 `Admin` 역할은 설치된 관리자 기능을 바로 사용할 수 있고, 패키지별로 필요할 때는 메뉴 폴더를 숨기거나 권한 연결 대상을 명시적으로 좁힐 수 있다.
+
+## 기능 패키지 필수 확인
+
+기능 패키지는 아래 항목을 테스트로 고정한다.
+
+- 관리자 route의 `can:*` middleware permission이 seeder permission과 같은 문자열이다.
+- seeder 실행 후 `permissions` 테이블에 해당 permission이 존재한다.
+- 기본 공개 대상 역할의 `role_has_permissions`에 permission이 연결된다.
+- 메뉴 카테고리 노출 대상 역할은 `menu_category_role`에 연결된다.
+- permission 없는 `Admin` 또는 custom role은 접근할 수 없다.
+- permission 있는 `Admin` 또는 custom role은 접근할 수 있다.
+- `Super Admin`은 직접 permission이 없어도 core bypass로 접근할 수 있다.

@@ -233,7 +233,7 @@ php artisan vendor:publish --tag=laravel-admin-seeders --no-interaction
 database/seeders/vendor/laravel-admin
 ```
 
-기본 `MenuSeeder`는 관리자 계정, 역할, 권한 관리를 위한 `관리자 전용` 메뉴 폴더를 만든다. 이 폴더는 `Super Admin` 역할에만 연결된다.
+기본 `MenuSeeder`는 관리자 계정, 역할, 권한 관리를 위한 `관리자 전용` 메뉴 폴더를 만든다. 이 폴더는 기본 `Super Admin`, `Admin` 역할에 연결된다. 메뉴 폴더 노출은 role 연결로 판단하고, 실제 route/action 접근은 permission으로 다시 판단한다.
 
 ## 권한과 메뉴 계약
 
@@ -245,6 +245,7 @@ database/seeders/vendor/laravel-admin
 - role/permission은 관리자 계정과 관리자 화면 접근 제어에만 사용한다.
 - role은 메뉴 카테고리 노출을 제어한다.
 - permission은 화면과 기능 단위 접근을 제어한다.
+- `Admin` 역할명 자체로는 Policy를 통과하지 않는다. `Admin`도 DB에 등록되고 부여된 permission으로 접근한다.
 - 기능 패키지는 `AdminPackageRegistrar`로 메뉴와 permission을 등록한다.
 - 관리자 화면용 API는 route-level `can:*` 미들웨어와 Policy/Gate를 사용한다.
 
