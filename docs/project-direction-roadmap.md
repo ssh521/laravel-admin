@@ -287,7 +287,7 @@ php artisan laravel-file:install
 
 - `laravel-admin:install`을 fresh install 기준으로 정리한다.
 - `laravel-admin:update`는 config/view/migration/seeder 강제 덮어쓰기를 피한다.
-- `--with=users,file,bbs,blog` 기능 패키지 설치 흐름을 확정한다.
+- `--with=file,bbs,blog` 기능 패키지 설치 흐름을 확정한다.
 - feature package installer discovery 또는 명시 mapping 방식을 결정한다.
 - `make-super-admin` command를 설치 문서의 표준 절차로 만든다.
 - workbench에서 fresh install smoke test를 만든다.
@@ -352,7 +352,7 @@ php artisan laravel-file:install
 2. seeder permission name, route middleware name, 테스트 fixture의 permission string이 같은 이름 체계를 쓰는지 맞춘다.
 3. Admin과 Super Admin의 차이를 route 접근 테스트로 고정한다.
 4. 권한이 필요한 Livewire action에서 `Gate::authorize()` 또는 `$this->authorize()` 누락이 없는지 확인한다.
-5. installer와 `--with=users,file,bbs,blog` 기능 패키지 설치 흐름을 정리한다.
+5. installer와 `--with=file,bbs,blog` 기능 패키지 설치 흐름을 정리한다.
 6. workbench fresh install smoke test를 만든다.
 
 이 순서로 가면 UI shell 안정화 이후 권한 계약을 먼저 고정하고, 그 위에 installer/workbench와 기능 패키지 생태계를 안정적으로 확장할 수 있다.

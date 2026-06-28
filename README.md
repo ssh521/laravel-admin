@@ -140,11 +140,11 @@ php artisan laravel-admin:install --publish-seeders
 기능 패키지를 함께 설치할 수도 있다.
 
 ```bash
-php artisan laravel-admin:install --with=users,file
+php artisan laravel-admin:install --with=file
 php artisan laravel-admin:install --with=bbs,blog --with-test-data
 ```
 
-현재 core installer가 알고 있는 기능 패키지 키는 `users`, `bbs`, `blog`, `file`이다.
+회원 관리는 core 기본 기능이므로 별도 `users` 키를 사용하지 않는다. 현재 core installer가 알고 있는 기능 패키지 키는 `bbs`, `blog`, `file`이다.
 
 ## 설정
 
