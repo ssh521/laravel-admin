@@ -31,12 +31,34 @@ class UserTable extends Component
 
     public $search = '';
 
+    public string $sortField = 'created_at';
+
+    public string $sortDirection = 'desc';
+
     protected $queryString = [
         'search' => ['except' => ''],
+        'sortField' => ['except' => 'created_at'],
+        'sortDirection' => ['except' => 'desc'],
     ];
 
     public function updatingSearch()
     {
+        $this->resetPage();
+    }
+
+    public function sortBy(string $field): void
+    {
+        if (! in_array($field, ['name', 'email', 'created_at'], true)) {
+            return;
+        }
+
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+
         $this->resetPage();
     }
 
@@ -112,8 +134,8 @@ class UserTable extends Component
 
         $users = $this->userService->getUserList([
             'search' => $this->search,
-            'sortField' => 'created_at',
-            'sortDirection' => 'desc',
+            'sortField' => $this->sortField,
+            'sortDirection' => $this->sortDirection,
             'perPage' => 15,
         ]);
 

@@ -24,8 +24,8 @@ class AdminUserController extends Controller
         $adminUsers = $this->adminUserService->getAdminUserList([
             'search' => $request->query('search'),
             'role' => $request->query('role'),
-            'sortField' => 'created_at',
-            'sortDirection' => 'desc',
+            'sortField' => $request->query('sortField', 'created_at'),
+            'sortDirection' => $request->query('sortDirection', 'desc'),
             'perPage' => 15,
         ]);
 

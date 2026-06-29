@@ -32,8 +32,8 @@ class UserController extends Controller
 
         $data = $this->userService->getUserList([
             'search' => $request->search,
-            'sortField' => 'created_at',
-            'sortDirection' => 'desc',
+            'sortField' => $request->query('sortField', 'created_at'),
+            'sortDirection' => $request->query('sortDirection', 'desc'),
             'perPage' => 15,
         ]);
 

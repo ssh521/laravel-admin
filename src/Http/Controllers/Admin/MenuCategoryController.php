@@ -26,6 +26,10 @@ class MenuCategoryController extends Controller
     {
         $this->authorize('viewAny', MenuCategory::class);
 
+        $allowedSortColumns = ['sort_order', 'name', 'menus_count', 'is_active', 'created_at'];
+        $sort = in_array($request->get('sort'), $allowedSortColumns, true) ? $request->get('sort') : 'sort_order';
+        $direction = $request->get('direction') === 'desc' ? 'desc' : 'asc';
+
         $categories = MenuCategory::query()
             ->withCount('menus')
             ->with('roles')
@@ -35,10 +39,14 @@ class MenuCategoryController extends Controller
                     $builder->where('name', 'like', "%{$request->search}%");
                 }
             )
-            ->ordered()
+            ->when($sort === 'sort_order', function ($query) use ($direction) {
+                $query->orderBy('sort_order', $direction)->orderBy('id', $direction);
+            }, function ($query) use ($sort, $direction) {
+                $query->orderBy($sort, $direction)->orderBy('sort_order')->orderBy('id');
+            })
             ->paginate(perPage: 100);
 
-        return view('laravel-admin::admin.menu-categories.index', compact('categories'));
+        return view('laravel-admin::admin.menu-categories.index', compact('categories', 'sort', 'direction'));
     }
 
     /**
