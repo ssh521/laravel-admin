@@ -23,6 +23,20 @@ class MenuOrderModal extends Component
 
     public bool $hasChanges = false;
 
+    public ?string $modalStackId = null;
+
+    public function mount(?int $categoryId = null, ?string $categoryName = null, ?string $modalStackId = null): void
+    {
+        $this->modalStackId = $modalStackId;
+
+        if ($categoryId) {
+            $this->open([
+                'categoryId' => $categoryId,
+                'categoryName' => $categoryName,
+            ]);
+        }
+    }
+
     #[On('admin-menus:menu-order-modal:open')]
     public function open(mixed $data = null): void
     {
@@ -206,7 +220,10 @@ class MenuOrderModal extends Component
     public function close(): void
     {
         $this->resetModal();
-        $this->dispatch('close-modal', ['modalId' => 'menu-order-modal']);
+
+        if ($this->modalStackId) {
+            $this->dispatch('admin:modal-stack:close', id: $this->modalStackId);
+        }
     }
 
     public function resetModal(): void

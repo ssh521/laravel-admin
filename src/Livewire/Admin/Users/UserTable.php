@@ -62,26 +62,33 @@ class UserTable extends Component
         $this->resetPage();
     }
 
-    // 자식 모달창 열기 (사용자 생성)
-    public function create()
-    {
-        $this->authorize('create', User::class);
-        $this->dispatch('admin-user-management:user-form:open', ['mode' => 'create']);
-    }
-
     // 자식 모달창 열기 (사용자 수정)
     public function edit($id)
     {
         $user = $this->userService->getUserDetail(['userId' => $id]);
         $this->authorize('update', $user);
-        $this->dispatch('admin-user-management:user-form:open', ['mode' => 'edit', 'userId' => $user->id]);
+
+        $this->dispatch('admin:modal-stack:push', [
+            'id' => 'user-edit-'.$user->id.'-'.uniqid(),
+            'component' => 'admin.users.user-edit-modal',
+            'params' => ['userId' => $user->id],
+            'title' => '사용자 수정',
+            'size' => 'md',
+        ]);
     }
 
     // 사용자 상세 모달 열기
-    public function showUserDetailModal(int $userId): void
+    public function showUserModal(int $userId): void
     {
-        $this->dispatch('admin-user-management:user-detail-modal:open', [
-            'userId' => $userId,
+        $user = $this->userService->getUserDetail(['userId' => $userId]);
+        $this->authorize('view', $user);
+
+        $this->dispatch('admin:modal-stack:push', [
+            'id' => 'user-show-'.$user->id.'-'.uniqid(),
+            'component' => 'admin.users.user-show-modal',
+            'params' => ['userId' => $user->id],
+            'title' => '사용자 상세 정보',
+            'size' => 'lg',
         ]);
     }
 
@@ -116,6 +123,12 @@ class UserTable extends Component
     {
         // 사용자가 저장된 후 목록 새로고침 (현재 페이지 유지)
         // Livewire가 자동으로 컴포넌트를 다시 렌더링하여 최신 데이터를 표시
+    }
+
+    #[On('user-saved')]
+    public function handleUserSavedAlias(): void
+    {
+        $this->handleUserSaved();
     }
 
     #[On('admin-user-management:user:rendering')]

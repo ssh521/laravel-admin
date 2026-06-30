@@ -18,11 +18,21 @@ class ChangeCategoryModal extends Component
 
     public ?int $categoryId = null; // null = 미분류
 
+    public ?string $modalStackId = null;
+
     /** @var array<int, array{id:int,name:string,count:int}> */
     public array $categories = [];
 
-    public function mount(): void
+    public function mount(array $selectedMenuIds = [], ?string $modalStackId = null): void
     {
+        $this->modalStackId = $modalStackId;
+        $this->selectedMenuIds = collect($selectedMenuIds)
+            ->map(fn ($v) => (int) $v)
+            ->filter(fn ($v) => $v > 0)
+            ->unique()
+            ->values()
+            ->all();
+
         $this->loadCategories();
     }
 
@@ -70,12 +80,11 @@ class ChangeCategoryModal extends Component
             Menu::whereIn('id', $this->selectedMenuIds)
                 ->update(['category_id' => $this->categoryId]);
 
-            $this->js('
-                window.dispatchEvent(new CustomEvent("draggable-modal-close", {
-                    detail: { modalId: "category-selection-modal" }
-                }));
-                setTimeout(() => window.location.reload(), 100);
-            ');
+            if ($this->modalStackId) {
+                $this->dispatch('admin:modal-stack:close', id: $this->modalStackId);
+            }
+
+            $this->js('setTimeout(() => window.location.reload(), 100);');
         } catch (\Throwable $e) {
             Log::error('ChangeCategoryModal save failed', ['error' => $e->getMessage()]);
             $this->js('alert("카테고리 변경 중 오류가 발생했습니다.");');

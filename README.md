@@ -291,6 +291,34 @@ database/seeders/vendor/laravel-admin
 
 `<x-button>`, `<x-input>`, `<x-layouts.admin>`처럼 prefix 없는 컴포넌트는 호스트 앱의 소유일 수 있으므로 패키지 view에서 사용하지 않는다.
 
+### 동적 Livewire 모달
+
+동적 Livewire child component를 모달 안에 띄울 때는 `admin.modal-stack`을 페이지에 한 번 렌더링한다.
+
+```blade
+<livewire:admin.modal-stack />
+```
+
+부모 컴포넌트는 `admin:modal-stack:open` 또는 `admin:modal-stack:push` 이벤트로 모달을 연다. `open`은 기존 stack을 교체하고, `push`는 다중 모달을 쌓는다.
+
+```php
+$this->dispatch('admin:modal-stack:push', [
+    'component' => 'admin.users.user-edit-modal',
+    'params' => ['userId' => $user->id],
+    'title' => '사용자 수정',
+    'size' => 'md',
+]);
+```
+
+ModalStack은 component name, modal id, params hash, version으로 고유 key를 만들고, 닫힌 모달을 stack에서 제거한다. 같은 edit component를 여러 번 열어도 Livewire 인스턴스와 validation error가 섞이지 않는다.
+
+자식 컴포넌트는 저장 후 이벤트를 발생시키고 stack entry를 닫을 수 있다.
+
+```php
+$this->dispatch('user-saved', userId: $this->userId);
+$this->dispatch('admin:modal-stack:close', id: $this->modalStackId);
+```
+
 컴포넌트만 퍼블리시하려면 아래 명령을 사용한다.
 
 ```bash

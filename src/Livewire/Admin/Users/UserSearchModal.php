@@ -17,6 +17,8 @@ class UserSearchModal extends Component
 
     public string $modalId = '';
 
+    public ?string $modalStackId = null;
+
     public ?string $userId = null;
 
     public string $search = '';
@@ -28,6 +30,12 @@ class UserSearchModal extends Component
     public function boot(ResolvesUserModel $users): void
     {
         $this->users = $users;
+    }
+
+    public function mount(?string $modalStackId = null, ?string $userId = null, ?string $userName = null, ?string $userEmail = null): void
+    {
+        $this->modalStackId = $modalStackId;
+        $this->applyInput($userId, $userName, $userEmail);
     }
 
     #[On('admin-user-management:user-search-modal:prefill')]
@@ -64,11 +72,11 @@ class UserSearchModal extends Component
         ])."
             }));
             
-            // 모달 닫기 이벤트 디스패치
-            window.dispatchEvent(new CustomEvent('close-modal', {
-                detail: { modalId: '{$this->modalId}' }
-            }));
         ");
+
+        if ($this->modalStackId) {
+            $this->dispatch('admin:modal-stack:close', id: $this->modalStackId);
+        }
     }
 
     public function clearSearch(): void
@@ -79,17 +87,27 @@ class UserSearchModal extends Component
 
     public function openUserEditModal(string $userId): void
     {
-        $this->dispatch('admin-user-management:user-form:open', [
-            'mode' => 'edit',
-            'userId' => $userId,
+        $this->dispatch('admin:modal-stack:push', [
+            'id' => 'user-edit-'.$userId.'-'.uniqid(),
+            'component' => 'admin.users.user-edit-modal',
+            'params' => ['userId' => $userId],
+            'title' => '사용자 수정',
+            'size' => 'md',
+            'width' => 576,
+            'height' => 560,
         ]);
     }
 
     public function openUserViewModal(string $userId): void
     {
-        $this->dispatch('admin-user-management:user-form:open', [
-            'mode' => 'view',
-            'userId' => $userId,
+        $this->dispatch('admin:modal-stack:push', [
+            'id' => 'user-show-'.$userId.'-'.uniqid(),
+            'component' => 'admin.users.user-show-modal',
+            'params' => ['userId' => $userId],
+            'title' => '사용자 상세 정보',
+            'size' => 'lg',
+            'width' => 768,
+            'height' => 560,
         ]);
     }
 
