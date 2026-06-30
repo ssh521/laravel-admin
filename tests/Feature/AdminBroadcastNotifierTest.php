@@ -112,6 +112,51 @@ class AdminBroadcastNotifierTest extends TestCase
         $this->assertCount(1, $notification['notifiables']);
     }
 
+    public function test_it_sends_admin_login_notification_when_integration_is_available(): void
+    {
+        $adminUser = AdminUser::query()->create([
+            'name' => 'Login Admin',
+            'email' => 'login-admin@example.com',
+            'password' => 'password',
+        ]);
+
+        $this->actingAs($adminUser, config('laravel-admin.auth.guard', 'laravel_admin'));
+
+        app(AdminBroadcastNotifier::class)->adminLoggedIn();
+
+        $this->assertCount(1, FakeBroadcastNotification::$sent);
+
+        $notification = FakeBroadcastNotification::$sent[0];
+
+        $this->assertSame('system', $notification['type']);
+        $this->assertSame('관리자가 로그인했습니다', $notification['title']);
+        $this->assertSame('Login Admin login-admin@example.com', $notification['body']);
+        $this->assertSame('laravel-admin', $notification['source']);
+        $this->assertSame('admin_user', $notification['payload']['resource']);
+        $this->assertSame($adminUser->getKey(), $notification['payload']['resource_id']);
+        $this->assertSame('logged_in', $notification['payload']['event']);
+        $this->assertSame($adminUser->getKey(), $notification['related']->getKey());
+        $this->assertSame($adminUser->getKey(), $notification['actor']->getKey());
+        $this->assertCount(1, $notification['notifiables']);
+    }
+
+    public function test_it_can_disable_admin_login_notifications_by_config(): void
+    {
+        config()->set('laravel-admin.broadcast_notifications.login_events_enabled', false);
+
+        $adminUser = AdminUser::query()->create([
+            'name' => 'Silent Login Admin',
+            'email' => 'silent-login-admin@example.com',
+            'password' => 'password',
+        ]);
+
+        $this->actingAs($adminUser, config('laravel-admin.auth.guard', 'laravel_admin'));
+
+        app(AdminBroadcastNotifier::class)->adminLoggedIn();
+
+        $this->assertSame([], FakeBroadcastNotification::$sent);
+    }
+
     private function adminUserService(): AdminUserService
     {
         return app(AdminUserService::class);

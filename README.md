@@ -180,10 +180,17 @@ return [
     'admin_users_table' => 'admin_users',
     'user_model' => App\Models\User::class,
     'super_admin_role' => 'Super Admin',
+    'broadcast_notifications' => [
+        'enabled' => true,
+        'login_events_enabled' => true,
+        'facade' => 'Ssh521\\LaravelBroadcastNotification\\Facades\\BroadcastNotification',
+    ],
 ];
 ```
 
 서비스 프로바이더는 설정된 guard/provider를 런타임에 등록한다. 새 Laravel 프로젝트에서 기본 `laravel_admin` guard를 그대로 쓴다면 `config/auth.php`를 직접 수정하지 않아도 된다.
+
+`ssh521/laravel-broadcast-notification`이 설치되어 있으면 관리자 계정 변경, 관리자 리소스 변경, 관리자 로그인 같은 이벤트를 알림으로 보낼 수 있다. 전체 연동은 `broadcast_notifications.enabled`로 끄고, 로그인 알림만 끄려면 `LARAVEL_ADMIN_BROADCAST_LOGIN_NOTIFICATIONS_ENABLED=false` 또는 `broadcast_notifications.login_events_enabled=false`를 사용한다.
 
 ## 관리자 인증
 

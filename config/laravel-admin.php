@@ -81,6 +81,7 @@ return [
     'super_admin_role' => 'Super Admin',
     'broadcast_notifications' => [
         'enabled' => env('LARAVEL_ADMIN_BROADCAST_NOTIFICATIONS_ENABLED', true),
+        'login_events_enabled' => env('LARAVEL_ADMIN_BROADCAST_LOGIN_NOTIFICATIONS_ENABLED', true),
         'facade' => 'Ssh521\\LaravelBroadcastNotification\\Facades\\BroadcastNotification',
     ],
     'vite' => [

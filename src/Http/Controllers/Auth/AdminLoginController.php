@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Ssh521\LaravelAdmin\Http\Controllers\Controller;
+use Ssh521\LaravelAdmin\Support\AdminBroadcastNotifier;
 
 class AdminLoginController extends Controller
 {
@@ -43,6 +44,8 @@ class AdminLoginController extends Controller
         }
 
         $request->session()->regenerate();
+
+        app(AdminBroadcastNotifier::class)->adminLoggedIn($request);
 
         return redirect()->intended($this->redirectPath());
     }

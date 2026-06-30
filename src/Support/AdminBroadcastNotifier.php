@@ -3,6 +3,7 @@
 namespace Ssh521\LaravelAdmin\Support;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -71,6 +72,29 @@ class AdminBroadcastNotifier
         );
     }
 
+    public function adminLoggedIn(?Request $request = null): void
+    {
+        if (! $this->isLoginEventEnabled()) {
+            return;
+        }
+
+        $adminUser = $this->actor();
+
+        if (! $adminUser instanceof Model) {
+            return;
+        }
+
+        $this->sendAdminUserNotification(
+            adminUser: $adminUser,
+            type: 'system',
+            title: '관리자가 로그인했습니다',
+            event: 'logged_in',
+            payload: [
+                'ip' => $request?->ip(),
+            ],
+        );
+    }
+
     /**
      * @param  array<string, mixed>  $payload
      */
@@ -125,6 +149,7 @@ class AdminBroadcastNotifier
         string $event,
         ?string $url = null,
         bool $includeUrl = true,
+        array $payload = [],
     ): void {
         if (! $this->isEnabled()) {
             return;
@@ -142,7 +167,7 @@ class AdminBroadcastNotifier
                 ->title($title)
                 ->body($this->adminUserLabel($adminUser))
                 ->url($includeUrl ? ($url ?? $this->adminUserUrl($adminUser)) : null)
-                ->payload([
+                ->payload($payload + [
                     'resource' => 'admin_user',
                     'resource_id' => $adminUser->getKey(),
                     'event' => $event,
@@ -160,6 +185,12 @@ class AdminBroadcastNotifier
     private function isEnabled(): bool
     {
         return config('laravel-admin.broadcast_notifications.enabled', true) === true;
+    }
+
+    private function isLoginEventEnabled(): bool
+    {
+        return $this->isEnabled()
+            && config('laravel-admin.broadcast_notifications.login_events_enabled', true) === true;
     }
 
     private function facade(): string
