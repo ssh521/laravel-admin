@@ -146,6 +146,15 @@ php artisan laravel-admin:install --with=bbs,blog --with-test-data
 
 회원 관리는 core 기본 기능이므로 별도 `users` 키를 사용하지 않는다. 현재 core installer가 알고 있는 기능 패키지 키는 `bbs`, `blog`, `file`이다.
 
+실시간 관리자 알림이 필요하면 추천 확장 패키지를 추가로 설치한다. `laravel-admin`은 알림 패키지 없이도 동작하며, 패키지가 설치되어 있고 `broadcast_notifications.enabled`가 켜져 있을 때만 선택적으로 알림을 발송한다.
+
+```bash
+composer require ssh521/laravel-broadcast-notification
+php artisan laravel-broadcast-notification:install
+```
+
+알림 패키지를 설치하면 관리자 계정 생성/수정/삭제, 관리자 권한 변경, 역할/권한/메뉴/메뉴 카테고리 변경, 관리자 로그인 이벤트를 관리자들에게 broadcast notification으로 보낼 수 있다.
+
 ## 설정
 
 기본 설정 파일은 `config/laravel-admin.php`로 퍼블리시할 수 있다.
@@ -190,7 +199,9 @@ return [
 
 서비스 프로바이더는 설정된 guard/provider를 런타임에 등록한다. 새 Laravel 프로젝트에서 기본 `laravel_admin` guard를 그대로 쓴다면 `config/auth.php`를 직접 수정하지 않아도 된다.
 
-`ssh521/laravel-broadcast-notification`이 설치되어 있으면 관리자 계정 변경, 관리자 리소스 변경, 관리자 로그인 같은 이벤트를 알림으로 보낼 수 있다. 전체 연동은 `broadcast_notifications.enabled`로 끄고, 로그인 알림만 끄려면 `LARAVEL_ADMIN_BROADCAST_LOGIN_NOTIFICATIONS_ENABLED=false` 또는 `broadcast_notifications.login_events_enabled=false`를 사용한다.
+`ssh521/laravel-broadcast-notification`은 선택 의존성이다. 설치되어 있지 않거나 configured facade class가 없으면 알림 발송은 조용히 건너뛰고 관리자 기능은 계속 동작한다.
+
+전체 연동은 `LARAVEL_ADMIN_BROADCAST_NOTIFICATIONS_ENABLED=false` 또는 `broadcast_notifications.enabled=false`로 끈다. 로그인 알림만 끄려면 `LARAVEL_ADMIN_BROADCAST_LOGIN_NOTIFICATIONS_ENABLED=false` 또는 `broadcast_notifications.login_events_enabled=false`를 사용한다. 커스텀 알림 facade를 쓸 때는 `broadcast_notifications.facade`에 `to()` 메서드를 제공하는 class를 지정한다.
 
 ## 관리자 인증
 

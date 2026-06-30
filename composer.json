@@ -33,6 +33,9 @@
         "pestphp/pest": "^4.0",
         "pestphp/pest-plugin-laravel": "^4.0"
     },
+    "suggest": {
+        "ssh521/laravel-broadcast-notification": "관리자 리소스 변경, 권한 변경, 로그인 이벤트를 실시간 관리자 알림으로 표시하려면 설치하세요."
+    },
     "scripts": {
         "test": "vendor/bin/phpunit --configuration phpunit.xml.dist"
     },
