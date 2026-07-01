@@ -106,8 +106,9 @@ class UserSearchModal extends Component
             'params' => ['userId' => $userId],
             'title' => '사용자 상세 정보',
             'size' => 'lg',
-            'width' => 768,
-            'height' => 560,
+            'width' => 680,
+            'height' => 480,
+            'minHeight' => 420,
         ]);
     }
 

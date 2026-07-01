@@ -72,6 +72,27 @@ class ModalStackTest extends TestCase
         $this->assertSame(5001, $component->instance()->zIndexFor(1));
     }
 
+    public function test_modal_dimensions_are_preserved_from_named_event_payload(): void
+    {
+        $component = Livewire::test(ModalStack::class)
+            ->call(
+                'pushModal',
+                component: 'test.modal-child',
+                params: ['userId' => 1],
+                title: '사용자 상세 정보',
+                size: 'lg',
+                width: 680,
+                height: 480,
+                minHeight: 420,
+            );
+
+        $modal = $component->get('modals')[0];
+
+        $this->assertSame(680, $modal['width']);
+        $this->assertSame(480, $modal['height']);
+        $this->assertSame(420, $modal['minHeight']);
+    }
+
     public function test_close_top_and_close_all_remove_modal_entries(): void
     {
         Livewire::test(ModalStack::class)

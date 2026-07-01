@@ -19,17 +19,69 @@ class ModalStack extends Component
     public int $version = 0;
 
     #[On('admin:modal-stack:open')]
-    public function openModal(mixed $component = null, array $params = [], ?string $title = null, ?string $size = null, ?string $id = null): void
+    public function openModal(
+        mixed $component = null,
+        array $params = [],
+        ?string $title = null,
+        ?string $size = null,
+        ?string $id = null,
+        mixed $width = null,
+        mixed $height = null,
+        mixed $minWidth = null,
+        mixed $minHeight = null,
+        mixed $draggable = null,
+        mixed $resizable = null,
+        mixed $closeOnBackdrop = null
+    ): void
     {
-        $modal = $this->makeModal($this->normalizePayload($component, $params, $title, $size, $id));
+        $modal = $this->makeModal($this->normalizePayload(
+            $component,
+            $params,
+            $title,
+            $size,
+            $id,
+            $width,
+            $height,
+            $minWidth,
+            $minHeight,
+            $draggable,
+            $resizable,
+            $closeOnBackdrop
+        ));
 
         $this->modals = [$modal];
     }
 
     #[On('admin:modal-stack:push')]
-    public function pushModal(mixed $component = null, array $params = [], ?string $title = null, ?string $size = null, ?string $id = null): void
+    public function pushModal(
+        mixed $component = null,
+        array $params = [],
+        ?string $title = null,
+        ?string $size = null,
+        ?string $id = null,
+        mixed $width = null,
+        mixed $height = null,
+        mixed $minWidth = null,
+        mixed $minHeight = null,
+        mixed $draggable = null,
+        mixed $resizable = null,
+        mixed $closeOnBackdrop = null
+    ): void
     {
-        $this->modals[] = $this->makeModal($this->normalizePayload($component, $params, $title, $size, $id));
+        $this->modals[] = $this->makeModal($this->normalizePayload(
+            $component,
+            $params,
+            $title,
+            $size,
+            $id,
+            $width,
+            $height,
+            $minWidth,
+            $minHeight,
+            $draggable,
+            $resizable,
+            $closeOnBackdrop
+        ));
     }
 
     #[On('admin:modal-stack:close')]
@@ -160,7 +212,20 @@ class ModalStack extends Component
     /**
      * @return array<string, mixed>
      */
-    private function normalizePayload(mixed $component, array $params, ?string $title, ?string $size, ?string $id): array
+    private function normalizePayload(
+        mixed $component,
+        array $params,
+        ?string $title,
+        ?string $size,
+        ?string $id,
+        mixed $width,
+        mixed $height,
+        mixed $minWidth,
+        mixed $minHeight,
+        mixed $draggable,
+        mixed $resizable,
+        mixed $closeOnBackdrop
+    ): array
     {
         if (is_array($component)) {
             return $component;
@@ -176,6 +241,13 @@ class ModalStack extends Component
             'title' => $title,
             'size' => $size,
             'id' => $id,
+            'width' => $width,
+            'height' => $height,
+            'minWidth' => $minWidth,
+            'minHeight' => $minHeight,
+            'draggable' => $draggable,
+            'resizable' => $resizable,
+            'closeOnBackdrop' => $closeOnBackdrop,
         ], fn (mixed $value): bool => $value !== null);
     }
 

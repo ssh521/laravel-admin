@@ -89,6 +89,9 @@ class UserTable extends Component
             'params' => ['userId' => $user->id],
             'title' => '사용자 상세 정보',
             'size' => 'lg',
+            'width' => 680,
+            'height' => 480,
+            'minHeight' => 420,
         ]);
     }
 
