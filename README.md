@@ -321,6 +321,18 @@ $this->dispatch('admin:modal-stack:push', [
 ]);
 ```
 
+배열 payload와 named 인자를 모두 지원한다. 배열 payload를 쓰면서 `width`, `height`, `minHeight`, `draggable`, `resizable`, `closeOnBackdrop` 같은 named 옵션을 함께 넘기면 named 옵션이 payload 값보다 우선한다.
+
+```php
+$this->dispatch(
+    'admin:modal-stack:push',
+    ['component' => 'admin.users.user-show-modal', 'params' => ['userId' => $user->id]],
+    width: 680,
+    height: 480,
+    minHeight: 420,
+);
+```
+
 ModalStack은 component name, modal id, params hash, version으로 고유 key를 만들고, 닫힌 모달을 stack에서 제거한다. 같은 edit component를 여러 번 열어도 Livewire 인스턴스와 validation error가 섞이지 않는다.
 
 자식 컴포넌트는 저장 후 이벤트를 발생시키고 stack entry를 닫을 수 있다.

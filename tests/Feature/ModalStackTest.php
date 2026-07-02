@@ -2,6 +2,7 @@
 
 namespace Ssh521\LaravelAdmin\Tests\Feature;
 
+use InvalidArgumentException;
 use Livewire\Livewire;
 use Livewire\Component;
 use Ssh521\LaravelAdmin\Livewire\Admin\ModalStack;
@@ -91,6 +92,51 @@ class ModalStackTest extends TestCase
         $this->assertSame(680, $modal['width']);
         $this->assertSame(480, $modal['height']);
         $this->assertSame(420, $modal['minHeight']);
+    }
+
+    public function test_named_modal_options_override_array_payload_values(): void
+    {
+        $component = Livewire::test(ModalStack::class)
+            ->call(
+                'pushModal',
+                component: [
+                    'id' => 'mixed-payload',
+                    'component' => 'test.modal-child',
+                    'params' => ['userId' => 1],
+                    'title' => '사용자 상세 정보',
+                    'size' => 'lg',
+                ],
+                width: 680,
+                height: 480,
+                minHeight: 420,
+            );
+
+        $modal = $component->get('modals')[0];
+
+        $this->assertSame(680, $modal['width']);
+        $this->assertSame(480, $modal['height']);
+        $this->assertSame(420, $modal['minHeight']);
+    }
+
+    public function test_open_modal_keeps_existing_stack_when_payload_is_invalid(): void
+    {
+        $component = Livewire::test(ModalStack::class)
+            ->call('pushModal', [
+                'id' => 'existing',
+                'component' => 'test.modal-child',
+                'params' => ['userId' => 1],
+                'title' => '기존 모달',
+            ]);
+
+        try {
+            $component->call('openModal', ['title' => '잘못된 모달']);
+        } catch (InvalidArgumentException) {
+            $this->assertSame('existing', $component->get('modals')[0]['id']);
+
+            return;
+        }
+
+        $this->fail('Expected invalid modal payload to throw an exception.');
     }
 
     public function test_close_top_and_close_all_remove_modal_entries(): void

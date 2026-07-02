@@ -8,12 +8,13 @@ use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Ssh521\LaravelAdmin\Livewire\Concerns\BuildsUserShowModalPayload;
 use Ssh521\LaravelAdmin\Models\User;
 use Ssh521\LaravelAdmin\Support\ResolvesUserModel;
 
 class UserSearchModal extends Component
 {
-    use AuthorizesRequests,  WithPagination;
+    use AuthorizesRequests, BuildsUserShowModalPayload, WithPagination;
 
     public string $modalId = '';
 
@@ -100,16 +101,7 @@ class UserSearchModal extends Component
 
     public function openUserViewModal(string $userId): void
     {
-        $this->dispatch('admin:modal-stack:push', [
-            'id' => 'user-show-'.$userId.'-'.uniqid(),
-            'component' => 'admin.users.user-show-modal',
-            'params' => ['userId' => $userId],
-            'title' => '사용자 상세 정보',
-            'size' => 'lg',
-            'width' => 680,
-            'height' => 480,
-            'minHeight' => 420,
-        ]);
+        $this->dispatch('admin:modal-stack:push', $this->userShowModalPayload($userId));
     }
 
     private function resetSearchState(): void

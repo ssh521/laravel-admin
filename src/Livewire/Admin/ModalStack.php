@@ -34,20 +34,8 @@ class ModalStack extends Component
         mixed $closeOnBackdrop = null
     ): void
     {
-        $modal = $this->makeModal($this->normalizePayload(
-            $component,
-            $params,
-            $title,
-            $size,
-            $id,
-            $width,
-            $height,
-            $minWidth,
-            $minHeight,
-            $draggable,
-            $resizable,
-            $closeOnBackdrop
-        ));
+        $payload = $this->normalizePayload($component, $this->namedPayload(get_defined_vars()));
+        $modal = $this->makeModal($payload);
 
         $this->modals = [$modal];
     }
@@ -68,20 +56,9 @@ class ModalStack extends Component
         mixed $closeOnBackdrop = null
     ): void
     {
-        $this->modals[] = $this->makeModal($this->normalizePayload(
-            $component,
-            $params,
-            $title,
-            $size,
-            $id,
-            $width,
-            $height,
-            $minWidth,
-            $minHeight,
-            $draggable,
-            $resizable,
-            $closeOnBackdrop
-        ));
+        $this->modals[] = $this->makeModal(
+            $this->normalizePayload($component, $this->namedPayload(get_defined_vars()))
+        );
     }
 
     #[On('admin:modal-stack:close')]
@@ -212,43 +189,34 @@ class ModalStack extends Component
     /**
      * @return array<string, mixed>
      */
-    private function normalizePayload(
-        mixed $component,
-        array $params,
-        ?string $title,
-        ?string $size,
-        ?string $id,
-        mixed $width,
-        mixed $height,
-        mixed $minWidth,
-        mixed $minHeight,
-        mixed $draggable,
-        mixed $resizable,
-        mixed $closeOnBackdrop
-    ): array
+    private function namedPayload(array $arguments): array
+    {
+        unset($arguments['component']);
+
+        return array_filter(
+            $arguments,
+            fn (mixed $value, string $key): bool => $value !== null && ! ($key === 'params' && $value === []),
+            ARRAY_FILTER_USE_BOTH
+        );
+    }
+
+    /**
+     * @param  array<string, mixed>  $namedPayload
+     * @return array<string, mixed>
+     */
+    private function normalizePayload(mixed $component, array $namedPayload = []): array
     {
         if (is_array($component)) {
-            return $component;
+            return array_replace($component, $namedPayload);
         }
 
         if (is_object($component)) {
-            return (array) $component;
+            return array_replace((array) $component, $namedPayload);
         }
 
-        return array_filter([
+        return array_replace(array_filter([
             'component' => $component,
-            'params' => $params,
-            'title' => $title,
-            'size' => $size,
-            'id' => $id,
-            'width' => $width,
-            'height' => $height,
-            'minWidth' => $minWidth,
-            'minHeight' => $minHeight,
-            'draggable' => $draggable,
-            'resizable' => $resizable,
-            'closeOnBackdrop' => $closeOnBackdrop,
-        ], fn (mixed $value): bool => $value !== null);
+        ], fn (mixed $value): bool => $value !== null), $namedPayload);
     }
 
     /**

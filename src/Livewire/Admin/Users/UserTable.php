@@ -10,6 +10,7 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Ssh521\LaravelAdmin\Livewire\Concerns\BuildsUserShowModalPayload;
 use Ssh521\LaravelAdmin\Models\User;
 use Ssh521\LaravelAdmin\Services\UserService;
 
@@ -18,7 +19,7 @@ use Ssh521\LaravelAdmin\Services\UserService;
 
 class UserTable extends Component
 {
-    use AuthorizesRequests, WithPagination;
+    use AuthorizesRequests, BuildsUserShowModalPayload, WithPagination;
 
     private UserService $userService;
 
@@ -83,16 +84,7 @@ class UserTable extends Component
         $user = $this->userService->getUserDetail(['userId' => $userId]);
         $this->authorize('view', $user);
 
-        $this->dispatch('admin:modal-stack:push', [
-            'id' => 'user-show-'.$user->id.'-'.uniqid(),
-            'component' => 'admin.users.user-show-modal',
-            'params' => ['userId' => $user->id],
-            'title' => '사용자 상세 정보',
-            'size' => 'lg',
-            'width' => 680,
-            'height' => 480,
-            'minHeight' => 420,
-        ]);
+        $this->dispatch('admin:modal-stack:push', $this->userShowModalPayload($user->id));
     }
 
     public function delete($id)
