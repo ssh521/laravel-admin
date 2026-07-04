@@ -77,6 +77,7 @@ class ModalStack extends Component
             $this->modals,
             fn (array $modal): bool => $modal['id'] !== $modalId
         ));
+        $this->dispatch('admin:dropdown-close-all');
     }
 
     #[On('admin:modal-stack:close-top')]
@@ -84,12 +85,14 @@ class ModalStack extends Component
     {
         array_pop($this->modals);
         $this->modals = array_values($this->modals);
+        $this->dispatch('admin:dropdown-close-all');
     }
 
     #[On('admin:modal-stack:close-all')]
     public function closeAllModals(): void
     {
         $this->modals = [];
+        $this->dispatch('admin:dropdown-close-all');
     }
 
     public function isTopModal(string $id): bool

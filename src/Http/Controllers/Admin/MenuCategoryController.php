@@ -72,8 +72,8 @@ class MenuCategoryController extends Controller
             'is_active' => 'boolean',
         ]);
 
-        $input = $request->all();
-        $input['sort_order'] = $input['sort_order'] ?? 0;
+        $input = $request->only(['name', 'sort_order']);
+        $input['sort_order'] = $input['sort_order'] ?? ((int) MenuCategory::query()->max('sort_order') + 1);
         $input['is_active'] = $request->has('is_active');
 
         $menuCategory = MenuCategory::create($input);
@@ -126,8 +126,12 @@ class MenuCategoryController extends Controller
             'is_active' => 'boolean',
         ]);
 
-        $input = $request->all();
-        $input['sort_order'] = $input['sort_order'] ?? 0;
+        $input = $request->only(['name']);
+
+        if ($request->filled('sort_order')) {
+            $input['sort_order'] = $request->integer('sort_order');
+        }
+
         $input['is_active'] = $request->has('is_active');
 
         $menuCategory->update($input);
