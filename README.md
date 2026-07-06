@@ -42,6 +42,16 @@ Laravel starter kit
 
 관리자 CSS/JS는 Laravel Vite 빌드에 포함해서 사용한다.
 
+## Starter Kit 선택
+
+`ssh521/laravel-admin`은 Laravel 13 기반 프로젝트를 전제로 한다. 2026년 7월 현재 `laravel/livewire-starter-kit`의 stable 태그(`v1.0.x`)는 Laravel 12를 설치하므로, Laravel 13 프로젝트를 새로 만들 때는 `dev-main`을 명시해야 한다.
+
+```bash
+composer create-project laravel/livewire-starter-kit:dev-main workbench-laravel13
+```
+
+stable starter kit으로 생성한 뒤 `laravel-admin`을 설치하면 `illuminate/* ^13.0` 의존성 충돌이 발생한다. 이미 Laravel 12 starter kit으로 만든 프로젝트라면 먼저 Laravel 13 / Livewire 4 계열로 올린 뒤 설치한다.
+
 ## 로컬 개발 폴더 구조
 
 로컬에서 여러 `ssh521/*` 패키지를 함께 개발할 때는 workbench Laravel 앱과 패키지 repo를 분리해서 둔다.
@@ -58,7 +68,7 @@ Laravel starter kit
         └── laravel-blog/
 ```
 
-`workbench-laravel13`은 Laravel starter kit 설치 후 패키지를 path repository로 연결해 실제 설치, 화면, migrate/seed, Vite build를 검증하는 앱이다. 각 패키지는 독립 GitHub repo로 관리하고, workbench에서는 symlink 기반 path repository로 연결한다.
+`workbench-laravel13`은 Laravel 13 starter kit 설치 후 패키지를 path repository로 연결해 실제 설치, 화면, migrate/seed, Vite build를 검증하는 앱이다. 각 패키지는 독립 GitHub repo로 관리하고, workbench에서는 symlink 기반 path repository로 연결한다.
 
 workbench `composer.json` 예시는 아래와 같다.
 
@@ -90,20 +100,28 @@ workbench `composer.json` 예시는 아래와 같다.
 일반 프로젝트에서는 Composer로 패키지를 설치한다.
 
 ```bash
+composer create-project laravel/livewire-starter-kit:dev-main my-site
+cd my-site
 composer require ssh521/laravel-admin
 php artisan laravel-admin:install
+npm install
 npm run build
 ```
 
 로컬 패키지 개발 환경에서는 path repository를 연결해서 설치한다.
 
 ```bash
+composer create-project laravel/livewire-starter-kit:dev-main workbench-laravel13
+cd workbench-laravel13
 composer config repositories.ssh521-laravel-admin path ../packages/ssh521/laravel-admin
-composer config repositories.ssh521-laravel-admin-ui path ../packages/ssh521/laravel-admin-ui
-composer require ssh521/laravel-admin:dev-main
+composer config repositories.ssh521-laravel-admin-ui '{"type":"path","url":"../packages/ssh521/laravel-admin-ui","options":{"symlink":true,"versions":{"ssh521/laravel-admin-ui":"1.0.0"}}}'
+composer require ssh521/laravel-admin:^1.0
 php artisan laravel-admin:install --force
+npm install
 npm run build
 ```
+
+로컬 path repository에서 `laravel-admin-ui`는 Git tag가 있어도 branch checkout 상태에서는 Composer가 `dev-main`으로 해석할 수 있다. `laravel-admin`은 `ssh521/laravel-admin-ui ^1.0`을 요구하므로, 위 예시처럼 `options.versions`에 `ssh521/laravel-admin-ui`를 `1.0.0`으로 지정해야 한다. 이 alias가 없으면 `found ssh521/laravel-admin-ui[dev-main] but it does not match the constraint` 의존성 오류가 날 수 있다.
 
 기본 설치 커맨드는 아래 작업을 수행한다.
 
@@ -113,7 +131,14 @@ npm run build
 - `vite.config.js`에 관리자 CSS/JS input을 추가한다.
 - `--with=...` 옵션이 있으면 기능 패키지 installer를 이어서 실행한다.
 
-설치 후 `/admin/login`으로 접속한다. 기본 seed 계정은 환경 변수로 바꿀 수 있다.
+설치 후 화면이나 테스트를 확인하기 전에 `npm install`과 `npm run build`를 실행한다. 관리자 CSS/JS가 Vite manifest에 포함되어야 `/admin/login`과 관리자 화면이 정상 렌더링된다.
+
+```bash
+npm install
+npm run build
+```
+
+빌드 후 `/admin/login`으로 접속한다. 기본 seed 계정은 환경 변수로 바꿀 수 있다.
 
 ```dotenv
 LARAVEL_ADMIN_SEED_ADMIN_EMAIL=admin@example.com
@@ -371,11 +396,12 @@ laravel({
 })
 ```
 
-패키지 업데이트 후에는 asset을 다시 퍼블리시하고 빌드한다.
+패키지 업데이트 후에는 asset을 다시 퍼블리시하고 의존성을 설치한 뒤 빌드한다.
 
 ```bash
 composer update ssh521/laravel-admin ssh521/laravel-admin-ui
 php artisan laravel-admin:update
+npm install
 npm run build
 ```
 
@@ -428,12 +454,13 @@ php artisan laravel-admin:install-ai-context --with-codex-skill
 vendor/bin/phpunit --configuration phpunit.xml.dist
 ```
 
-로컬 패키지 checkout에 `vendor/bin/phpunit`이 없으면 workbench Laravel 앱에서 path repository로 설치한 뒤 검증한다. 패키지 변경 후 최소한 아래 항목을 확인한다.
+로컬 패키지 checkout에 `vendor/bin/phpunit`이 없으면 workbench Laravel 앱에서 path repository로 설치한 뒤 검증한다. 패키지 변경 후 최소한 아래 순서로 확인한다.
 
 - `php artisan laravel-admin:install --force`
+- `npm install`
+- `npm run build`
 - `php artisan route:list --name=admin`
 - `php artisan view:cache`
-- `npm run build`
 - `/admin/login`, `/admin`, 관리자 계정, 역할, 권한, 메뉴 화면 렌더링
 
 문서만 수정한 경우에는 Markdown diff와 공백 오류를 확인한다.

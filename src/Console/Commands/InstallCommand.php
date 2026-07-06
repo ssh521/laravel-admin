@@ -69,7 +69,9 @@ class InstallCommand extends Command
 
         $this->newLine();
         $this->info('Laravel Admin install complete.');
-        $this->line('Run [npm run build] for production, or [npm run dev] while developing.');
+        $this->line('Laravel Admin targets Laravel 13. For new Laravel Livewire starter kit apps, use [laravel/livewire-starter-kit:dev-main].');
+        $this->line('Before testing the admin UI, run [npm install] and then [npm run build].');
+        $this->line('Use [npm run dev] instead while developing.');
 
         return self::SUCCESS;
     }
