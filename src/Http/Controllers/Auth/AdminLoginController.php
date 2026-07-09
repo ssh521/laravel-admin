@@ -4,24 +4,30 @@ namespace Ssh521\LaravelAdmin\Http\Controllers\Auth;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use Illuminate\View\View;
 use Ssh521\LaravelAdmin\Http\Controllers\Controller;
 use Ssh521\LaravelAdmin\Support\AdminBroadcastNotifier;
 
 class AdminLoginController extends Controller
 {
-    public function create(): View|RedirectResponse
+    public function create(Request $request): Response|RedirectResponse
     {
         if (Auth::guard($this->guard())->check()) {
             return redirect()->intended($this->redirectPath());
         }
 
-        return view('laravel-admin::admin.auth.login', [
+        $request->session()->regenerateToken();
+
+        return response()->view('laravel-admin::admin.auth.login', [
             'loginRoute' => $this->routeName('login'),
             'showRegisterLink' => false,
             'showPasswordResetLink' => false,
+        ])->withHeaders([
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma' => 'no-cache',
+            'Expires' => 'Fri, 01 Jan 1990 00:00:00 GMT',
         ]);
     }
 

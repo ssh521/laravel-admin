@@ -42,6 +42,24 @@ class AdminLoginBroadcastNotificationTest extends TestCase
         $this->assertSame($adminUser->getKey(), $notification['payload']['resource_id']);
     }
 
+    public function test_login_page_regenerates_csrf_token_and_disables_browser_cache(): void
+    {
+        $this->withSession(['_token' => 'stale-token']);
+
+        $response = $this->get('/admin/login')
+            ->assertOk()
+            ->assertHeader('Pragma', 'no-cache')
+            ->assertHeader('Expires', 'Fri, 01 Jan 1990 00:00:00 GMT');
+
+        $cacheControl = $response->headers->get('Cache-Control');
+
+        $this->assertStringContainsString('no-store', $cacheControl);
+        $this->assertStringContainsString('no-cache', $cacheControl);
+        $this->assertStringContainsString('must-revalidate', $cacheControl);
+        $this->assertStringContainsString('max-age=0', $cacheControl);
+        $this->assertNotSame('stale-token', session()->token());
+    }
+
     public function test_it_does_not_send_admin_login_notification_after_failed_login(): void
     {
         AdminUser::query()->create([
