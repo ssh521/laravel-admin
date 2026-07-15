@@ -80,10 +80,10 @@ return [
     ],
 
     'seed_admin_user' => [
-        'enabled' => env('LARAVEL_ADMIN_SEED_ADMIN_ENABLED', true),
+        'enabled' => env('LARAVEL_ADMIN_SEED_ADMIN_ENABLED', false),
         'name' => env('LARAVEL_ADMIN_SEED_ADMIN_NAME', 'Super Admin'),
-        'email' => env('LARAVEL_ADMIN_SEED_ADMIN_EMAIL', 'admin@example.com'),
-        'password' => env('LARAVEL_ADMIN_SEED_ADMIN_PASSWORD', 'change-this-password'),
+        'email' => env('LARAVEL_ADMIN_SEED_ADMIN_EMAIL'),
+        'password' => env('LARAVEL_ADMIN_SEED_ADMIN_PASSWORD'),
         'verified' => env('LARAVEL_ADMIN_SEED_ADMIN_VERIFIED', true),
         'role' => env('LARAVEL_ADMIN_SEED_ADMIN_ROLE', 'Super Admin'),
     ],

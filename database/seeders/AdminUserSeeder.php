@@ -4,6 +4,7 @@ namespace Ssh521\LaravelAdmin\Database\Seeders;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
+use InvalidArgumentException;
 use Spatie\Permission\Models\Role;
 use Ssh521\LaravelAdmin\Models\AdminUser;
 use Ssh521\LaravelAdmin\Services\AdminUserService;
@@ -12,13 +13,18 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        if (! config('laravel-admin.seed_admin_user.enabled', true)) {
+        if (! config('laravel-admin.seed_admin_user.enabled', false)) {
             $this->command?->info('Admin user seeding is disabled.');
 
             return;
         }
 
-        $email = config('laravel-admin.seed_admin_user.email', 'admin@example.com');
+        $email = config('laravel-admin.seed_admin_user.email');
+
+        if (! is_string($email) || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+            throw new InvalidArgumentException('Set a valid LARAVEL_ADMIN_SEED_ADMIN_EMAIL before enabling admin user seeding.');
+        }
+
         $adminUser = $this->findAdminUser($email);
         $adminUserService = app(AdminUserService::class);
 
@@ -29,10 +35,16 @@ class AdminUserSeeder extends Seeder
                 'email' => $email,
             ]);
         } else {
+            $password = config('laravel-admin.seed_admin_user.password');
+
+            if (! is_string($password) || mb_strlen($password) < 12) {
+                throw new InvalidArgumentException('Set LARAVEL_ADMIN_SEED_ADMIN_PASSWORD to at least 12 characters before enabling admin user seeding.');
+            }
+
             $adminUser = $adminUserService->createAdminUser([
                 'name' => config('laravel-admin.seed_admin_user.name', 'Super Admin'),
                 'email' => $email,
-                'password' => config('laravel-admin.seed_admin_user.password', 'change-this-password'),
+                'password' => $password,
                 'isVerified' => config('laravel-admin.seed_admin_user.verified', true),
             ]);
         }

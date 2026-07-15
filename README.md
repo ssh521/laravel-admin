@@ -127,7 +127,7 @@ npm run build
 
 - migration과 관리자 UI asset을 퍼블리시한다.
 - 관리자 테이블을 migrate한다.
-- 기본 role/permission, menu, admin user를 seed한다.
+- 기본 role/permission과 menu를 seed한다. 관리자 계정은 명시적으로 활성화한 경우에만 seed한다.
 - `vite.config.js`에 관리자 CSS/JS input을 추가한다.
 - `--with=...` 옵션이 있으면 기능 패키지 installer를 이어서 실행한다.
 
@@ -138,14 +138,17 @@ npm install
 npm run build
 ```
 
-빌드 후 `/admin/login`으로 접속한다. 기본 seed 계정은 환경 변수로 바꿀 수 있다.
+빌드 후 `/admin/login`으로 접속한다. 공개 패키지는 예측 가능한 기본 관리자 계정을 만들지 않으므로, 설치 전에 안전한 계정 정보를 명시적으로 설정하거나 설치 후 `laravel-admin:make-super-admin`을 사용한다.
 
 ```dotenv
-LARAVEL_ADMIN_SEED_ADMIN_EMAIL=admin@example.com
-LARAVEL_ADMIN_SEED_ADMIN_PASSWORD=change-this-password
+LARAVEL_ADMIN_SEED_ADMIN_ENABLED=true
+LARAVEL_ADMIN_SEED_ADMIN_EMAIL=owner@example.com
+LARAVEL_ADMIN_SEED_ADMIN_PASSWORD=replace-with-a-long-random-password
 LARAVEL_ADMIN_SEED_ADMIN_NAME="Super Admin"
 LARAVEL_ADMIN_SEED_ADMIN_VERIFIED=true
 ```
+
+`LARAVEL_ADMIN_SEED_ADMIN_ENABLED`의 기본값은 `false`이며, 새 계정을 만들 때 비밀번호는 최소 12자여야 한다.
 
 ## 설치 옵션
 
