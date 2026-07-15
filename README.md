@@ -208,6 +208,10 @@ return [
             'middleware' => ['web'],
             'redirect_to' => '/admin',
         ],
+        'session' => [
+            'enabled' => true,
+            'cookie' => 'laravel-admin-session',
+        ],
     ],
 
     'admin_user_model' => Ssh521\LaravelAdmin\Models\AdminUser::class,
@@ -223,6 +227,16 @@ return [
 ```
 
 서비스 프로바이더는 설정된 guard/provider를 런타임에 등록한다. 새 Laravel 프로젝트에서 기본 `laravel_admin` guard를 그대로 쓴다면 `config/auth.php`를 직접 수정하지 않아도 된다.
+
+일반 사용자와 관리자 session guard는 기본적으로 서로 다른 쿠키를 사용한다. 관리자 route·path와 같은 호스트의 관리자 Livewire 요청에는 `LARAVEL_ADMIN_SESSION_COOKIE`가 적용되므로 한쪽 로그아웃이 다른 쪽 세션을 무효화하지 않는다.
+
+```dotenv
+SESSION_COOKIE=application-session
+LARAVEL_ADMIN_SEPARATE_SESSION=true
+LARAVEL_ADMIN_SESSION_COOKIE=application-admin-session
+```
+
+기존 단일 세션 쿠키 동작이 필요한 호스트 앱은 `LARAVEL_ADMIN_SEPARATE_SESSION=false`로 비활성화할 수 있다. 분리 설정을 처음 배포하면 기존 관리자 쿠키 대신 새 관리자 쿠키를 사용하므로 관리자는 한 번 다시 로그인해야 한다.
 
 `ssh521/laravel-broadcast-notification`은 선택 의존성이다. 설치되어 있지 않거나 configured facade class가 없으면 알림 발송은 조용히 건너뛰고 관리자 기능은 계속 동작한다.
 

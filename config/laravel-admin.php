@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+use Illuminate\Support\Str;
 use Ssh521\LaravelAdmin\Http\Middleware\AuthenticateAdmin;
 use Ssh521\LaravelAdmin\Models\AdminUser;
 
@@ -29,6 +31,13 @@ return [
             'middleware' => ['web'],
             'redirect_to' => '/admin',
         ],
+        'session' => [
+            'enabled' => env('LARAVEL_ADMIN_SEPARATE_SESSION', true),
+            'cookie' => env(
+                'LARAVEL_ADMIN_SESSION_COOKIE',
+                Str::slug((string) env('APP_NAME', 'laravel')).'-admin-session',
+            ),
+        ],
     ],
     'api_prefix' => 'api/admin',
     'api_middleware' => ['api'],
@@ -56,7 +65,7 @@ return [
     | 이 값만 교체하면 됩니다.
     |
     */
-    'user_model' => App\Models\User::class,
+    'user_model' => User::class,
     'users' => [
         'admin' => [
             'route_prefix' => 'users',

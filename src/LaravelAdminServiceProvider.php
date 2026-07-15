@@ -12,6 +12,7 @@ use Ssh521\LaravelAdmin\Console\Commands\InstallAiContextCommand;
 use Ssh521\LaravelAdmin\Console\Commands\InstallCommand;
 use Ssh521\LaravelAdmin\Console\Commands\MakeSuperAdminCommand;
 use Ssh521\LaravelAdmin\Console\Commands\UpdateCommand;
+use Ssh521\LaravelAdmin\Http\Middleware\UseAdminSession;
 use Ssh521\LaravelAdmin\Livewire\Admin\HeaderNav;
 use Ssh521\LaravelAdmin\Livewire\Admin\LeftMenu;
 use Ssh521\LaravelAdmin\Livewire\Admin\LeftMenuMobile;
@@ -54,12 +55,18 @@ class LaravelAdminServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->registerAdminSessionMiddleware();
         $this->registerRoutes();
         $this->registerLivewireComponents();
         $this->registerLivewirePersistentMiddleware();
         $this->registerPolicies();
         $this->registerCommands();
         $this->registerPublishes();
+    }
+
+    private function registerAdminSessionMiddleware(): void
+    {
+        $this->app['router']->prependMiddlewareToGroup('web', UseAdminSession::class);
     }
 
     private function registerRoutes(): void
