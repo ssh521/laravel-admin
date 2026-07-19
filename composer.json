@@ -1,6 +1,6 @@
 {
     "name": "ssh521/laravel-admin",
-    "description": "Reusable Laravel admin panel extracted from admin-yaver.",
+    "description": "Laravel 13 admin foundation with dedicated authentication, roles, permissions, menus, and extensibility.",
     "type": "library",
     "license": "MIT",
     "autoload": {
