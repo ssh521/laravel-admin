@@ -45,6 +45,7 @@ npm run build
 - migration과 관리자 UI 자산을 퍼블리시합니다.
 - 관리자 테이블을 migrate합니다.
 - 기본 역할·권한·메뉴를 등록합니다.
+- Laravel 기본 `UTC` 설정을 `env('APP_TIMEZONE', 'Asia/Seoul')`로 변경합니다.
 - `vite.config.js`에 관리자 CSS와 JavaScript input을 추가합니다.
 
 설치가 끝나면 `/admin/login`에서 관리자 로그인을 사용할 수 있습니다.
@@ -80,12 +81,23 @@ php artisan laravel-admin:install --skip-migrate
 php artisan laravel-admin:install --skip-seed
 php artisan laravel-admin:install --skip-admin-user
 php artisan laravel-admin:install --skip-vite
+php artisan laravel-admin:install --skip-timezone
 php artisan laravel-admin:install --publish-config
 php artisan laravel-admin:install --publish-views
 php artisan laravel-admin:install --publish-seeders
 ```
 
 `--force`, `--force-config`, `--force-views`, `--force-seeders`는 기존 파일 또는 데이터베이스 작업에 영향을 줄 수 있으므로 변경 내용을 확인한 뒤 사용하십시오.
+
+## 호스트 애플리케이션 시간대 계약
+
+Laravel Admin 기반 호스트 애플리케이션은 사용자·관리자 화면과 Scheduler의 기본 시간대로 한국 표준시를 사용합니다.
+
+```php
+'timezone' => env('APP_TIMEZONE', 'Asia/Seoul'),
+```
+
+운영 환경에서 다른 시간대를 명시적으로 사용해야 하면 `APP_TIMEZONE`으로 재정의합니다. 설치 명령은 Laravel 기본 `UTC`만 변경하며, 이미 설정된 다른 시간대는 덮어쓰지 않습니다. 이 계약을 적용하지 않으려면 `--skip-timezone`을 사용합니다.
 
 ## 설정
 

@@ -286,6 +286,7 @@ php artisan laravel-file:install
 목표: starter kit 이후 설치 경험을 짧고 재현 가능하게 만든다.
 
 - `laravel-admin:install`을 fresh install 기준으로 정리한다.
+- Laravel 기본 `UTC`를 `env('APP_TIMEZONE', 'Asia/Seoul')`로 전환하고 다른 사용자 설정은 보존한다.
 - `laravel-admin:update`는 config/view/migration/seeder 강제 덮어쓰기를 피한다.
 - `--with=file,bbs,blog` 기능 패키지 설치 흐름을 확정한다.
 - feature package installer discovery 또는 명시 mapping 방식을 결정한다.
@@ -295,6 +296,7 @@ php artisan laravel-file:install
 완료 기준:
 
 - 새 Laravel starter kit 앱에서 문서의 명령만으로 `/admin` 접속까지 가능하다.
+- 설치 후 호스트 앱의 기본 시간대가 `Asia/Seoul`로 확인된다.
 - 기능 패키지를 선택 설치하고 메뉴/권한이 등록된다.
 
 ### 6단계: Workbench와 CI 구축

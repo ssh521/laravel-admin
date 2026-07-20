@@ -24,6 +24,13 @@ Core에 넣지 않는 책임:
 
 일반 회원 관리는 core가 기본 제공한다. 호스트 앱이 기본 `App\Models\User`가 아닌 다른 회원 모델을 사용하면 `config('laravel-admin.user_model')`만 교체한다.
 
+## 호스트 애플리케이션 기본 계약
+
+- `config/app.php`의 기본 시간대는 `env('APP_TIMEZONE', 'Asia/Seoul')`로 둔다.
+- 사용자·관리자 화면과 Scheduler에서 별도 요구가 없으면 한국 표준시를 사용한다.
+- 외부 API가 UTC를 요구하면 해당 API 경계에서 명시적으로 변환하고 시간대 또는 offset을 함께 전달한다.
+- 다른 시간대를 사용하는 호스트 앱은 `APP_TIMEZONE` 또는 `laravel-admin:install --skip-timezone`으로 명시적으로 재정의한다.
+
 ## AI가 먼저 읽을 문서
 
 호스트 프로젝트에서 관리자 기능을 개발하기 전에 아래 문서를 우선 확인한다.

@@ -21,6 +21,12 @@ Path repository 또는 monorepo 개발 중이면 `vendor/` 대신 실제 패키�
 - 일반 회원 관리는 core 기본 기능이며 `config('laravel-admin.user_model')`로 호스트 앱 모델을 바꿀 수 있다.
 - 게시판, 블로그, 파일, 페이지처럼 사이트 도메인 기능은 기능 패키지로 분리한다.
 
+## Host Application Baseline
+
+- `config/app.php`의 기본 시간대는 `env('APP_TIMEZONE', 'Asia/Seoul')`로 둔다.
+- 사용자·관리자 화면과 Scheduler는 별도 요구가 없으면 한국 표준시를 사용한다.
+- UTC가 필요한 외부 API는 해당 경계에서 명시적으로 변환하고 시간대 또는 offset을 함께 전달한다.
+
 ## Feature Package Rules
 
 - 새 관리자 기능은 가능하면 `ssh521/laravel-{feature}` 패키지로 만든다.

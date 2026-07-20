@@ -7,6 +7,7 @@ use Ssh521\LaravelAdmin\Database\Seeders\AdminUserSeeder;
 use Ssh521\LaravelAdmin\Database\Seeders\MenuSeeder;
 use Ssh521\LaravelAdmin\Database\Seeders\RolePermissionSeeder;
 use Ssh521\LaravelAdmin\Database\Seeders\UserManagementSeeder;
+use Ssh521\LaravelAdmin\Support\HostApplicationTimezone;
 use Ssh521\LaravelAdmin\Support\PackageInstaller;
 
 class InstallCommand extends Command
@@ -17,6 +18,7 @@ class InstallCommand extends Command
         {--skip-seed : Do not seed Laravel Admin roles, menus, or admin user}
         {--skip-admin-user : Do not seed the default admin user}
         {--skip-vite : Do not update vite.config.js}
+        {--skip-timezone : Do not set the host application timezone default to Asia/Seoul}
         {--publish-config : Publish Laravel Admin config}
         {--publish-views : Publish Laravel Admin views and components}
         {--publish-seeders : Publish Laravel Admin seeders}
@@ -44,6 +46,10 @@ class InstallCommand extends Command
     public function handle(): int
     {
         $this->info('Installing Laravel Admin...');
+
+        if (! $this->option('skip-timezone')) {
+            $this->configureApplicationTimezone();
+        }
 
         $this->publishResources();
 
@@ -221,6 +227,18 @@ class InstallCommand extends Command
         file_put_contents($path, $updated);
 
         $this->info('Added Laravel Admin Vite inputs to vite.config.js.');
+    }
+
+    private function configureApplicationTimezone(): void
+    {
+        $result = app(HostApplicationTimezone::class)->update(base_path('config/app.php'));
+
+        match ($result) {
+            HostApplicationTimezone::UPDATED => $this->info('Set the application timezone default to Asia/Seoul.'),
+            HostApplicationTimezone::CONFIGURED => $this->info('Application timezone already uses Asia/Seoul.'),
+            HostApplicationTimezone::MISSING => $this->warn('config/app.php was not found. Set the application timezone to Asia/Seoul manually.'),
+            default => $this->warn('A custom application timezone is configured. Laravel Admin left it unchanged.'),
+        };
     }
 
     /**

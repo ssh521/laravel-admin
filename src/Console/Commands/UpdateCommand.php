@@ -36,6 +36,7 @@ class UpdateCommand extends Command
                 '--skip-migrate' => true,
                 '--skip-seed' => true,
                 '--skip-admin-user' => true,
+                '--skip-timezone' => true,
                 '--with' => [],
             ]);
         }
