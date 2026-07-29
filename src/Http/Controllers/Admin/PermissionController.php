@@ -5,6 +5,7 @@ namespace Ssh521\LaravelAdmin\Http\Controllers\Admin;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Ssh521\LaravelAdmin\Http\Controllers\Controller;
 use Ssh521\LaravelAdmin\Models\Permission;
 use Ssh521\LaravelAdmin\Support\AdminBroadcastNotifier;
@@ -37,11 +38,14 @@ class PermissionController extends Controller
         }
 
         $data = Permission::query()
+            ->where('guard_name', $this->adminGuard())
             ->when(
                 $request->search,
                 function (Builder $builder) use ($request) {
-                    $builder->where('name', 'like', "%{$request->search}%")
-                        ->orWhere('description', 'like', "%{$request->search}%");
+                    $builder->where(function (Builder $searchQuery) use ($request): void {
+                        $searchQuery->where('name', 'like', "%{$request->search}%")
+                            ->orWhere('description', 'like', "%{$request->search}%");
+                    });
                 }
             )
             ->orderBy($sort, $direction)
@@ -62,13 +66,19 @@ class PermissionController extends Controller
     {
         $this->authorize('create', Permission::class);
 
+        $guard = $this->adminGuard();
         $validatedData = $request->validate([
-            'name' => 'required|max:255|unique:permissions',
+            'name' => [
+                'required',
+                'max:255',
+                Rule::unique('permissions', 'name')->where('guard_name', $guard),
+            ],
             'description' => 'nullable|string|max:255',
         ]);
 
         $permission = Permission::create([
             'name' => $validatedData['name'],
+            'guard_name' => $guard,
             'description' => $validatedData['description'] ?? null,
         ]);
 
@@ -84,6 +94,7 @@ class PermissionController extends Controller
 
     public function show(Permission $permission)
     {
+        $this->ensureAdminGuard($permission);
         $this->authorize('view', $permission);
 
         return view('laravel-admin::admin.permissions.show', compact('permission'));
@@ -91,6 +102,7 @@ class PermissionController extends Controller
 
     public function edit(Permission $permission)
     {
+        $this->ensureAdminGuard($permission);
         $this->authorize('update', $permission);
 
         return view('laravel-admin::admin.permissions.edit', compact('permission'));
@@ -98,10 +110,18 @@ class PermissionController extends Controller
 
     public function update(Request $request, Permission $permission)
     {
+        $this->ensureAdminGuard($permission);
         $this->authorize('update', $permission);
 
+        $guard = $this->adminGuard();
         $validatedData = $request->validate([
-            'name' => 'required|max:255|unique:permissions,name,'.$permission->id,
+            'name' => [
+                'required',
+                'max:255',
+                Rule::unique('permissions', 'name')
+                    ->where('guard_name', $guard)
+                    ->ignore($permission->id),
+            ],
             'description' => 'nullable|string|max:255',
         ]);
 
@@ -123,6 +143,7 @@ class PermissionController extends Controller
 
     public function destroy(Permission $permission)
     {
+        $this->ensureAdminGuard($permission);
         $this->authorize('delete', $permission);
 
         $this->broadcastNotifier->resourceChanged(
@@ -143,18 +164,28 @@ class PermissionController extends Controller
     {
         $this->authorize('update', Permission::class);
 
+        $guard = $this->adminGuard();
         $request->validate([
             'order' => 'required|array',
-            'order.*.id' => 'required|integer|exists:permissions,id',
+            'order.*.id' => [
+                'required',
+                'integer',
+                Rule::exists('permissions', 'id')->where('guard_name', $guard),
+            ],
             'order.*.order' => 'required|integer|min:1',
         ]);
 
         try {
             foreach ($request->order as $item) {
-                Permission::where('id', $item['id'])->update(['sort_order' => $item['order']]);
+                Permission::query()
+                    ->where('guard_name', $guard)
+                    ->whereKey($item['id'])
+                    ->update(['sort_order' => $item['order']]);
             }
 
-            $permission = Permission::find(data_get($request->order, '0.id'));
+            $permission = Permission::query()
+                ->where('guard_name', $guard)
+                ->find(data_get($request->order, '0.id'));
 
             if ($permission) {
                 $this->broadcastNotifier->resourceChanged(
@@ -177,5 +208,15 @@ class PermissionController extends Controller
                 'message' => 'Failed to update order',
             ], 500);
         }
+    }
+
+    private function adminGuard(): string
+    {
+        return config('laravel-admin.auth.guard', 'laravel_admin');
+    }
+
+    private function ensureAdminGuard(Permission $permission): void
+    {
+        abort_unless($permission->guard_name === $this->adminGuard(), 404);
     }
 }

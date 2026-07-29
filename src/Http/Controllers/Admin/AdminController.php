@@ -19,11 +19,12 @@ class AdminController extends Controller
         $this->authorize('viewDashboard', 'admin');
 
         $adminUserModel = config('laravel-admin.admin_user_model', AdminUser::class);
+        $guard = config('laravel-admin.auth.guard', 'laravel_admin');
 
         $stats = [
             'total_admin_users' => $adminUserModel::query()->count(),
-            'total_roles' => Role::count(),
-            'total_permissions' => Permission::count(),
+            'total_roles' => Role::query()->where('guard_name', $guard)->count(),
+            'total_permissions' => Permission::query()->where('guard_name', $guard)->count(),
             'total_menu_categories' => MenuCategory::query()->count(),
         ];
 

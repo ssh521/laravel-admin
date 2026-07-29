@@ -9,6 +9,9 @@ final class GetRoleDetailAction
 {
     public function execute(GetRoleDetailDTO $dto): Role
     {
-        return Role::with('permissions')->findOrFail($dto->roleId);
+        return Role::query()
+            ->where('guard_name', config('laravel-admin.auth.guard', 'laravel_admin'))
+            ->with('permissions')
+            ->findOrFail($dto->roleId);
     }
 }

@@ -83,6 +83,7 @@ class RoleEditModal extends Component
     private function loadAvailablePermissions(): void
     {
         $this->availablePermissions = Permission::query()
+            ->where('guard_name', config('laravel-admin.auth.guard', 'laravel_admin'))
             ->ordered()
             ->get()
             ->map(fn ($permission) => [

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
 use Ssh521\LaravelAdmin\Http\Controllers\Controller;
 use Ssh521\LaravelAdmin\Models\MenuCategory;
@@ -310,7 +311,7 @@ class MenuCategoryController extends Controller
         $this->authorize('update', $menuCategory);
 
         $roles = $this->getAvailableRoles();
-        $allowedRoleIds = $menuCategory->roles->pluck('id')->toArray();
+        $allowedRoleIds = $this->getAdminRoleIds($menuCategory);
 
         return view('laravel-admin::admin.menu-categories.roles', compact('menuCategory', 'roles', 'allowedRoleIds'));
     }
@@ -322,12 +323,16 @@ class MenuCategoryController extends Controller
     {
         $this->authorize('update', $menuCategory);
 
-        $request->validate([
-            'roles' => 'array',
-            'roles.*' => 'exists:roles,id',
+        $guard = $this->adminGuard();
+        $validated = $request->validate([
+            'roles' => ['nullable', 'array'],
+            'roles.*' => [
+                'integer',
+                Rule::exists('roles', 'id')->where('guard_name', $guard),
+            ],
         ]);
 
-        $this->syncMenuCategoryRoles($menuCategory, $request->roles);
+        $this->syncMenuCategoryRoles($menuCategory, $validated['roles'] ?? []);
 
         $this->broadcastNotifier->resourceChanged(
             resource: $menuCategory->load('roles'),
@@ -347,23 +352,29 @@ class MenuCategoryController extends Controller
     private function getAvailableRoles()
     {
         $currentUser = Auth::user();
-        if ($currentUser->roles->contains('name', 'Super Admin')) {
-            return Role::all();
-        } else {
-            return Role::where('name', '!=', 'Super Admin')->get();
+        $roles = Role::query()
+            ->where('guard_name', $this->adminGuard())
+            ->orderBy('name');
+
+        if (! $currentUser->roles->contains('name', config('laravel-admin.super_admin_role', 'Super Admin'))) {
+            $roles->where('name', '!=', config('laravel-admin.super_admin_role', 'Super Admin'));
         }
+
+        return $roles->get();
     }
 
     /**
      * Sync menu category roles
      */
-    private function syncMenuCategoryRoles(MenuCategory $menuCategory, $roles)
+    private function syncMenuCategoryRoles(MenuCategory $menuCategory, array $roles): void
     {
-        if (isset($roles)) {
-            $menuCategory->roles()->sync($roles);
-        } else {
-            $menuCategory->roles()->detach();
-        }
+        $roleIds = Role::query()
+            ->where('guard_name', $this->adminGuard())
+            ->whereKey($roles)
+            ->pluck('id')
+            ->all();
+
+        $menuCategory->roles()->sync($roleIds);
     }
 
     /**
@@ -373,7 +384,7 @@ class MenuCategoryController extends Controller
     {
         $this->authorize('view', $menuCategory);
 
-        $roleIds = $menuCategory->roles->pluck('id')->toArray();
+        $roleIds = $this->getAdminRoleIds($menuCategory);
 
         return response()->json([
             'success' => true,
@@ -388,13 +399,17 @@ class MenuCategoryController extends Controller
     {
         $this->authorize('update', $menuCategory);
 
-        $request->validate([
-            'roles' => 'array',
-            'roles.*' => 'exists:roles,id',
+        $guard = $this->adminGuard();
+        $validated = $request->validate([
+            'roles' => ['nullable', 'array'],
+            'roles.*' => [
+                'integer',
+                Rule::exists('roles', 'id')->where('guard_name', $guard),
+            ],
         ]);
 
         try {
-            $this->syncMenuCategoryRoles($menuCategory, $request->roles);
+            $this->syncMenuCategoryRoles($menuCategory, $validated['roles'] ?? []);
 
             $this->broadcastNotifier->resourceChanged(
                 resource: $menuCategory->load('roles'),
@@ -407,7 +422,10 @@ class MenuCategoryController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => '허용 역할이 저장되었습니다.',
-                'roles' => $menuCategory->roles()->select('id', 'name')->get(),
+                'roles' => $menuCategory->roles()
+                    ->where('roles.guard_name', $this->adminGuard())
+                    ->select('roles.id', 'roles.name')
+                    ->get(),
             ]);
         } catch (\Exception $e) {
             Log::error('MenuCategoryController: 역할 저장 중 오류 발생', [
@@ -430,7 +448,7 @@ class MenuCategoryController extends Controller
         $this->authorize('view', $menuCategory);
 
         $availableRoles = $this->getAvailableRoles();
-        $selectedRoles = $menuCategory->roles->pluck('id')->toArray();
+        $selectedRoles = $this->getAdminRoleIds($menuCategory);
 
         return response()->json([
             'success' => true,
@@ -438,5 +456,21 @@ class MenuCategoryController extends Controller
             'selectedRoles' => $selectedRoles,
             'categoryName' => $menuCategory->name,
         ]);
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    private function getAdminRoleIds(MenuCategory $menuCategory): array
+    {
+        return $menuCategory->roles()
+            ->where('roles.guard_name', $this->adminGuard())
+            ->pluck('roles.id')
+            ->all();
+    }
+
+    private function adminGuard(): string
+    {
+        return config('laravel-admin.auth.guard', 'laravel_admin');
     }
 }

@@ -10,14 +10,20 @@ final class UpdateRoleAction
 {
     public function execute(UpdateRoleDTO $dto): Role
     {
-        $role = Role::findOrFail($dto->roleId);
+        $guard = config('laravel-admin.auth.guard', 'laravel_admin');
+        $role = Role::query()
+            ->where('guard_name', $guard)
+            ->findOrFail($dto->roleId);
 
         $role->name = $dto->name;
         $role->save();
 
         // 권한 동기화
         if (! empty($dto->permissionIds)) {
-            $permissions = Permission::whereIn('id', $dto->permissionIds)->pluck('name');
+            $permissions = Permission::query()
+                ->where('guard_name', $guard)
+                ->whereIn('id', $dto->permissionIds)
+                ->get();
             $role->syncPermissions($permissions);
         } else {
             $role->syncPermissions([]);

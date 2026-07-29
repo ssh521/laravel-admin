@@ -17,12 +17,27 @@ final class UpdateRoleValidator
     public static function validate(array $data): array
     {
         $roleId = $data['roleId'] ?? null;
+        $guard = config('laravel-admin.auth.guard', 'laravel_admin');
 
         $validator = Validator::make($data, [
-            'roleId' => ['required', 'integer', 'exists:roles,id'],
-            'name' => ['required', 'string', 'max:255', Rule::unique('roles', 'name')->ignore($roleId)],
+            'roleId' => [
+                'required',
+                'integer',
+                Rule::exists('roles', 'id')->where('guard_name', $guard),
+            ],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('roles', 'name')
+                    ->where('guard_name', $guard)
+                    ->ignore($roleId),
+            ],
             'permissionIds' => ['nullable', 'array'],
-            'permissionIds.*' => ['integer', 'exists:permissions,id'],
+            'permissionIds.*' => [
+                'integer',
+                Rule::exists('permissions', 'id')->where('guard_name', $guard),
+            ],
         ]);
 
         return $validator->validate();
