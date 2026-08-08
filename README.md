@@ -8,6 +8,12 @@ Laravel 13 애플리케이션에 독립된 관리자 인증, 계정, 역할·권
 
 Filament, Nova, Backpack과 같은 범용 CRUD 빌더를 대체하지 않습니다. 호스트 애플리케이션이 자체 관리자 기능을 일관된 인증·권한·UI 계약 위에서 구현할 수 있도록 공통 기반을 제공합니다.
 
+## 화면 예시
+
+![Laravel Admin 관리자 대시보드](docs/images/admin-dashboard.png)
+
+> `ssh521/laravel-admin`과 선택적 확장 패키지를 함께 구성한 통합 화면입니다.
+
 ## 주요 기능
 
 - 일반 사용자와 분리된 관리자 guard, provider, 로그인과 세션 쿠키
