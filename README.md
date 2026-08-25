@@ -194,7 +194,7 @@ npm run build
 
 ## 확장 패키지 개발
 
-`laravel-admin`은 기능 패키지가 관리자 메뉴, 권한, route와 installer를 등록할 수 있는 계약을 제공합니다. 새 확장 패키지를 만들 때는 [기능 패키지 가이드](docs/feature-package-template.md)를 기준으로 구현하십시오.
+`laravel-admin`은 기능 패키지가 관리자 메뉴, 권한, route와 installer를 등록할 수 있는 계약을 제공합니다. 관리자 기능을 운영에 전달할 때는 [관리자 기능 전달 계약](docs/admin-feature-delivery-contract.md)을, 새 확장 패키지를 만들 때는 [기능 패키지 가이드](docs/feature-package-template.md)를 기준으로 구현하십시오.
 
 현재 설치 가능한 공개 패키지는 [Packagist의 `ssh521` 검색 결과](https://packagist.org/search/?query=ssh521)에서 확인할 수 있습니다.
 
@@ -212,6 +212,7 @@ php artisan laravel-admin:install-ai-context --with-codex-skill
 ## 문서
 
 - [프로젝트 방향과 로드맵](docs/project-direction-roadmap.md)
+- [관리자 기능 전달 계약](docs/admin-feature-delivery-contract.md)
 - [관리자 권한 계약](docs/admin-authorization-contract.md)
 - [기능 패키지 가이드](docs/feature-package-template.md)
 - [AI 개발 가이드](docs/ai-development-guide.md)

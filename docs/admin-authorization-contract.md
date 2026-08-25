@@ -1,5 +1,7 @@
 # 관리자 권한 계약
 
+이 문서는 역할과 permission의 의미를 정의한다. 관리자 기능의 seeder, 화면 상태, 배포와 완료 검증을 포함한 전체 흐름은 [관리자 기능 전달 계약](admin-feature-delivery-contract.md)을 함께 따른다.
+
 `ssh521/laravel-admin`은 관리자 권한을 두 계층으로 나누어 다룬다.
 
 - role은 좌측 메뉴 폴더 노출 대상을 정한다.

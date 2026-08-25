@@ -2,6 +2,8 @@
 
 이 문서는 `ssh521/laravel-admin`을 기반으로 `ssh521/laravel-bbs`, `ssh521/laravel-blog`, `ssh521/laravel-file` 같은 기능 패키지를 새로 만들 때 따르는 템플릿이다.
 
+기능의 코드 작성부터 운영 DB의 메뉴·권한 반영과 화면 상태 검증까지 이어지는 완료 기준은 [관리자 기능 전달 계약](admin-feature-delivery-contract.md)을 함께 따른다.
+
 목표는 다음과 같다.
 
 - 기능 패키지는 `ssh521/laravel-admin`에 의존한다.
