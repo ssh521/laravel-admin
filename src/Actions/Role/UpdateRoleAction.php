@@ -2,33 +2,32 @@
 
 namespace Ssh521\LaravelAdmin\Actions\Role;
 
-use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Ssh521\LaravelAdmin\DTOs\Role\UpdateRoleDTO;
+use Ssh521\LaravelAdmin\Support\RolePermissionAssignment;
 
 final class UpdateRoleAction
 {
+    public function __construct(private readonly RolePermissionAssignment $permissionAssignment) {}
+
     public function execute(UpdateRoleDTO $dto): Role
     {
-        $guard = config('laravel-admin.auth.guard', 'laravel_admin');
-        $role = Role::query()
-            ->where('guard_name', $guard)
-            ->findOrFail($dto->roleId);
+        return DB::transaction(function () use ($dto): Role {
+            $role = Role::query()
+                ->where('guard_name', config('laravel-admin.auth.guard', 'laravel_admin'))
+                ->lockForUpdate()
+                ->findOrFail($dto->roleId);
 
-        $role->name = $dto->name;
-        $role->save();
+            $permissions = $this->permissionAssignment->authorize($role, $dto->name, $dto->permissionIds);
 
-        // 권한 동기화
-        if (! empty($dto->permissionIds)) {
-            $permissions = Permission::query()
-                ->where('guard_name', $guard)
-                ->whereIn('id', $dto->permissionIds)
-                ->get();
-            $role->syncPermissions($permissions);
-        } else {
-            $role->syncPermissions([]);
-        }
+            $role->update(['name' => $dto->name]);
 
-        return $role->load('permissions');
+            if ($permissions !== null) {
+                $role->syncPermissions($permissions);
+            }
+
+            return $role->load('permissions');
+        });
     }
 }

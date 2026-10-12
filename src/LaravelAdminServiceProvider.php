@@ -164,7 +164,10 @@ class LaravelAdminServiceProvider extends ServiceProvider
     private function registerPolicies(): void
     {
         Gate::before(function ($user): ?bool {
-            if (method_exists($user, 'hasRole') && $user->hasRole(config('laravel-admin.super_admin_role', 'Super Admin'))) {
+            if (method_exists($user, 'hasRole') && $user->roles->contains(
+                fn (Role $role): bool => $role->name === config('laravel-admin.super_admin_role', 'Super Admin')
+                    && $role->guard_name === config('laravel-admin.auth.guard', 'laravel_admin'),
+            )) {
                 return true;
             }
 

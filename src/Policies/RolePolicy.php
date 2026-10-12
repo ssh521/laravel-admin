@@ -103,6 +103,14 @@ class RolePolicy
     }
 
     /**
+     * Reserve promotion to the configured Super Admin role for the global Gate override.
+     */
+    public function promoteToSuperAdmin(object $user, Role $role): bool
+    {
+        return false;
+    }
+
+    /**
      * Determine whether the user can view role permissions.
      */
     public function viewPermissions($user, Role $role): bool

@@ -5,20 +5,25 @@ namespace Ssh521\LaravelAdmin\Http\Controllers\Admin;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
 use Ssh521\LaravelAdmin\Http\Controllers\Controller;
 use Ssh521\LaravelAdmin\Models\Permission;
+use Ssh521\LaravelAdmin\Services\RoleService;
 use Ssh521\LaravelAdmin\Support\AdminBroadcastNotifier;
+use Ssh521\LaravelAdmin\Support\RolePermissionAssignment;
 
 class RoleController extends Controller
 {
     use AuthorizesRequests;
 
-    public function __construct(private readonly AdminBroadcastNotifier $broadcastNotifier)
-    {
-        // authorizeResource 대신 개별 메서드에서 authorize 호출
-    }
+    public function __construct(
+        private readonly AdminBroadcastNotifier $broadcastNotifier,
+        private readonly RolePermissionAssignment $permissionAssignment,
+        private readonly RoleService $roleService,
+    ) {}
 
     public function index(Request $request)
     {
@@ -41,8 +46,9 @@ class RoleController extends Controller
         $this->authorize('create', Role::class);
 
         $permissions = $this->getOrderedPermissions();
+        $canAssignPermissions = Gate::allows('assignPermissions', new Role(['guard_name' => $this->adminGuard()]));
 
-        return view('laravel-admin::admin.roles.create', compact('permissions'));
+        return view('laravel-admin::admin.roles.create', compact('permissions', 'canAssignPermissions'));
     }
 
     public function store(Request $request)
@@ -59,26 +65,22 @@ class RoleController extends Controller
             ],
             'permissions' => 'array',
             'permissions.*' => [
+                'integer',
                 Rule::exists('permissions', 'id')->where('guard_name', $guard),
             ],
         ]);
 
-        $role = Role::create([
+        $role = new Role([
             'name' => $validatedData['name'],
             'guard_name' => $guard,
         ]);
 
-        // 권한 동기화 - 권한이 선택되지 않았을 때도 빈 배열로 처리
-        if (isset($validatedData['permissions']) && ! empty($validatedData['permissions'])) {
-            $permissions = Permission::query()
-                ->where('guard_name', $guard)
-                ->whereIn('id', $validatedData['permissions'])
-                ->get();
+        $permissions = $this->permissionAssignment->authorize($role, $role->name, $validatedData['permissions'] ?? []);
+
+        DB::transaction(function () use ($role, $permissions): void {
+            $role->save();
             $role->syncPermissions($permissions);
-        } else {
-            // 권한이 선택되지 않았을 때는 모든 권한을 제거
-            $role->syncPermissions([]);
-        }
+        });
 
         $this->broadcastNotifier->resourceChanged(
             resource: $role->load('permissions'),
@@ -107,8 +109,9 @@ class RoleController extends Controller
 
         $permissions = $this->getOrderedPermissions();
         $rolePermissions = $role->permissions->pluck('id')->toArray();
+        $canAssignPermissions = Gate::allows('assignPermissions', $role);
 
-        return view('laravel-admin::admin.roles.edit', compact('role', 'permissions', 'rolePermissions'));
+        return view('laravel-admin::admin.roles.edit', compact('role', 'permissions', 'rolePermissions', 'canAssignPermissions'));
     }
 
     public function update(Request $request, Role $role)
@@ -127,32 +130,20 @@ class RoleController extends Controller
                     ->ignore($role->id),
             ],
             'permissions' => 'array',
+            'permissions_present' => ['sometimes', 'boolean'],
             'permissions.*' => [
+                'integer',
                 Rule::exists('permissions', 'id')->where('guard_name', $guard),
             ],
         ]);
 
-        $role->update(['name' => $validatedData['name']]);
-
-        // 권한 동기화 - 권한이 선택되지 않았을 때도 빈 배열로 처리
-        if (isset($validatedData['permissions']) && ! empty($validatedData['permissions'])) {
-            $permissions = Permission::query()
-                ->where('guard_name', $guard)
-                ->whereIn('id', $validatedData['permissions'])
-                ->get();
-            $role->syncPermissions($permissions);
-        } else {
-            // 권한이 선택되지 않았을 때는 모든 권한을 제거
-            $role->syncPermissions([]);
-        }
-
-        $this->broadcastNotifier->resourceChanged(
-            resource: $role->load('permissions'),
-            resourceType: 'role',
-            event: 'updated',
-            title: '관리자 역할이 수정되었습니다',
-            type: 'warning',
-        );
+        $this->roleService->updateRole([
+            'roleId' => $role->id,
+            'name' => $validatedData['name'],
+            'permissionIds' => $request->exists('permissions') || $request->boolean('permissions_present')
+                ? ($validatedData['permissions'] ?? [])
+                : null,
+        ]);
 
         return redirect()->route('admin.roles.index')->with('success', 'Role updated successfully');
     }

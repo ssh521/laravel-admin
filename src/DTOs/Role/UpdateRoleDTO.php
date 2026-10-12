@@ -7,7 +7,7 @@ final readonly class UpdateRoleDTO
     public function __construct(
         public int $roleId,
         public string $name,
-        public array $permissionIds = [],
+        public ?array $permissionIds = null,
     ) {}
 
     public static function make(array $data): self
@@ -15,7 +15,7 @@ final readonly class UpdateRoleDTO
         return new self(
             roleId: $data['roleId'],
             name: $data['name'],
-            permissionIds: $data['permissionIds'] ?? [],
+            permissionIds: $data['permissionIds'] ?? null,
         );
     }
 }

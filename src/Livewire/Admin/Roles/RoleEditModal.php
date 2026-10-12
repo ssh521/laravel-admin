@@ -4,7 +4,9 @@ namespace Ssh521\LaravelAdmin\Livewire\Admin\Roles;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Ssh521\LaravelAdmin\Models\Permission;
 use Ssh521\LaravelAdmin\Services\RoleService;
@@ -20,6 +22,9 @@ class RoleEditModal extends Component
     public string $name = '';
 
     public array $permissionIds = [];
+
+    #[Locked]
+    public array $originalPermissionIds = [];
 
     public array $availablePermissions = [];
 
@@ -49,11 +54,20 @@ class RoleEditModal extends Component
             $role = $this->roleService->getRoleDetail(['roleId' => $this->roleId]);
             $this->authorize('update', $role);
 
-            $this->roleService->updateRole([
+            $canAssignPermissions = Gate::allows('assignPermissions', $role);
+
+            if (! $canAssignPermissions && $this->normalizedPermissionIds($this->permissionIds) !== $this->normalizedPermissionIds($this->originalPermissionIds)) {
+                $this->authorize('assignPermissions', $role);
+            }
+
+            $this->role = $this->roleService->updateRole([
                 'roleId' => $this->roleId,
                 'name' => $this->name,
-                'permissionIds' => $this->permissionIds,
+                'permissionIds' => $canAssignPermissions ? $this->permissionIds : null,
             ]);
+
+            $this->permissionIds = $this->role->permissions->pluck('id')->map(fn ($id) => (string) $id)->all();
+            $this->originalPermissionIds = $this->permissionIds;
 
             $this->dispatch('admin-roles:role:saved');
             $this->dispatch('notification:show', message: '역할이 저장되었습니다.', type: 'success');
@@ -78,6 +92,19 @@ class RoleEditModal extends Component
         $this->authorize('update', $this->role);
         $this->name = (string) $this->role->name;
         $this->permissionIds = $this->role->permissions->pluck('id')->map(fn ($id) => (string) $id)->all();
+        $this->originalPermissionIds = $this->permissionIds;
+    }
+
+    /**
+     * @param  array<int, int|string>  $permissionIds
+     * @return array<int, int>
+     */
+    private function normalizedPermissionIds(array $permissionIds): array
+    {
+        $ids = array_values(array_unique(array_map(intval(...), $permissionIds)));
+        sort($ids);
+
+        return $ids;
     }
 
     private function loadAvailablePermissions(): void
@@ -89,6 +116,7 @@ class RoleEditModal extends Component
             ->map(fn ($permission) => [
                 'id' => $permission->id,
                 'name' => $permission->name,
+                'canAssign' => Gate::allows('assignToRoles', $permission),
             ])
             ->toArray();
     }
@@ -103,6 +131,8 @@ class RoleEditModal extends Component
 
     public function render()
     {
-        return view('laravel-admin::livewire.admin.roles.role-edit-modal');
+        return view('laravel-admin::livewire.admin.roles.role-edit-modal', [
+            'canAssignPermissions' => Gate::allows('assignPermissions', $this->role),
+        ]);
     }
 }
